@@ -108,12 +108,12 @@ public class EditProcedureDialog extends CMTitleAreaDialog {
 
 	public EditProcedureDialog(Shell parentShell) {
 		super(parentShell);
-		initJavaType();
-		initSqlTypeMap();
 	}
 
 	protected Control createDialogArea(Composite parent) {
 		isCommentSupport = CompatibleUtil.isCommentSupports(database.getDatabaseInfo());
+		initJavaType();
+		initSqlTypeMap();
 		Composite parentComp = (Composite) super.createDialogArea(parent);
 		Composite composite = new Composite(parentComp, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -712,8 +712,17 @@ public class EditProcedureDialog extends CMTitleAreaDialog {
 		}
 		if (!javaTypeMap.containsKey("5")) {
 			List<String> list = new ArrayList<String>();
-			list.add("cubrid.sql.CUBRIDOID");
-			list.add("cubrid.sql.CUBRIDOIDImpl");
+			if (database != null) {
+				String jdbcVersion = database.getDatabase().getServer().getJdbcDriverVersion();
+				if (isAfterJdbc111(jdbcVersion)) {
+					list.add("cubrid.sql.CUBRIDOIDImpl");					
+				} else { 
+					list.add("cubrid.sql.CUBRIDOID");
+				}
+			} else {
+				list.add("cubrid.sql.CUBRIDOID");
+			}
+			
 			javaTypeMap.put("5", list);
 		}
 		if (!javaTypeMap.containsKey("6")) {
@@ -757,4 +766,19 @@ public class EditProcedureDialog extends CMTitleAreaDialog {
 		return procedureName;
 	}
 
+	private static boolean isAfterJdbc111(String jdbcVersion) {
+		String[] tempString;
+		int tempIntVersion = 0;
+
+		tempString = jdbcVersion.replaceAll("[^0-9.]","").split("\\.");
+
+		tempIntVersion += Integer.valueOf(tempString[0]).intValue() * 10;
+		tempIntVersion += Integer.valueOf(tempString[1]).intValue();
+
+		if (tempIntVersion >= 111) {
+			return true;
+		}
+		
+		return false;
+	}
 }
