@@ -9,4 +9,6 @@ Export-Package:
  com.cubrid.jdbc.proxy.driver,
  com.cubrid.jdbc.proxy.manage
 Require-Bundle: org.eclipse.core.runtime
+Import-Package: com.cubrid.common.core.util,
+ org.slf4j
 

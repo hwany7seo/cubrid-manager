@@ -32,6 +32,10 @@ import java.io.OutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+
+import com.cubrid.common.core.util.LogUtil;
+import com.cubrid.jdbc.proxy.manage.CUBRIDProxyException;
 import com.cubrid.jdbc.proxy.manage.CUBRIDProxySQLException;
 import com.cubrid.jdbc.proxy.manage.JdbcClassLoaderFactory;
 import com.cubrid.jdbc.proxy.manage.ReflectionUtil;
@@ -43,6 +47,8 @@ import com.cubrid.jdbc.proxy.manage.ReflectionUtil;
  *
  */
 public class CUBRIDOIDProxy {
+	private static final Logger LOGGER = LogUtil.getLogger(CUBRIDOIDProxy.class);
+	
 	private final Object cubridOID;
 	private String jdbcVersion;
 
@@ -267,7 +273,12 @@ public class CUBRIDOIDProxy {
 
 		ClassLoader loader = JdbcClassLoaderFactory.getClassLoader(version);
 		try {
-			return loader.loadClass("cubrid.sql.CUBRIDOID");
+			LOGGER.debug("---------getCUBRIDOIDClass version---------- : " + version);
+			if (isAfterJdbc111(version)) {
+				return loader.loadClass("cubrid.sql.CUBRIDOIDImpl");
+			} else {
+				return loader.loadClass("cubrid.sql.CUBRIDOID");
+			}
 		} catch (ClassNotFoundException e) {
 			return null;
 		}
@@ -294,8 +305,15 @@ public class CUBRIDOIDProxy {
 		Class<?> clazz = null;
 
 		try {
-			clazz = conn.getProxyClass().getClassLoader().loadClass(
-					"cubrid.sql.CUBRIDOID");
+			String jdbcVersion = conn.getJdbcVersion();
+			LOGGER.debug("---------getCUBRIDOIDClass version---------- : " + jdbcVersion);
+			if (isAfterJdbc111(jdbcVersion)) {
+				clazz = conn.getProxyClass().getClassLoader().loadClass(
+						"cubrid.sql.CUBRIDOIDImpl");
+			} else {				
+				clazz = conn.getProxyClass().getClassLoader().loadClass(
+						"cubrid.sql.CUBRIDOID");
+			}
 		} catch (ClassNotFoundException e) {
 			throw new CUBRIDProxySQLException(e, -90007);
 		}
@@ -334,6 +352,24 @@ public class CUBRIDOIDProxy {
 
 	public Object getProxyObject() {
 		return cubridOID;
+	}
+	
+	private static boolean isAfterJdbc111(String jdbcVersion) {
+		String[] tempString;
+		int tempIntVersion = 0;
+
+		tempString = jdbcVersion.replaceAll("[^0-9.]","").split("\\.");
+
+		tempIntVersion += Integer.valueOf(tempString[0]).intValue() * 10;
+		tempIntVersion += Integer.valueOf(tempString[1]).intValue();
+
+		LOGGER.debug("---------isAfterJdbc111 tempIntVersion---------- : " + tempIntVersion);
+		
+		if (tempIntVersion >= 111) {
+			return true;
+		}
+		
+		return false;
 	}
 
 }

@@ -910,6 +910,7 @@ public class EditFunctionDialog extends CMTitleAreaDialog {
 		if (!javaTypeMap.containsKey("5")) {
 			List<String> list = new ArrayList<String>();
 			list.add("cubrid.sql.CUBRIDOID");
+			list.add("cubrid.sql.CUBRIDOIDImpl");
 			javaTypeMap.put("5", list);
 		}
 		if (!javaTypeMap.containsKey("6")) {
