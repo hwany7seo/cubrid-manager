@@ -266,10 +266,18 @@ public class CUBRIDOIDProxy {
 	public static Class<?> getCUBRIDOIDClass(String version) {
 
 		ClassLoader loader = JdbcClassLoaderFactory.getClassLoader(version);
-		try {
-			return loader.loadClass("cubrid.sql.CUBRIDOID");
-		} catch (ClassNotFoundException e) {
-			return null;
+		if (isAfterJdbc111(version)) {
+			try {
+				return loader.loadClass("cubrid.sql.CUBRIDOIDImpl");
+			} catch (ClassNotFoundException e) {
+				return null;
+			}
+		} else {
+			try {
+				return loader.loadClass("cubrid.sql.CUBRIDOID");
+			} catch (ClassNotFoundException e) {
+				return null;
+			}
 		}
 	}
 
@@ -294,8 +302,14 @@ public class CUBRIDOIDProxy {
 		Class<?> clazz = null;
 
 		try {
-			clazz = conn.getProxyClass().getClassLoader().loadClass(
-					"cubrid.sql.CUBRIDOID");
+			String jdbcVersion = conn.getJdbcVersion();
+			if (isAfterJdbc111(jdbcVersion)) {
+				clazz = conn.getProxyClass().getClassLoader().loadClass(
+						"cubrid.sql.CUBRIDOIDImpl");
+			} else {
+				clazz = conn.getProxyClass().getClassLoader().loadClass(
+						"cubrid.sql.CUBRIDOID");
+			}
 		} catch (ClassNotFoundException e) {
 			throw new CUBRIDProxySQLException(e, -90007);
 		}
@@ -334,6 +348,22 @@ public class CUBRIDOIDProxy {
 
 	public Object getProxyObject() {
 		return cubridOID;
+	}
+	
+	private static boolean isAfterJdbc111(String jdbcVersion) {
+		String[] tempString;
+		int tempIntVersion = 0;
+
+		tempString = jdbcVersion.replaceAll("[^0-9.]","").split("\\.");
+
+		tempIntVersion += Integer.valueOf(tempString[0]).intValue() * 10;
+		tempIntVersion += Integer.valueOf(tempString[1]).intValue();
+
+		if (tempIntVersion >= 111) {
+			return true;
+		}
+		
+		return false;
 	}
 
 }

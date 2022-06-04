@@ -3,7 +3,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="lib/com.cubrid.cubridmanager.jdbc.proxy_8.4.1.201308291110.jar" sourcepath="/com.cubrid.cubridmanager.jdbc.proxy"/>
+	<classpathentry exported="true" kind="lib" path="lib/com.cubrid.cubridmanager.jdbc.proxy_11.1.0.202206031110.jar" sourcepath="/com.cubrid.cubridmanager.jdbc.proxy"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/fluent-hc-4.2.1.jar"/>
