@@ -54,9 +54,15 @@ public class CheckSubClassTask extends JDBCTask {
 	 * @param className
 	 * @return
 	 */
-	public boolean checkSubClass(String className) {
+	public boolean checkSubClass(String ownerName, String className) {
 		boolean isHasSubClass = false;
-		String sql = "SELECT sub_classes FROM _db_class WHERE class_name='" + className + "'";
+		boolean isSupportUserSchema = databaseInfo.isSupportUserSchema();
+		String sql = "";
+		if (isSupportUserSchema) {
+			sql = "SELECT sub_classes FROM _db_class WHERE class_name='" + className + "'" + "AND owner_name='" + ownerName + "'";
+		} else {
+			sql = "SELECT sub_classes FROM _db_class WHERE class_name='" + className + "'";
+		}
 
 		try {
 			if (errorMsg != null && errorMsg.trim().length() > 0) {

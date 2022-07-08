@@ -119,7 +119,7 @@ public class SchemaDDL {
 	public String getSchemaDDL(SchemaInfo schemaInfo, boolean isContainIndex, boolean isVirtual) {
 		StringBuffer ddlBuffer = new StringBuffer();
 		ddlBuffer.append("CREATE TABLE ");
-		final String tableName = schemaInfo.getClassname().toLowerCase();
+		final String tableName = schemaInfo.getTableName().toLowerCase();
 		if (null == tableName || tableName.equals("")) {
 			ddlBuffer.append("<class_name>");
 		} else {
@@ -144,7 +144,7 @@ public class SchemaDDL {
 			for (int i = 0; i < clist.size(); i++) {
 				DBAttribute classAttr = clist.get(i);
 				String inherit = classAttr.getInherit();
-				if (inherit.equalsIgnoreCase(schemaInfo.getClassname())) {
+				if (inherit.equalsIgnoreCase(schemaInfo.getTableName())) {
 					if (count == 0) {
 						ddlBuffer.append(StringUtil.NEWLINE);
 						attrBegin = true;
@@ -171,8 +171,8 @@ public class SchemaDDL {
 			for (int i = 0; i < nlist.size(); i++) {
 				DBAttribute instanceAttr = nlist.get(i);
 				String inherit = instanceAttr.getInherit();
-				String className = schemaInfo.getClassname();
-				if (StringUtil.isEqualIgnoreCase(inherit, className)) {
+				String getTableName = schemaInfo.getTableName();
+				if (StringUtil.isEqualIgnoreCase(inherit, getTableName)) {
 					if (count == 0) {
 						if (!attrBegin) {
 							ddlBuffer.append("(").append(StringUtil.NEWLINE);
@@ -298,7 +298,7 @@ public class SchemaDDL {
 	 * @return pk DDL
 	 */
 	public String getPKsDDL(SchemaInfo schemaInfo) {
-		String tableName = schemaInfo.getClassname();
+		String tableName = schemaInfo.getTableName();
 		StringBuffer ddlBuffer = new StringBuffer();
 
 		//Get the PK
@@ -322,7 +322,7 @@ public class SchemaDDL {
 	 * @return pk DDL
 	 */
 	public String getFKsDDL(SchemaInfo schemaInfo) {
-		String tableName = schemaInfo.getClassname();
+		String tableName = schemaInfo.getTableName();
 		StringBuffer ddlBuffer = new StringBuffer();
 
 		//Get the FK
@@ -343,7 +343,7 @@ public class SchemaDDL {
 	 * @return pk DDL
 	 */
 	public String getIndexsDDL(SchemaInfo schemaInfo) {
-		String tableName = schemaInfo.getClassname();
+		String tableName = schemaInfo.getTableName();
 		StringBuffer ddlBuffer = new StringBuffer();
 
 		//Get the index
@@ -378,7 +378,7 @@ public class SchemaDDL {
 	 * @return The index related DDL
 	 */
 	public String getIndexDDL(SchemaInfo schemaInfo) {
-		String tableName = schemaInfo.getClassname();
+		String tableName = schemaInfo.getTableName();
 		StringBuffer ddlBuffer = new StringBuffer();
 
 		//Get the PK
@@ -459,8 +459,8 @@ public class SchemaDDL {
 		Map<String, String> attrMap = new HashMap<String, String>();
 
 		//Generate the DDL for rename table
-		String oldTableName = oldSchemaInfo.getClassname().toLowerCase();
-		String newTableName = newSchemaInfo.getClassname().toLowerCase();
+		String oldTableName = oldSchemaInfo.getTableName().toLowerCase();
+		String newTableName = newSchemaInfo.getTableName().toLowerCase();
 		String tableName = oldTableName;
 		if (!oldTableName.equals(newTableName)) {
 			String renameDDL = getRenameTableDDL(oldTableName, newTableName);
@@ -1364,7 +1364,7 @@ public class SchemaDDL {
 		for (DBAttribute attr : newSchemaInfo.getAttributes()) {
 			if (attr.getName().equals(newAttr.getName())) {
 				break;
-			} else if (newSchemaInfo.getClassname().equals(attr.getInherit())) {
+			} else if (newSchemaInfo.getTableName().equals(attr.getInherit())) {
 				lastName = attr.getName();
 			}
 		}
@@ -1911,7 +1911,7 @@ public class SchemaDDL {
 	 */
 	private String getAlterTableCollationDDL(SchemaInfo oldSchemaInfo, SchemaInfo newSchemaInfo) {
 		StringBuffer bf = new StringBuffer();
-		bf.append("ALTER CLASS ").append(QuerySyntax.escapeKeyword(newSchemaInfo.getClassname()));
+		bf.append("ALTER CLASS ").append(QuerySyntax.escapeKeyword(newSchemaInfo.getTableName()));
 		bf.append(" COLLATE ").append(
 				newSchemaInfo.getCollation() == null ? "" : newSchemaInfo.getCollation());
 		bf.append(endLineChar).append(StringUtil.NEWLINE);

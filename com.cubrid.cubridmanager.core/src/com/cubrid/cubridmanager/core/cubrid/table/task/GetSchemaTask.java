@@ -72,24 +72,30 @@ public class GetSchemaTask extends JDBCTask {
 	private static final Logger LOGGER = LogUtil.getLogger(GetSchemaTask.class);
 	
 	//private final Logger logger = LogUtil.getLogger(GetSchemaTask.class);
+	private final String ownerName;
+	private final String className;
 	private final String tableName;
 	private SchemaInfo schema = null;
 	/*Is load collation information*/
 	private volatile boolean isNeedCollationInfo = true;
 	private IProgressMonitor monitor;
-	public GetSchemaTask(DatabaseInfo dbInfo, String tableName) {
+	public GetSchemaTask(DatabaseInfo dbInfo, String ownerName, String className) {
 		super("GetSchemaTask", dbInfo);
-		this.tableName = tableName.toLowerCase(Locale.getDefault());
+		this.ownerName = ownerName.toLowerCase(Locale.getDefault());
+		this.className = ownerName.toLowerCase(Locale.getDefault());
+		this.tableName = ownerName + "." + className;
 	}
 	
-	public GetSchemaTask(DatabaseInfo dbInfo, String tableName, IProgressMonitor monitor) {
-		this(dbInfo, tableName);
+	public GetSchemaTask(DatabaseInfo dbInfo, String ownerName, String className, IProgressMonitor monitor) {
+		this(dbInfo, ownerName, className);
 		this.monitor = monitor;
 	}
 
-	public GetSchemaTask(Connection connection, DatabaseInfo dbInfo, String tableName) {
+	public GetSchemaTask(Connection connection, DatabaseInfo dbInfo, String ownerName, String className) {
 		super("GetSchemaTask", dbInfo, connection);
-		this.tableName = tableName.toLowerCase(Locale.getDefault());
+		this.ownerName = ownerName.toLowerCase(Locale.getDefault());
+		this.className = ownerName.toLowerCase(Locale.getDefault());
+		this.tableName = ownerName + "." + className;
 	}
 
 	/**
@@ -183,7 +189,7 @@ public class GetSchemaTask extends JDBCTask {
 				partitionedClassListTask = new GetPartitionedClassListTask(
 						databaseInfo);
 			}
-			List<PartitionInfo> partitionInfoList = partitionedClassListTask.getPartitionItemList(schemaInfo.getClassname());
+			List<PartitionInfo> partitionInfoList = partitionedClassListTask.getPartitionItemList(schemaInfo.getOwner(), schemaInfo.getClassname());
 			schemaInfo.setPartitionList(partitionInfoList);
 		}
 	}
@@ -201,20 +207,30 @@ public class GetSchemaTask extends JDBCTask {
 		boolean supportComment = SchemaCommentHandler.isInstalledMetaTable(databaseInfo, connection);
 		SchemaComment schemaComment = null;
 
+		boolean supportUserSchema = databaseInfo.isSupportUserSchema();
+		
 		if (supportComment) {
 			schemaComment = SchemaCommentHandler.loadDescription(
-					databaseInfo, connection, tableName).get(tableName + "*");
+					databaseInfo, connection, ownerName, className).get(tableName + "*");
 		}
 
 		//get table information
-		String sql = "SELECT * FROM db_class WHERE class_name=?";
+		String sql = "";
+		if (supportUserSchema) {
+			sql = "SELECT * FROM db_class WHERE class_name=? AND owner_name=?";
+		} else {
+			sql = "SELECT * FROM db_class WHERE class_name=?";
+		}
 
 		// [TOOLS-2425]Support shard broker
 		sql = databaseInfo.wrapShardQuery(sql);
 		SchemaInfo schemaInfo = null;
 		try {
 			stmt = connection.prepareStatement(sql);
-			((PreparedStatement) stmt).setString(1, tableName);
+			((PreparedStatement) stmt).setString(1, className);
+			if (supportUserSchema) {
+				((PreparedStatement) stmt).setString(2, ownerName);
+			}
 			rs = ((PreparedStatement) stmt).executeQuery();
 			// databaseInfo.getServerInfo().compareVersionKey("8.2.2") >= 0;
 			boolean isSupportReuseOid = CompatibleUtil.isSupportReuseOID(databaseInfo);
@@ -245,7 +261,8 @@ public class GetSchemaTask extends JDBCTask {
 					schemaInfo.setDescription(schemaComment.getDescription());
 				}
 				schemaInfo.setOwner(owner);
-				schemaInfo.setClassname(tableName);
+				schemaInfo.setClassname(className);
+				schemaInfo.setTableName(owner + "." + className);
 				schemaInfo.setDbname(databaseInfo.getDbName());
 				schemaInfo.setPartitionGroup(rs.getString("partitioned"));
 			}
@@ -253,7 +270,7 @@ public class GetSchemaTask extends JDBCTask {
 			// after cubrid 9.1
 			if (supportCharset && schemaInfo != null
 					&& StringUtil.isEqual(SchemaInfo.VIRTUAL_NORMAL, schemaInfo.getVirtual())) {
-				getTableCollation(connection, schemaInfo);
+				getTableCollation(connection, databaseInfo, schemaInfo);
 			}
 		} finally {
 			QueryUtil.freeQuery(stmt, rs);
@@ -268,14 +285,21 @@ public class GetSchemaTask extends JDBCTask {
 	 * @param schemaInfo
 	 * @return
 	 */
-	private static String getCreateSQL(SchemaInfo schemaInfo) {
+	private static String getCreateSQL(SchemaInfo schemaInfo, DatabaseInfo databaseInfo) {
 
 		String key = "TABLE";
 		if (SchemaInfo.VIRTUAL_VIEW.equalsIgnoreCase(schemaInfo.getVirtual())) {
 			key = SchemaInfo.VIRTUAL_VIEW.toUpperCase();
 		}
-		String sql = "SHOW CREATE " + key + " "
-				+ QuerySyntax.escapeKeyword(schemaInfo.getClassname());
+		
+		String sql = "";
+		if (databaseInfo.isSupportUserSchema()) {
+			sql = "SHOW CREATE " + key + " "
+					+ QuerySyntax.escapeKeyword(schemaInfo.getTableName());
+		} else {
+			sql = "SHOW CREATE " + key + " "
+					+ QuerySyntax.escapeKeyword(schemaInfo.getClassname());
+		}
 
 		return sql;
 	}
@@ -285,9 +309,9 @@ public class GetSchemaTask extends JDBCTask {
 	 * 
 	 * @param schemaInfo
 	 */
-	public static void getTableCollation(Connection conn, SchemaInfo schemaInfo) throws SQLException {
+	public static void getTableCollation(Connection conn, DatabaseInfo databaseInfo, SchemaInfo schemaInfo) throws SQLException {
 		String ddl = null;
-		String sql = getCreateSQL(schemaInfo);
+		String sql = getCreateSQL(schemaInfo, databaseInfo);
 
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -349,14 +373,24 @@ public class GetSchemaTask extends JDBCTask {
 			return;
 		}
 		if (schemaInfo != null) {
-			String sql = "SELECT vclass_name, vclass_def FROM db_vclass WHERE vclass_name=?";
+			String sql = "";
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT owner_name vclass_name, vclass_def FROM db_vclass WHERE vclass_name=? AND owner_name=?";
+			} else {
+				sql = "SELECT vclass_name, vclass_def FROM db_vclass WHERE vclass_name=?";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
 
 			try{
 				stmt = connection.prepareStatement(sql);
-				((PreparedStatement) stmt).setString(1, tableName);
+				if (databaseInfo.isSupportUserSchema()) {
+					((PreparedStatement) stmt).setString(1, className);
+					((PreparedStatement) stmt).setString(2, ownerName);
+				} else {
+					((PreparedStatement) stmt).setString(1, className);
+				}
 				rs = ((PreparedStatement) stmt).executeQuery();
 				while (rs.next()) {
 					schemaInfo.addQuerySpec(rs.getString("vclass_def"));
@@ -375,16 +409,28 @@ public class GetSchemaTask extends JDBCTask {
 	 */
 	private void getDBResolutionInfo(SchemaInfo schemaInfo) throws SQLException {
 		if (schemaInfo != null) {
-			String sql = "SELECT attr_name, from_class_name, attr_type, from_attr_name" +
-					" FROM db_attribute WHERE class_name=? AND attr_name<>from_attr_name" +
-					" AND from_attr_name IS NOT NULL";
+			String sql;
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT attr_name, from_class_name, attr_type, from_attr_name" +
+						" FROM db_attribute WHERE class_name=? AND owner_name=? AND attr_name<>from_attr_name" +
+						" AND from_attr_name IS NOT NULL";
+			} else {
+				sql = "SELECT attr_name, from_class_name, attr_type, from_attr_name" +
+						" FROM db_attribute WHERE class_name=? AND attr_name<>from_attr_name" +
+						" AND from_attr_name IS NOT NULL";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
 
 			try{
 				stmt = connection.prepareStatement(sql);
-				((PreparedStatement) stmt).setString(1, tableName);
+				if (databaseInfo.isSupportUserSchema()) {
+					((PreparedStatement) stmt).setString(1, className);
+					((PreparedStatement) stmt).setString(2, ownerName);
+				} else {
+					((PreparedStatement) stmt).setString(1, className);
+				}
 				rs = ((PreparedStatement) stmt).executeQuery();
 				while (rs.next()) {
 					DBResolution dbr = new DBResolution();
@@ -722,7 +768,7 @@ public class GetSchemaTask extends JDBCTask {
 			Map<String, String> columnCollMap = null;
 			boolean supportCharset = CompatibleUtil.isSupportCreateDBByCharset(databaseInfo);
 			if (supportCharset && isNeedCollationInfo && StringUtil.isEqual(schemaInfo.getVirtual(), SchemaInfo.VIRTUAL_NORMAL)) {
-				columnCollMap = extractColumnCollationMap(connection, schemaInfo);
+				columnCollMap = extractColumnCollationMap(connection, databaseInfo, schemaInfo);
 			}
 
 			// get table comment
@@ -731,18 +777,30 @@ public class GetSchemaTask extends JDBCTask {
 			if (supportComment) {
 				comments = SchemaCommentHandler.loadDescriptions(databaseInfo, connection);
 			}
+			
+			boolean supportUserSchema = databaseInfo.isSupportUserSchema();
 
-			sql = "SELECT *"
-					+ " FROM db_attribute"
-					+ " WHERE class_name=? "
-					+ " ORDER BY def_order";
+			if (supportUserSchema) {
+				sql = "SELECT *"
+						+ " FROM db_attribute"
+						+ " WHERE class_name=? AND owner_name=?"
+						+ " ORDER BY def_order";
+			} else {
+				sql = "SELECT *"
+						+ " FROM db_attribute"
+						+ " WHERE class_name=?"
+						+ " ORDER BY def_order";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
 			List<String> enumColumnList = new ArrayList<String>();
 			try{
 				stmt = connection.prepareStatement(sql);
-				((PreparedStatement) stmt).setString(1, tableName);
+				((PreparedStatement) stmt).setString(1, className);
+				if (supportUserSchema) {
+					((PreparedStatement) stmt).setString(2, ownerName);
+				}
 				rs = ((PreparedStatement) stmt).executeQuery();
 								
 				while (rs.next()) {
@@ -808,7 +866,12 @@ public class GetSchemaTask extends JDBCTask {
 			
 			// Get enumeration
 			if (CompatibleUtil.isSupportEnumVersion(databaseInfo) && enumColumnList.size() > 0) {
-				String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getClassname());
+				String escapedTableName = "";
+				if(databaseInfo.isSupportUserSchema()) {
+					QuerySyntax.escapeKeyword(schemaInfo.getTableName());
+				} else {
+					QuerySyntax.escapeKeyword(schemaInfo.getClassname());
+				}
 				StringBuilder sb = new StringBuilder();
 				sb.append("SHOW COLUMNS FROM ").append(escapedTableName).append(" WHERE FIELD IN (");
 				try{
@@ -841,11 +904,11 @@ public class GetSchemaTask extends JDBCTask {
 	 * @param schemaInfo
 	 * @return
 	 */
-	public static Map<String, String> extractColumnCollationMap(Connection conn, SchemaInfo schemaInfo) {
+	public static Map<String, String> extractColumnCollationMap(Connection conn, DatabaseInfo databaseInfo, SchemaInfo schemaInfo) {
 		final String findString = " COLLATE ";
 		Map<String, String> columnCollMap = new HashMap<String, String>();
 		String ddl = null;
-		String sql = getCreateSQL(schemaInfo);
+		String sql = getCreateSQL(schemaInfo, databaseInfo);
 		
 		Statement stmt = null;
 		ResultSet rs = null;

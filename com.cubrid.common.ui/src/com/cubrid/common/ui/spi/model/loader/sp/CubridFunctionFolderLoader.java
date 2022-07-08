@@ -145,7 +145,7 @@ public class CubridFunctionFolderLoader extends
 	 * @return ICubridNode
 	 */
 	public static ICubridNode createFunctionNode(String id, SPInfo spInfo) {
-		ICubridNode spNode = new DefaultSchemaNode(id, spInfo.getSpName(),
+		ICubridNode spNode = new DefaultSchemaNode(id, spInfo.getSpName(), null,
 				"icons/navigator/procedure_func_item.png");
 		spNode.setType(NodeType.STORED_PROCEDURE_FUNCTION);
 		spNode.setModelObj(spInfo);

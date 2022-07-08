@@ -104,7 +104,7 @@ public class CubridSystemViewFolderLoader extends
 					String id = parent.getId() + NODE_SEPARATOR
 							+ classInfo.getClassName();
 					ICubridNode classNode = new DefaultSchemaNode(id,
-							classInfo.getClassName(),
+							classInfo.getClassName(), classInfo,
 							"icons/navigator/schema_view_item.png");
 					classNode.setType(NodeType.SYSTEM_VIEW);
 					classNode.setEditorId(SchemaInfoEditorPart.ID);

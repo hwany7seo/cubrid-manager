@@ -27,6 +27,8 @@
  */
 package com.cubrid.common.ui.spi.model;
 
+import com.cubrid.cubridmanager.core.cubrid.table.model.ClassInfo;
+
 /**
  * 
  * All database schema node must extend this class or use this class
@@ -39,6 +41,8 @@ public class DefaultSchemaNode extends
 		ISchemaNode {
 
 	private CubridDatabase cubridDatabase = null;
+	private ClassInfo classInfo = null;
+	private boolean isSupportUserSchema = false;
 
 	/**
 	 * The constructor
@@ -49,6 +53,19 @@ public class DefaultSchemaNode extends
 	 */
 	public DefaultSchemaNode(String id, String label, String iconPath) {
 		super(id, label, iconPath);
+	}
+	
+	/**
+	 * The constructor
+	 * 
+	 * @param id
+	 * @param label
+	 * @param iconPath
+	 */
+	public DefaultSchemaNode(String id, String label, ClassInfo classInfo, String iconPath) {
+		super(id, label, iconPath);
+		this.classInfo = classInfo;
+		isSupportUserSchema = this.classInfo.isSupportUserSchema();
 	}
 
 	/**
@@ -133,5 +150,32 @@ public class DefaultSchemaNode extends
 		return obj;
 	}
 	
+	@Override
+	public String getName() {
+		if (isSupportUserSchema) {
+			return this.classInfo.getTableName();
+		} else {
+			return this.classInfo.getClassName();
+		}
+	}
 	
+	public boolean isSupportUserSchema() {
+		return isSupportUserSchema;
+	}
+	
+	public ClassInfo getClassInfo() {
+		return this.classInfo;
+	}
+	
+	public String getTableName() {
+		return this.classInfo.getTableName();
+	}
+	
+	public String getOwnerName() {
+		return this.classInfo.getOwnerName();
+	}
+	
+	public String getClassName() {
+		return this.classInfo.getClassName();
+	}
 }

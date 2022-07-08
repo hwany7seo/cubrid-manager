@@ -61,7 +61,7 @@ public class CubridColumnNavigatorView extends ViewPart {
 	public static final String ID = "com.cubrid.common.navigator.columns";
 	private TableViewer tableColTableViewer;
 	private Label lblSchemaName;
-	private String schemaName;
+	private String tableName;
 
 	public void createPartControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -213,13 +213,13 @@ public class CubridColumnNavigatorView extends ViewPart {
 			cleanView();
 		}
 		if (schemaInfo != null) {
-			this.schemaName = schemaInfo.getClassname();
+			this.tableName = schemaInfo.getTableName();
 		}
 		redrawView(databaseInfo, schemaInfo);
 	}
 
 	public void cleanView() {
-		this.schemaName = null;
+		this.tableName = null;
 		lblSchemaName.setText(com.cubrid.common.ui.common.Messages.lblQuickViewColInfo);
 		try {
 			tableColTableViewer.setInput(null);
@@ -228,9 +228,9 @@ public class CubridColumnNavigatorView extends ViewPart {
 	}
 
 	private void redrawView(DatabaseInfo databaseInfo, SchemaInfo schemaInfo) {
-		if (schemaInfo != null && schemaInfo.getClassname() != null) {
+		if (schemaInfo != null && schemaInfo.getTableName() != null) {
 			String msg = com.cubrid.common.ui.common.Messages.lblQuickViewColInfo + " "
-					+ schemaInfo.getClassname();
+					+ schemaInfo.getTableName();
 			lblSchemaName.setText(msg);
 		}
 
@@ -300,7 +300,7 @@ public class CubridColumnNavigatorView extends ViewPart {
 			return;
 		}
 
-		String tableName = QuerySyntax.escapeKeyword(schemaName);
+		String tableName = QuerySyntax.escapeKeyword(this.tableName);
 		String columns = makeTableItemsToColumnsText(items, ", ");
 
 		StringBuilder sql = new StringBuilder();
@@ -316,7 +316,7 @@ public class CubridColumnNavigatorView extends ViewPart {
 			return;
 		}
 
-		String tableName = QuerySyntax.escapeKeyword(schemaName);
+		String tableName = QuerySyntax.escapeKeyword(this.tableName);
 		String columns = makeTableItemsToColumnsText(items, ", ");
 
 		StringBuilder sql = new StringBuilder();
@@ -339,7 +339,7 @@ public class CubridColumnNavigatorView extends ViewPart {
 			return;
 		}
 
-		String escapedTableName = QuerySyntax.escapeKeyword(schemaName);
+		String escapedTableName = QuerySyntax.escapeKeyword(this.tableName);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE ").append(escapedTableName).append(" SET ");

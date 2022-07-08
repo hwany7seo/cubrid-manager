@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import com.cubrid.common.core.util.CompatibleUtil;
 import com.cubrid.common.ui.cubrid.table.dialog.CreateViewDialog;
 import com.cubrid.common.ui.spi.CubridNodeManager;
 import com.cubrid.common.ui.spi.action.SelectionAction;
@@ -119,7 +120,7 @@ public class CreateViewAction extends SelectionAction {
 			String id = folderNode.getId() + ICubridNodeLoader.NODE_SEPARATOR
 					+ viewName;
 			ClassInfo newClassInfo = new ClassInfo(viewName, owner,
-					ClassType.VIEW, false, false);
+					ClassType.VIEW, false, false, CompatibleUtil.isAfter112(databaseInfo.getServerInfo()));
 			ICubridNode newNode = CubridViewsFolderLoader.createUserViewNode(
 					id, newClassInfo);
 			CommonUITool.addNodeToTree(treeViewer, folderNode, newNode);

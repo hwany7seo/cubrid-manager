@@ -281,6 +281,7 @@ public class GetAllSchemaTask extends
 	private void getTableInfo() throws SQLException {
 		boolean isSupportReuseOid = CompatibleUtil.isSupportReuseOID(databaseInfo);
 		boolean isSupportCharset = CompatibleUtil.isSupportCreateDBByCharset(databaseInfo);
+		boolean isSupportUserSchema = databaseInfo.isSupportUserSchema();
 		String reuseOidCoulmn = isSupportReuseOid ? ",	c.is_reuse_oid_class\n" : "\n";
 		String dbName = databaseInfo.getDbName();
 
@@ -296,10 +297,16 @@ public class GetAllSchemaTask extends
 			+ " c.is_system_class, c.class_type, c.partitioned, c.owner_name, c.class_name,"
 			+ " a.from_attr_name"
 			+ reuseOidCoulmn
-			+ " FROM db_attribute a, db_class c"
-			+ " WHERE c.class_name=a.class_name"
-			+ " ORDER BY a.class_name, a.def_order";
-
+			+ " FROM db_attribute a, db_class c";
+		if (isSupportUserSchema) {
+			sql = sql + " WHERE c.class_name=a.class_name" 
+					+ " AND c.ownername=a.owner_name"
+					+ " ORDER BY a.owner_name, a.class_name, a.def_order";
+		} else {
+			sql = sql + " WHERE c.class_name=a.class_name" 
+					+ " ORDER BY a.class_name, a.def_order";
+		}
+		
 		// [TOOLS-2425]Support shard broker
 		sql = databaseInfo.wrapShardQuery(sql);
 
@@ -313,12 +320,13 @@ public class GetAllSchemaTask extends
 				boolean isUserClass = "NO".equals(rs.getString("is_system_class"));
 				String owner = rs.getString("owner_name");
 				String className = rs.getString("class_name");
+				String tableName = owner + "." + className;
 				String partitioned = rs.getString("partitioned");
 
-				schemaInfo = schemas.get(className);
+				schemaInfo = schemas.get(tableName);
 				if (schemaInfo == null) {
 					schemaInfo = new SchemaInfo();
-					schemas.put(className, schemaInfo);
+					schemas.put(tableName, schemaInfo);
 				}
 
 				if (isTable) {
@@ -350,6 +358,7 @@ public class GetAllSchemaTask extends
 
 				schemaInfo.setOwner(owner);
 				schemaInfo.setClassname(className);
+				schemaInfo.setTableName(owner + "." + className);
 				schemaInfo.setDbname(dbName);
 				schemaInfo.setPartitionGroup(partitioned);
 				getColumnInfo(rs, schemaInfo, isSupportCharset, descriptions);
@@ -388,7 +397,7 @@ public class GetAllSchemaTask extends
 
 		Map<String, String> columnCollMap = null;
 		if (supportCharset && isNeedCollationInfo) {
-			columnCollMap = GetSchemaTask.extractColumnCollationMap(connection, schemaInfo);
+			columnCollMap = GetSchemaTask.extractColumnCollationMap(connection, databaseInfo, schemaInfo);
 		}
 
 		String attrName = rs.getString("attr_name");
@@ -404,7 +413,7 @@ public class GetAllSchemaTask extends
 		attr.setName(attrName);
 
 		if (inherit == null) {
-			attr.setInherit(schemaInfo.getClassname());
+			attr.setInherit(schemaInfo.getTableName());
 		} else {
 			attr.setInherit(inherit);
 		}
@@ -431,7 +440,7 @@ public class GetAllSchemaTask extends
 		}
 
 		SchemaComment columnSchema = descriptions != null ?
-				descriptions.get(schemaInfo.getClassname() + "*" + attrName) : null;
+				descriptions.get(schemaInfo.getTableName() + "*" + attrName) : null;
 		if (columnSchema != null) {
 			attr.setDescription(columnSchema.getDescription());
 		}
@@ -918,7 +927,7 @@ public class GetAllSchemaTask extends
 					return -1;
 				}
 
-				return o1.getClassname().compareToIgnoreCase(o2.getClassname());
+				return o1.getTableName().compareToIgnoreCase(o2.getTableName());
 			}
 		});
 

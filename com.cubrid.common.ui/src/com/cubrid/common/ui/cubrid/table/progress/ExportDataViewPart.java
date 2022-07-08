@@ -338,7 +338,7 @@ public class ExportDataViewPart extends
 			if (exportConfig.isExportIndex()) {
 				ExportMonitor indexPo = new ExportMonitor(
 						exportConfig.getDataFilePath(ExportConfig.LOADDB_INDEXFILEKEY));
-				indexPo.setTotalCount(1);
+				indexPo.setTotalCount(2);
 				monitorList.add(indexPo);
 			}
 			if (exportConfig.isExportSchema()) {

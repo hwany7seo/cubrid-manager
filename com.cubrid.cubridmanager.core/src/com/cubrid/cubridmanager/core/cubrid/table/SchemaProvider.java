@@ -43,21 +43,37 @@ import com.cubrid.cubridmanager.core.cubrid.table.task.GetSchemaTask;
  */
 public class SchemaProvider {
 	protected DatabaseInfo dbInfo;
+	protected String ownerName;
+	protected String className;
 	protected String tableName;
 	protected String errorMessage;
+
+	public SchemaProvider(DatabaseInfo dbInfo, String ownerName, String className) {
+		this.dbInfo = dbInfo;
+		this.ownerName = ownerName;
+		this.className = className;
+		this.tableName = ownerName + "." + className;
+	}
 
 	public SchemaProvider(DatabaseInfo dbInfo, String tableName) {
 		this.dbInfo = dbInfo;
 		this.tableName = tableName;
+		if (tableName.indexOf(".") > 0) {
+			this.className = tableName.substring(tableName.indexOf(".")+1);
+			this.ownerName = tableName.substring(0, tableName.indexOf("."));
+		} else {
+			this.className = tableName;
+			this.ownerName = "";
+		}
 	}
-
+	
 	/**
 	 * Retrieves the schema of database object.
 	 * 
 	 * @return schema of table.
 	 */
 	public SchemaInfo getSchema() {
-		GetSchemaTask jdbcTask = new GetSchemaTask(dbInfo, tableName);
+		GetSchemaTask jdbcTask = new GetSchemaTask(dbInfo, ownerName, className);
 		jdbcTask.execute();
 		errorMessage = jdbcTask.getErrorMsg();
 		return jdbcTask.getSchema();
@@ -70,7 +86,7 @@ public class SchemaProvider {
 	 * @return schema of table.
 	 */
 	public SchemaInfo getSchema(Connection connection) {
-		GetSchemaTask jdbcTask = new GetSchemaTask(connection, dbInfo, tableName);
+		GetSchemaTask jdbcTask = new GetSchemaTask(connection, dbInfo, ownerName, className);
 		jdbcTask.execute();
 		errorMessage = jdbcTask.getErrorMsg();
 		return jdbcTask.getSchema();

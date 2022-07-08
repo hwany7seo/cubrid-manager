@@ -108,7 +108,9 @@ public class DatabaseInfo implements IDatabaseSpec {
 	private String version = null;
 	private boolean isSupportTableComment;
 	private boolean isShard = false;
-
+	private boolean isSupportUserSchema = false;;
+	private boolean isSupportSynonym = false;
+	
 	public static final int SHARD_QUERY_TYPE_VAL = 0;
 	public static final int SHARD_QUERY_TYPE_ID = 1;
 	private int shardQueryType = SHARD_QUERY_TYPE_VAL;
@@ -838,8 +840,8 @@ public class DatabaseInfo implements IDatabaseSpec {
 	 * @param tableName String The table name
 	 * @return SchemaInfo The instance of SchemaInfo
 	 */
-	public SchemaInfo getSchemaInfo(String tableName) {
-		if (StringUtil.isEmpty(tableName)) {
+	public SchemaInfo getSchemaInfo(String ownerName, String className) {
+		if (StringUtil.isEmpty(ownerName) || StringUtil.isEmpty(className)) {
 			return null;
 		}
 
@@ -847,9 +849,9 @@ public class DatabaseInfo implements IDatabaseSpec {
 			schemaMap = new HashMap<String, SchemaInfo>();
 		}
 
-		SchemaInfo schemaInfo = schemaMap.get(tableName);
+		SchemaInfo schemaInfo = schemaMap.get(ownerName + "." + className);
 		if (null == schemaInfo) {
-			SchemaProvider schemaProvider = new SchemaProvider(this, tableName);
+			SchemaProvider schemaProvider = new SchemaProvider(this, ownerName, className);
 			schemaInfo = schemaProvider.getSchema();
 			if (schemaInfo == null && StringUtil.isNotEmpty(schemaProvider.getErrorMessage())) {
 				errorMessage = schemaProvider.getErrorMessage();
@@ -862,6 +864,36 @@ public class DatabaseInfo implements IDatabaseSpec {
 		return schemaInfo;
 	}
 
+	public SchemaInfo getSchemaInfo(String tableName) {
+		if (StringUtil.isEmpty(tableName)) {
+			return null;
+		}
+
+		if (null == schemaMap) {
+			schemaMap = new HashMap<String, SchemaInfo>();
+		}
+
+		SchemaInfo schemaInfo = schemaMap.get(tableName);
+		if (null == schemaInfo) {
+			if (tableName.indexOf(".") < 0) {
+				errorMessage = "[Error] getSchemaInfo(String tableName)";
+				return null;
+			}
+			
+			String[] tempSplit = tableName.split(".");
+			SchemaProvider schemaProvider = new SchemaProvider(this, tempSplit[0], tempSplit[1]);
+			schemaInfo = schemaProvider.getSchema();
+			if (schemaInfo == null && StringUtil.isNotEmpty(schemaProvider.getErrorMessage())) {
+				errorMessage = schemaProvider.getErrorMessage();
+				return null;
+			} else {
+				putSchemaInfo(schemaInfo);
+			}
+		}
+
+		return schemaInfo;
+	}
+	
 	/**
 	 * get a schema object via table name
 	 * 
@@ -894,6 +926,30 @@ public class DatabaseInfo implements IDatabaseSpec {
 
 		return schemaInfo;
 	}
+	
+	public SchemaInfo getSchemaInfo(Connection connection, String ownerName, String className) {
+		if (StringUtil.isEmpty(ownerName) || StringUtil.isEmpty(className)) {
+			return null;
+		}
+
+		if (schemaMap == null) {
+			schemaMap = new HashMap<String, SchemaInfo>();
+		}
+
+		SchemaInfo schemaInfo = schemaMap.get(ownerName + "." + className);
+		if (schemaInfo == null) {
+			SchemaProvider schemaProvider = new SchemaProvider(this, ownerName, className);
+			schemaInfo = schemaProvider.getSchema(connection);
+			if (schemaInfo == null && StringUtil.isNotEmpty(schemaProvider.getErrorMessage())) {
+				errorMessage = schemaProvider.getErrorMessage();
+				return null;
+			} else {
+				putSchemaInfo(schemaInfo);
+			}
+		}
+
+		return schemaInfo;
+	}
 
 	/**
 	 * add a schema object to the map. design reason: class name is unique in a
@@ -908,7 +964,7 @@ public class DatabaseInfo implements IDatabaseSpec {
 		if (null == schemaMap) {
 			schemaMap = new HashMap<String, SchemaInfo>();
 		}
-		String key = schema.getClassname();
+		String key = schema.getTableName();
 		schemaMap.put(key, schema);
 	}
 
@@ -1041,6 +1097,39 @@ public class DatabaseInfo implements IDatabaseSpec {
 		this.isSupportTableComment = isSupportTableComment;
 	}
 
+	/**
+	 * return whether it has the UserSchema or not
+	 * @return
+	 */
+	public boolean isSupportUserSchema() {
+		return isSupportUserSchema;
+	}
+
+	/**
+	 * set the UserSchema support
+	 * @param isSupportUserSchema
+	 */
+	public void setSupportUserSchema(boolean isSupportUserSchema) {
+		this.isSupportUserSchema = isSupportUserSchema;
+		setSupportSynonym(isSupportUserSchema);
+	}
+	
+	/**
+	 * return whether it has the Synonym or not
+	 * @return
+	 */
+	public boolean isSupportSynonym() {
+		return isSupportSynonym;
+	}
+
+	/**
+	 * set the Synonym support
+	 * @param isSupportSynonym
+	 */
+	public void setSupportSynonym(boolean isSupportSynonym) {
+		this.isSupportSynonym = isSupportSynonym;
+	}
+	
 	public boolean isShard() {
 		// [TOOLS-2425]Support shard broker
 		return isShard;

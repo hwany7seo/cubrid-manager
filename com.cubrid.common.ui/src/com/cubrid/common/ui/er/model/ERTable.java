@@ -84,7 +84,7 @@ public class ERTable extends
 
 	public ERTable(SchemaInfo schemaInfo, ERSchema erSchema) {
 		super();
-		this.name = schemaInfo.getClassname();
+		this.name = schemaInfo.getTableName();
 		this.schemaInfo = schemaInfo;
 		this.erSchema = erSchema;
 		initDefaultLogicalInfo(schemaInfo);
@@ -95,7 +95,7 @@ public class ERTable extends
 		if (StringUtil.isNotEmpty(desc)) {
 			logicalName = desc;
 		} else {
-			logicalName = schemaInfo.getClassname();
+			logicalName = schemaInfo.getTableName();
 		}
 	}
 
@@ -171,6 +171,10 @@ public class ERTable extends
 	@Override
 	public CubridDatabase getCubridDatabase() {
 		return erSchema.getCubridDatabase();
+	}
+	
+	private String getDataBaseUserName() {
+		return erSchema.getCubridDatabase().getus
 	}
 
 	public ERTableColumn getColumn(String physicalName) {

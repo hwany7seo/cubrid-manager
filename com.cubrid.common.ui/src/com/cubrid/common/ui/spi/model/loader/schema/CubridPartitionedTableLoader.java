@@ -110,14 +110,14 @@ public class CubridPartitionedTableLoader extends
 			parent.removeAllChild();
 
 			if (classInfoList != null && !classInfoList.isEmpty()) {
-				for (ClassInfo clasInfo : classInfoList) {
+				for (ClassInfo classInfo : classInfoList) {
 					String id = parent.getId() + NODE_SEPARATOR
-							+ clasInfo.getClassName();
+							+ classInfo.getClassName();
 					ICubridNode partitionedClassNode = new DefaultSchemaNode(
-							id, clasInfo.getClassName(),
+							id, classInfo.getClassName(), classInfo,
 							"icons/navigator/schema_table_item.png");
 					partitionedClassNode.setType(NodeType.USER_PARTITIONED_TABLE);
-					partitionedClassNode.setModelObj(clasInfo);
+					partitionedClassNode.setModelObj(classInfo);
 					partitionedClassNode.setContainer(false);
 					partitionedClassNode.setEditorId(SchemaInfoEditorPart.ID);
 					parent.addChild(partitionedClassNode);

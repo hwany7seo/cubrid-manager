@@ -104,7 +104,7 @@ public class AddResolutionDialog extends
 				this.classConflicts[i] = (String[]) classConflicts[i].clone();
 			}
 		}
-		this.tableName = schema.getClassname();
+		this.tableName = schema.getTableName();
 		this.schema = schema;
 	}
 

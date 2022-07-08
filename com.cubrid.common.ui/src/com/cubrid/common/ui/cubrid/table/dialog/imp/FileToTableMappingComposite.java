@@ -714,7 +714,7 @@ public class FileToTableMappingComposite extends Composite {
 			List<String> colNameList, List<String> colTypeList) { // FIXME move this logic to core module
 		int columnCount = firstRowColsLst.size();
 		String iconPath = "icons/navigator/schema_table_item.png";
-		ICubridNode classNode = new DefaultSchemaNode(tableName, tableName,
+		ICubridNode classNode = new DefaultSchemaNode(tableName, tableName, null,
 				iconPath);
 		classNode.setContainer(true);
 		List<String> columnNames;

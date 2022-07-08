@@ -85,12 +85,12 @@ public final class SQLGenerateUtils {
 	 * 
 	 * @return String
 	 */
-	public static String getCreateSQL(DatabaseInfo databaseInfo, String tableName) {
+	public static String getCreateSQL(DatabaseInfo databaseInfo, String ownerName, String tableName) {
 		if (databaseInfo == null || tableName == null) {
 			return "";
 		}
 		SchemaDDL schemaDDL = new SchemaDDL(null, databaseInfo);
-		SchemaInfo schemaInfo = databaseInfo.getSchemaInfo(tableName);
+		SchemaInfo schemaInfo = databaseInfo.getSchemaInfo(ownerName, tableName);
 		if (schemaInfo == null) {
 //			CommonUITool.openErrorBox(Messages.bind(Messages.errGetSchemaInfo, tableName));
 //			LOGGER.debug("Can't get the SchemaInfo:" + tableName);

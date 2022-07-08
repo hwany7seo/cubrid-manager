@@ -627,11 +627,11 @@ public class TableDashboardPart extends CubridEditorPart implements ITableButton
 			if (database.getDatabaseInfo().getUserTableInfoList().size() > 0) {
 				ClassInfo classInfo = database.getDatabaseInfo().getUserTableInfoList().get(0);
 				SchemaInfo schemaInfo = database.getDatabaseInfo().getSchemaInfo(connection,
-						classInfo.getClassName());
+						classInfo.getTableName());
 				IDatabaseSpec dbSpec = database.getDatabaseInfo();
 				if (schemaInfo != null && SchemaCommentHandler.isInstalledMetaTable(dbSpec, connection)) {
 					Map<String, SchemaComment> comments = SchemaCommentHandler.loadDescription(
-							dbSpec, connection, classInfo.getClassName());
+							dbSpec, connection, classInfo.getOwnerName(), classInfo.getClassName());
 					if (comments != null) {
 						SchemaCommentHandler.bindSchemaInfo(comments, schemaInfo);
 					}
@@ -1262,7 +1262,7 @@ public class TableDashboardPart extends CubridEditorPart implements ITableButton
 				SchemaInfo schema = tabItem.getTableInfoComposite().getData();
 				if (schema != null
 						&& StringUtil.isEqualNotIgnoreNull(
-								schema.getClassname(), name)) {
+								schema.getTableName(), name)) {
 					item.dispose();
 				}
 			}
@@ -1316,8 +1316,12 @@ public class TableDashboardPart extends CubridEditorPart implements ITableButton
 				tabFolder, SWT.NONE);
 		tableComp.initialize();
 
+		String TableName = info.getTableName();
+		String ownerName = TableName.substring(0, TableName.lastIndexOf("."));
+		String className = TableName.substring(TableName.lastIndexOf(".")+1);
+		
 		SchemaProvider schemaProvider = new SchemaProvider(
-				database.getDatabaseInfo(), info.getTableName());
+				database.getDatabaseInfo(), ownerName, className);
 		SchemaInfo schemaInfo = schemaProvider.getSchema();
 		if (schemaInfo == null && StringUtil.isNotEmpty(schemaProvider.getErrorMessage())) {
 			String msg = Messages.bind(Messages.errGetSchemaInfo, info.getTableName());
@@ -1333,7 +1337,7 @@ public class TableDashboardPart extends CubridEditorPart implements ITableButton
 			boolean isSchemaCommentInstalled = SchemaCommentHandler.isInstalledMetaTable(dbSpec, conn);
 			if (schemaInfo != null && isSchemaCommentInstalled) {
 				Map<String, SchemaComment> comments = SchemaCommentHandler.loadDescription(
-						dbSpec, conn, schemaInfo.getClassname());
+						dbSpec, conn, schemaInfo.getOwner(), schemaInfo.getClassname());
 				SchemaCommentHandler.bindSchemaInfo(comments, schemaInfo);
 			}
 		} catch (SQLException e) {

@@ -46,6 +46,7 @@ import com.cubrid.cubridmanager.core.cubrid.database.model.DatabaseInfo;
  */
 public class GetViewAllColumnsTask extends
 		JDBCTask {
+	private String ownerName = null;
 	private String className = null;
 	private List<String> allVclassList = null;
 
@@ -72,13 +73,21 @@ public class GetViewAllColumnsTask extends
 				return;
 			}
 
-			String sql = "SELECT vclass_name, vclass_def FROM db_vclass WHERE vclass_name=?";
+			String sql = "";
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT vclass_name, vclass_def FROM db_vclass WHERE vclass_name=? AND owner_name=?";
+			} else {
+				sql = "SELECT vclass_name, vclass_def FROM db_vclass WHERE vclass_name=?";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
 
 			stmt = connection.prepareStatement(sql);
 			((PreparedStatement) stmt).setString(1, className);
+			if (databaseInfo.isSupportUserSchema()) {
+				((PreparedStatement) stmt).setString(2, ownerName);
+			}
 			rs = ((PreparedStatement) stmt).executeQuery();
 			while (rs.next()) {
 				String attrName = rs.getString("vclass_def");
@@ -91,10 +100,24 @@ public class GetViewAllColumnsTask extends
 		}
 	}
 
-	public void setClassName(String className) {
-		this.className = className;
-	}
+//	public void setClassName(String className) {
+//		this.className = className;
+//	}
+//	
+//	public void setOwnerName(String ownerName) {
+//		this.ownerName = ownerName;
+//	}
 
+	public void setTableName(String tableName) {
+		if (tableName.indexOf(".") > 0) {
+			String[] temp = tableName.split(",");
+			if (temp.length == 2) {
+				this.ownerName = temp[0];
+				this.className = temp[1];
+			}
+		}
+	}
+	
 	public List<String> getAllVclassList() {
 		return allVclassList;
 	}

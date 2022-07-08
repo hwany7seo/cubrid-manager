@@ -259,7 +259,7 @@ public class TableSchemaCompareInfoPart extends
 						Map<String, SchemaInfo> target = compareModel.getTargetSchemas();
 						List<SchemaInfo> commonTables = new LinkedList<SchemaInfo>();
 						for (SchemaInfo sourceTable : source.values()) {
-							if (target.containsKey(sourceTable.getClassname())) {
+							if (target.containsKey(sourceTable.getTableName())) {
 								commonTables.add(sourceTable);
 							}
 						}
@@ -653,7 +653,7 @@ public class TableSchemaCompareInfoPart extends
 
 		Set<String> commonNames = new HashSet<String>();
 		for (SchemaInfo table : commonTables) {
-			commonNames.add(table.getClassname());
+			commonNames.add(table.getTableName());
 		}
 		StringBuilder buf = new StringBuilder();
 
@@ -685,7 +685,7 @@ public class TableSchemaCompareInfoPart extends
 				addSchemaDDL(buf, schemaDDL, schemaInfo, true, true);
 			}
 			for (SchemaInfo si : tables) {
-				if (commonNames.contains(si.getClassname())) {
+				if (commonNames.contains(si.getTableName())) {
 					continue;
 				}
 				addSchemaDDL(buf, schemaDDL, si, true, true);

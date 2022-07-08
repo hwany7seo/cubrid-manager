@@ -119,6 +119,7 @@ import com.cubrid.common.ui.spi.model.NodeType;
 import com.cubrid.common.ui.spi.persist.PersistUtils;
 import com.cubrid.common.ui.spi.util.ActionSupportUtil;
 import com.cubrid.cubridmanager.core.cubrid.database.model.DatabaseInfo;
+import com.cubrid.cubridmanager.core.cubrid.table.model.ClassInfo;
 
 /**
  * CUBRID navigator view part for create navigator panel
@@ -559,20 +560,20 @@ public abstract class CubridNavigatorView extends ViewPart {
 
 		final CubridDatabase database = table == null ? null : table.getDatabase();
 		currentDatabaseInfo = database == null ? null : database.getDatabaseInfo();
-		final String schemaName = table == null ? null : table.getName();
+		final ClassInfo classinfo = table == null ? null : table.getClassInfo();
 		boolean isTable = (ActionSupportUtil.isSupportSingleSelection(table,
 				new String[]{NodeType.USER_TABLE, NodeType.SYSTEM_TABLE,
 						NodeType.USER_PARTITIONED_TABLE_FOLDER }));
-		showQuickView(currentDatabaseInfo, schemaName, isTable);
+		showQuickView(currentDatabaseInfo, classinfo, isTable);
 
 		lastKeyInputTimestamp = System.currentTimeMillis();
 	}
 
-	public void showQuickView(final DatabaseInfo databaseInfo, final String schemaName, final boolean isTable) {
+	public void showQuickView(final DatabaseInfo databaseInfo, final ClassInfo classInfo, final boolean isTable) {
 		final CubridColumnNavigatorView columnNav = CubridColumnNavigatorView.getInstance();
 		final CubridDdlNavigatorView ddlNav = CubridDdlNavigatorView.getInstance();
 		final CubridIndexNavigatorView indexNav = CubridIndexNavigatorView.getInstance();
-		if (databaseInfo == null || schemaName == null) {
+		if (databaseInfo == null || classInfo == null) {
 			if (columnNav != null) {
 				columnNav.cleanView();
 			}
@@ -585,8 +586,8 @@ public abstract class CubridNavigatorView extends ViewPart {
 		} else {
 			Job job = new Job("Getting the schema data...") {
 				protected IStatus run(IProgressMonitor monitor) {
-					currentSchemaInfo = databaseInfo.getSchemaInfo(schemaName);
-					GetSchemaDDLTask task = new GetSchemaDDLTask(databaseInfo, schemaName, isTable, monitor);
+					currentSchemaInfo = databaseInfo.getSchemaInfo(classInfo.getOwnerName(), classInfo.getClassName());
+					GetSchemaDDLTask task = new GetSchemaDDLTask(databaseInfo, classInfo.getOwnerName(), classInfo.getClassName(), isTable, monitor);
 					task.execute();
 					if (task.isSuccess()) {
 						currentSchemaDDL = task.getCreateDDL();

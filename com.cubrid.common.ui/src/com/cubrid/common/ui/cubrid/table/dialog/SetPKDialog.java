@@ -187,7 +187,7 @@ public class SetPKDialog extends
 	 */
 	protected void constrainShellSize() {
 		super.constrainShellSize();
-		String msg = Messages.bind(Messages.titleSetPK, schema.getClassname());
+		String msg = Messages.bind(Messages.titleSetPK, schema.getTableName());
 		getShell().setText(msg);
 	}
 
@@ -229,8 +229,8 @@ public class SetPKDialog extends
 			} else {
 				StringBuffer pkNameSB = new StringBuffer();
 				pkNameSB.append("pk_");
-				pkNameSB.append(schema.getClassname() == null ? ""
-						: schema.getClassname());
+				pkNameSB.append(schema.getTableName() == null ? ""
+						: schema.getTableName());
 				for (int i = 0, n = constraintTable.getItemCount(); i < n; i++) {
 					if (constraintTable.getItem(i).getChecked()) {
 						String columnName = constraintTable.getItem(i).getText(
@@ -466,7 +466,7 @@ public class SetPKDialog extends
 		for (int i = 0, n = list.size(); i < n; i++) {
 			DBAttribute da = list.get(i);
 			if (!pkColumns.contains(da.getName())
-					&& da.getInherit().equals(schema.getClassname())) {
+					&& da.getInherit().equals(schema.getTableName())) {
 				TableItem item = new TableItem(constraintTable, SWT.NONE);
 				item.setText(1, da.getName());
 				item.setText(2, DataType.getShownType(da.getType()));

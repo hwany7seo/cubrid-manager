@@ -102,7 +102,7 @@ public class CubridUserTableColumnLoader extends
 							column.getPrecision(), column.getScale());
 					String nodeId = parentId + NODE_SEPARATOR
 							+ column.getColumnName();
-					ICubridNode node = new DefaultSchemaNode(nodeId, label,
+					ICubridNode node = new DefaultSchemaNode(nodeId, label, null,
 							"icons/navigator/table_column_item.png");
 					if (column.isPrimaryKey()) {
 						node.setIconPath("icons/primary_key.png");

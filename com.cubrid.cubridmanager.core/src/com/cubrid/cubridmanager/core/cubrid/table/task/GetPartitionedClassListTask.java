@@ -104,7 +104,7 @@ public class GetPartitionedClassListTask extends JDBCTask {
 					isSystemClass = true;
 				}
 				ClassInfo classInfo = new ClassInfo(className, ownerName, type,
-						isSystemClass, true);
+						isSystemClass, true, CompatibleUtil.isAfter112(databaseInfo));
 				allClassInfoList.add(classInfo);
 			}
 		} catch (SQLException e) {
@@ -122,7 +122,7 @@ public class GetPartitionedClassListTask extends JDBCTask {
 	 * @param tableName String partitioned table name
 	 * @return List<PartitionInfo>
 	 */
-	public List<PartitionInfo> getPartitionItemList(String tableName) {
+	public List<PartitionInfo> getPartitionItemList(String iOwnerName, String iclassName) {
 
 		List<PartitionInfo> result = new ArrayList<PartitionInfo>();
 		try {
@@ -134,8 +134,14 @@ public class GetPartitionedClassListTask extends JDBCTask {
 				return result;
 			}
 
-			String sql = "SELECT * FROM db_partition WHERE class_name='"
-					+ tableName.trim().toLowerCase() + "'";
+			String sql = "";
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT * FROM db_partition WHERE class_name='"
+						+ iclassName.trim().toLowerCase() + "'" + "AND owner_name='" + iOwnerName.trim().toLowerCase();
+			} else {
+				sql = "SELECT * FROM db_partition WHERE class_name='"
+						+ iclassName.trim().toLowerCase() + "'";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
@@ -146,6 +152,8 @@ public class GetPartitionedClassListTask extends JDBCTask {
 			String exprDataType = null;
 			while (rs.next()) {
 				String className = rs.getString("class_name");
+				String ownerName = rs.getString("owner_name");
+				String TableName = className + "." + ownerName;
 				String partitionName = rs.getString("partition_name");
 				String partitionClassName = rs.getString("partition_class_name");
 				String partitionExpr = rs.getString("partition_expr");
@@ -176,7 +184,7 @@ public class GetPartitionedClassListTask extends JDBCTask {
 						}
 					}
 				}
-				PartitionInfo partitionItem = new PartitionInfo(className,
+				PartitionInfo partitionItem = new PartitionInfo(TableName,
 						partitionName, partitionClassName, partitionType,
 						partitionExpr, partitionValues, -1);
 				if (isCommentSupport) {

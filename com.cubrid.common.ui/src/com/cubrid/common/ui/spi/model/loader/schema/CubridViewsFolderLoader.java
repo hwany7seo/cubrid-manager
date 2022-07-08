@@ -112,7 +112,7 @@ public class CubridViewsFolderLoader extends
 			parent.removeAllChild();
 			if (systemViewFolder == null) {
 				systemViewFolder = new DefaultSchemaNode(systemViewFolderId,
-						SYSTEM_VIEW_FOLDER_NAME, "icons/navigator/folder_sys.png");
+						SYSTEM_VIEW_FOLDER_NAME, null, "icons/navigator/folder_sys.png");
 				systemViewFolder.setType(NodeType.SYSTEM_VIEW_FOLDER);
 				systemViewFolder.setContainer(true);
 				ICubridNodeLoader loader = new CubridSystemViewFolderLoader();
@@ -157,7 +157,7 @@ public class CubridViewsFolderLoader extends
 	 */
 	public static ICubridNode createUserViewNode(String id, ClassInfo classInfo) {
 		ICubridNode classNode = new DefaultSchemaNode(id,
-				classInfo.getClassName(),
+				classInfo.getClassName(), classInfo,
 				"icons/navigator/schema_view_item.png");
 		classNode.setType(NodeType.USER_VIEW);
 		classNode.setEditorId(SchemaInfoEditorPart.ID);

@@ -352,7 +352,7 @@ public class ExportSchemaTask extends
 				continue;
 			SchemaInfo schemaInfo = entry.getValue();
 
-			Map<String, Attribute> schemaAttrMap = entityAttrMap.get(schemaInfo.getClassname());
+			Map<String, Attribute> schemaAttrMap = entityAttrMap.get(schemaInfo.getTableName());
 
 			KeyGroupGroups keyGroups = new KeyGroupGroups();
 			entity.setKeyGroupGroups(keyGroups);
@@ -417,7 +417,7 @@ public class ExportSchemaTask extends
 					if (pEntity == null) {
 						continue;
 					}
-					Map<String, Attribute> tempAttrMap = entityAttrMap.get(schemaInfo.getClassname());
+					Map<String, Attribute> tempAttrMap = entityAttrMap.get(schemaInfo.getTableName());
 					Map<String, Attribute> parentAttrMap = entityAttrMap.get(inherit);
 
 					Relationship relationShip = new Relationship();
@@ -486,7 +486,7 @@ public class ExportSchemaTask extends
 
 					relationShipPropsList.setRelationshipChildEntity(new RelationshipChildEntity());
 					relationShipPropsList.getRelationshipChildEntity().setValue(
-							entityMap.get(schemaInfo.getClassname()).getId());
+							entityMap.get(schemaInfo.getTableName()).getId());
 					LinkedList<String> pkAttr = new LinkedList<String>();
 
 					SchemaInfo parentTable = allSchemaInfos.get(inherit);

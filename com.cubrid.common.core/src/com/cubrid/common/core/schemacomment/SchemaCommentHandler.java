@@ -186,7 +186,7 @@ public class SchemaCommentHandler {
 
 	public static Map<String, SchemaComment> loadDescriptions(IDatabaseSpec dbSpec, Connection conn)
 			throws SQLException {
-		return loadDescription(dbSpec, conn, null);
+		return loadDescription(dbSpec, conn, null, null);
 	}
 
 	public static Map<String, SchemaComment> loadTableDescriptions(IDatabaseSpec dbSpec, Connection conn) 
@@ -237,7 +237,7 @@ public class SchemaCommentHandler {
 	}
 
 	public static Map<String, SchemaComment> loadDescription(IDatabaseSpec dbSpec, 
-			Connection conn, String tableName) throws SQLException {
+			Connection conn, String ownerName, String className) throws SQLException {
 		boolean isSupportInEngine = CompatibleUtil.isCommentSupports(dbSpec);
 		String sql = null;
 		String tableCondition = null;
@@ -250,9 +250,9 @@ public class SchemaCommentHandler {
 					+ "UNION ALL "
 					+ "SELECT class_name as table_name, attr_name as column_name, comment as description "
 					+ "FROM db_attribute %s";
-			if (StringUtil.isNotEmpty(tableName)) {
-				tableCondition = "AND class_name = '" + tableName + "' ";
-				columnCondition = "WHERE class_name = '" + tableName + "'";
+			if (StringUtil.isNotEmpty(className)) {
+				tableCondition = "AND class_name = '" + className + "' ";
+				columnCondition = "WHERE class_name = '" + className + "'";
 			} else {
 				tableCondition = "AND comment is not null ";
 				columnCondition = "WHERE comment is not null";
@@ -261,8 +261,8 @@ public class SchemaCommentHandler {
 		} else {
 			sql = "SELECT LOWER(table_name) as table_name, LOWER(column_name) as column_name, description"
 					+ " FROM " + ConstantsUtil.SCHEMA_DESCRIPTION_TABLE;
-			if (StringUtil.isNotEmpty(tableName)) {
-				String pureTableName = tableName.replace("\"", "");
+			if (StringUtil.isNotEmpty(className)) {
+				String pureTableName = className.replace("\"", "");
 				sql += " WHERE LOWER(table_name)='" + pureTableName.toLowerCase() + "'";
 			}
 		}
@@ -527,7 +527,7 @@ public class SchemaCommentHandler {
 			return;
 		}
 		
-		String tableName = schema.getClassname();
+		String tableName = schema.getTableName();
 		SchemaComment cmt = find(comments, tableName, null);
 		if (cmt != null) {
 			schema.setDescription(cmt.getDescription());

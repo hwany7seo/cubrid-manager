@@ -474,7 +474,7 @@ public class ERSchemaEditor extends
 		Map<String, SchemaInfo> dbSchemaInfoMap = task.getSchemas();
 		String taskName = com.cubrid.common.ui.cubrid.table.Messages.updateDescriptionTask;
 		for (SchemaInfo newSchemaInfo : erdSchemaInfos) {
-			String tableName = newSchemaInfo.getClassname();
+			String tableName = newSchemaInfo.getTableName();
 			SchemaInfo dbSchemaInfo = dbSchemaInfoMap.get(tableName);
 			if (dbSchemaInfo == null) {
 				continue;
@@ -523,7 +523,7 @@ public class ERSchemaEditor extends
 		for (String tableName : schemaInfos.keySet()) {
 
 			SchemaInfo schemaInfo = schemaInfos.get(tableName);
-			if (schemaInfo == null || !tableName.equals(schemaInfo.getClassname())) {
+			if (schemaInfo == null || !tableName.equals(schemaInfo.getTableName())) {
 				continue;
 			}
 
@@ -643,7 +643,7 @@ public class ERSchemaEditor extends
 			}
 
 			boolean isAddLine = false;
-			String tableName = newSchemaInfo.getClassname();
+			String tableName = newSchemaInfo.getTableName();
 
 			if (isSupportOnServer) {
 				String description = String.format("'%s'", newSchemaInfo.getDescription());

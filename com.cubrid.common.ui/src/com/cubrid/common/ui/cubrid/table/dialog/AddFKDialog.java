@@ -219,7 +219,7 @@ public class AddFKDialog extends
 
 			String fkName = fkNameText.getText().trim();
 			if (StringUtil.isEmpty(fkName)) { //$NON-NLS-1$
-				fkName = ConstraintNamingUtil.getFKName(schema.getClassname(),
+				fkName = ConstraintNamingUtil.getFKName(schema.getTableName(),
 						retFK.getAttributes());
 			}
 			retFK.setName(fkName);
@@ -723,7 +723,7 @@ public class AddFKDialog extends
 		}
 		int fkItemCount = fkTable.getItemCount();
 		if (fkItemCount == 0) {
-			setErrorMessage(Messages.errNoColumnInTable + schema.getClassname());
+			setErrorMessage(Messages.errNoColumnInTable + schema.getTableName());
 			return 1;
 		}
 		Map<String, String> pk2fkMap = new HashMap<String, String>();

@@ -103,7 +103,7 @@ public class CubridUserTableLoader extends
 			ICubridNode indexFolder = parent.getChild(indexFolderId);
 			if (indexFolder == null) {
 				indexFolder = new DefaultSchemaNode(indexFolderId,
-						INDEX_FOLDER_NAME, "icons/navigator/folder.png");
+						INDEX_FOLDER_NAME, null, "icons/navigator/folder.png");
 				indexFolder.setType(NodeType.TABLE_INDEX_FOLDER);
 				indexFolder.setContainer(true);
 				parent.addChild(indexFolder);
@@ -134,7 +134,7 @@ public class CubridUserTableLoader extends
 		ICubridNode columnFolder = parent.getChild(columnFolderId);
 		if (columnFolder == null) {
 			columnFolder = new DefaultSchemaNode(columnFolderId,
-					COLUMN_FOLDER_NAME, "icons/navigator/folder.png");
+					COLUMN_FOLDER_NAME, null, "icons/navigator/folder.png");
 			columnFolder.setType(NodeType.TABLE_COLUMN_FOLDER);
 			columnFolder.setContainer(true);
 			parent.addChild(columnFolder);

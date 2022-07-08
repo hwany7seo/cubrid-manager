@@ -87,7 +87,7 @@ public class CubridSPFolderLoader extends
 			ICubridNode functionFolder = parent.getChild(functionFolderId);
 			if (functionFolder == null) {
 				functionFolder = new DefaultSchemaNode(functionFolderId,
-						FUNCTION_FOLDER_NAME, "icons/navigator/folder.png");
+						FUNCTION_FOLDER_NAME, null, "icons/navigator/folder.png");
 				functionFolder.setType(NodeType.STORED_PROCEDURE_FUNCTION_FOLDER);
 				functionFolder.setContainer(true);
 				ICubridNodeLoader loader = new CubridFunctionFolderLoader();
@@ -110,7 +110,7 @@ public class CubridSPFolderLoader extends
 			ICubridNode procedureFolder = parent.getChild(procedureFolderId);
 			if (procedureFolder == null) {
 				procedureFolder = new DefaultSchemaNode(procedureFolderId,
-						PROCEDURE_FOLDER_NAME, "icons/navigator/folder.png");
+						PROCEDURE_FOLDER_NAME, null, "icons/navigator/folder.png");
 				procedureFolder.setType(NodeType.STORED_PROCEDURE_PROCEDURE_FOLDER);
 				procedureFolder.setContainer(true);
 				ICubridNodeLoader loader = new CubridProcedureFolderLoader();

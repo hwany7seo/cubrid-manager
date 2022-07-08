@@ -183,8 +183,8 @@ public class TableEditorPart extends
 	private Table fkTable;
 	private Combo ownerCombo;
 	private StyledText sqlText;
-	private Text tableNameText;
-	private Text tableDescText;
+	private Text classNameText;
+	private Text classDescText;
 	private CubridDatabase database;
 	private TableColumn sharedColumn;
 	// Should use loadColumnData method to set input data
@@ -207,7 +207,7 @@ public class TableEditorPart extends
 	private Button editPartitionBtn;
 	private Button delPartitionBtn;
 	private Button reuseOIDBtn;
-	private String tableName;
+	private String className;
 	private String owner;
 	private ISchemaNode editedTableNode;
 	private List<String> dbUserList;
@@ -279,12 +279,18 @@ public class TableEditorPart extends
 					return;
 				}
 
-				String tableName = tableNameText.getText();
-				newSchemaInfo.setClassname(tableName);
+				String className = classNameText.getText();
+				newSchemaInfo.setClassname(className);
 
 				String owner = ownerCombo.getText();
 				newSchemaInfo.setOwner(owner);
 
+				if (database.getDatabaseInfo().isSupportUserSchema()) {
+					newSchemaInfo.setTableName(owner + "." + className);
+				} else {
+					newSchemaInfo.setTableName(className);
+				}
+				
 				if (reuseOIDBtn != null) {
 					newSchemaInfo.setReuseOid(reuseOIDBtn.getSelection());
 				}
@@ -321,7 +327,7 @@ public class TableEditorPart extends
 		init();
 
 		if (isNewTableFlag) {
-			tableNameText.setFocus();
+			classNameText.setFocus();
 		}
 
 		Composite btnComposite = new Composite(composite, SWT.NONE);
@@ -390,12 +396,14 @@ public class TableEditorPart extends
 			return;
 		}
 
-		tableName = tableNameText.getText();
+		className = classNameText.getText();
 		owner = ownerCombo.getText();
-		String tableDesc = tableDescText.getText();
-		newSchemaInfo.setClassname(tableName);
+		String tableDesc = classDescText.getText();
+		newSchemaInfo.setClassname(className);
 		newSchemaInfo.setOwner(owner);
+		newSchemaInfo.setTableName(className + "." + owner);
 		newSchemaInfo.setDescription(tableDesc);
+		
 		if (reuseOIDBtn != null) {
 			newSchemaInfo.setReuseOid(reuseOIDBtn.getSelection());
 		}
@@ -510,7 +518,7 @@ public class TableEditorPart extends
 			int nullColSize = nullToDefaultChangedColumnList.size();
 			for (int colIndex = 0; colIndex < nullColSize; colIndex++) {
 				UpdateNullToDefault updateNullToDefault = new UpdateNullToDefault(dbInfo);
-				updateNullToDefault.setTable(tableName);
+				updateNullToDefault.setTable(getTableName());
 				updateNullToDefault.setColumn(nullToDefaultChangedColumnList.get(colIndex));
 				updateNullToDefault.setDefaultValue(defaultValList.get(colIndex));
 				taskJobExec.addTask(updateNullToDefault);
@@ -526,7 +534,7 @@ public class TableEditorPart extends
 			String serverName = database.getServer().getName();
 			String dbName = database.getDatabaseInfo().getDbName();
 			String title = getSite().getShell().getText();
-			jobName = title + " - " + tableName + "@" + dbName;
+			jobName = title + " - " + owner + "." + className + "@" + dbName;
 
 			JobFamily jobFamily = new JobFamily();
 			jobFamily.setServerName(serverName);
@@ -558,7 +566,7 @@ public class TableEditorPart extends
 					continue;
 				} else {
 					updateDescriptionTaskList.add(new UpdateDescriptionTask(
-							Messages.updateDescriptionTask, dbInfo, tableName, newAttr.getName(),
+							Messages.updateDescriptionTask, dbInfo, getTableName(), newAttr.getName(),
 							newAttr.getDescription()));
 				}
 			}
@@ -571,7 +579,7 @@ public class TableEditorPart extends
 
 			if (oldSchemaInfo == null || notSameDescription) {
 				UpdateDescriptionTask task = new UpdateDescriptionTask(
-						Messages.updateDescriptionTask, dbInfo, tableName, null,
+						Messages.updateDescriptionTask, dbInfo, getTableName(), null,
 						newSchemaInfo.getDescription());
 				updateDescriptionTaskList.add(task);
 			}
@@ -670,7 +678,8 @@ public class TableEditorPart extends
 			return "";
 		}
 
-		String tableName = tableNameText.getText();
+		String className = classNameText.getText();
+		String tableName = newOwner + "." + className;
 
 		ServerInfo serverInfo = database.getServer().getServerInfo();
 		if (CompatibleUtil.isSupportChangeOwnerWithAlterStatement(serverInfo)) {
@@ -713,24 +722,29 @@ public class TableEditorPart extends
 			tableNameComp.setLayout(gl);
 			tableNameComp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-			tableNameText = new Text(tableNameComp, SWT.BORDER);
-			tableNameText.setTextLimit(ValidateUtil.MAX_SCHEMA_NAME_LENGTH);
+			classNameText = new Text(tableNameComp, SWT.BORDER);
+			classNameText.setTextLimit(ValidateUtil.MAX_SCHEMA_NAME_LENGTH);
 			{
 				GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 				gd.widthHint = 200;
-				tableNameText.setLayoutData(gd);
+				classNameText.setLayoutData(gd);
 			}
-			tableNameText.addModifyListener(new ModifyListener() {
+			classNameText.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent event) {
-					if (tableNameText.getText().length() == 0) {
+					if (classNameText.getText().length() == 0) {
 						CommonUITool.hideErrorBaloon(errorBaloon);
 					} else if (verifyTableName()) {
-						String tableName = tableNameText.getText();
-						newSchemaInfo.setClassname(tableName);
+						String className = classNameText.getText();
+						newSchemaInfo.setClassname(className);
+						if (ownerCombo != null && ownerCombo.getText().isEmpty()) {
+							newSchemaInfo.setTableName(ownerCombo.getText() + "." + className);
+						} else {
+							CommonUITool.openErrorBox(getSite().getShell(), Messages.msgNoTableName);
+						}
 					}
 				}
 			});
-			tableNameText.addFocusListener(new FocusAdapter() {
+			classNameText.addFocusListener(new FocusAdapter() {
 				public void focusLost(FocusEvent e) {
 					CommonUITool.hideErrorBaloon(errorBaloon);
 				}
@@ -781,18 +795,18 @@ public class TableEditorPart extends
 		final Label tableDescLabel = new Label(group, SWT.NONE);
 		tableDescLabel.setText(Messages.lblTableDesc);
 
-		tableDescText = new Text(group, SWT.BORDER);
-		tableDescText.setTextLimit(512);
-		tableDescText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		classDescText = new Text(group, SWT.BORDER);
+		classDescText.setTextLimit(512);
+		classDescText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		if (newSchemaInfo != null && newSchemaInfo.getDescription() != null) {
-			tableDescText.setText(newSchemaInfo.getDescription());
+			classDescText.setText(newSchemaInfo.getDescription());
 		}
-		tableDescText.addFocusListener(new FocusAdapter() {
+		classDescText.addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
 				if (!isSupportTableComment) {
-					CommonUITool.showErrorBaloon(group, tableDescText, errorBaloon, "",
+					CommonUITool.showErrorBaloon(group, classDescText, errorBaloon, "",
 							Messages.errNotSupportTableCommentNotice);
-					tableDescText.setFocus();
+					classDescText.setFocus();
 				}
 			}
 
@@ -800,7 +814,7 @@ public class TableEditorPart extends
 				CommonUITool.hideErrorBaloon(errorBaloon);
 			}
 		});
-		tableDescText.setEditable(isSupportTableComment);
+		classDescText.setEditable(isSupportTableComment);
 
 		if (database == null) {
 			return;
@@ -1090,7 +1104,7 @@ public class TableEditorPart extends
 			TableItem[] tblItems = columnsTable.getSelection();
 			DBAttribute attr = (DBAttribute) tblItems[0].getData();
 			boolean isInheritAttr = attr.getInherit() != null
-					&& !tableNameText.getText().trim().equalsIgnoreCase(attr.getInherit().trim());
+					&& !classNameText.getText().trim().equalsIgnoreCase(attr.getInherit().trim());
 			deleteColumnBtn.setEnabled(!isInheritAttr);
 
 			if (selectionCount > 1) {
@@ -1126,7 +1140,7 @@ public class TableEditorPart extends
 					for (DBAttribute dbAttr : attrList) {
 						boolean isInheritDbAttr = dbAttr.getInherit() != null
 								&& dbAttr.getInherit().trim().length() > 0
-								&& !tableNameText.getText().trim().equalsIgnoreCase(
+								&& !classNameText.getText().trim().equalsIgnoreCase(
 										dbAttr.getInherit().trim());
 						if (isInheritDbAttr) {
 							inheritAttrCount++;
@@ -1164,7 +1178,7 @@ public class TableEditorPart extends
 	public boolean isHasSubClass() {
 		if (isHasSubClass == null) {
 			CheckSubClassTask task = new CheckSubClassTask(database.getDatabaseInfo());
-			isHasSubClass = task.checkSubClass(oldSchemaInfo.getClassname());
+			isHasSubClass = task.checkSubClass(oldSchemaInfo.getOwner(), oldSchemaInfo.getClassname());
 		}
 
 		return isHasSubClass;
@@ -1254,7 +1268,7 @@ public class TableEditorPart extends
 				String attrName = attrList.get(0);
 				Constraint index = newSchema.removeUniqueByAttrName(attrName);
 				if (index != null) {
-					String key = index.getDefaultName(newSchema.getClassname()) + "$"
+					String key = index.getDefaultName(newSchema.getTableName()) + "$"
 							+ index.getName();
 					SchemaChangeLog changeLog = new SchemaChangeLog(key, null,
 							SchemeInnerType.TYPE_INDEX);
@@ -1309,7 +1323,7 @@ public class TableEditorPart extends
 				String attrName = attrList.get(0);
 				Constraint index = newSchema.removeUniqueByAttrName(attrName);
 				if (index != null) {
-					String key = index.getDefaultName(newSchema.getClassname()) + "$"
+					String key = index.getDefaultName(newSchema.getTableName()) + "$"
 							+ index.getName();
 					SchemaChangeLog changeLog = new SchemaChangeLog(key, null,
 							SchemeInnerType.TYPE_INDEX);
@@ -1469,7 +1483,7 @@ public class TableEditorPart extends
 
 		String newAttrName = "";
 		DBAttribute addAttribute = new DBAttribute(newAttrName, DataType.DATATYPE_CHAR,
-				newSchemaInfo.getClassname(), false, false, false, false, null, collation);
+				newSchemaInfo.getTableName(), false, false, false, false, null, collation);
 		addAttribute.setNew(true);
 		tempDBAttributeList.add(addAttribute);
 		loadColumnData();
@@ -1494,7 +1508,7 @@ public class TableEditorPart extends
 			return false;
 		}
 
-		String tableName = newSchemaInfo.getClassname();
+		String tableName = newSchemaInfo.getTableName();
 		editAttr.setInherit(tableName);
 		String newAttrName = editAttr.getName();
 
@@ -1596,7 +1610,7 @@ public class TableEditorPart extends
 				}
 				addedConstrainList.add(newCons);
 
-				String key = cons.getDefaultName(newSchemaInfo.getClassname()) + "$"
+				String key = cons.getDefaultName(newSchemaInfo.getTableName()) + "$"
 						+ cons.getName();
 				SchemaChangeLog changeLog = new SchemaChangeLog(key, key,
 						SchemeInnerType.TYPE_INDEX);
@@ -1680,7 +1694,7 @@ public class TableEditorPart extends
 				if (oldAttribute == null) {
 					continue;
 				}
-				if (!oldAttribute.getInherit().equals(newSchemaInfo.getClassname())) {
+				if (!oldAttribute.getInherit().equals(newSchemaInfo.getTableName())) {
 					CommonUITool.openErrorBox(Messages.errColumnNotDrop);
 					return;
 				}
@@ -2114,9 +2128,9 @@ public class TableEditorPart extends
 				}
 			}
 
-			String key1 = editedIndex.getDefaultName(newSchemaInfo.getClassname()) + "$"
+			String key1 = editedIndex.getDefaultName(newSchemaInfo.getTableName()) + "$"
 					+ editedIndex.getName();
-			String key2 = newIndex.getDefaultName(newSchemaInfo.getClassname()) + "$"
+			String key2 = newIndex.getDefaultName(newSchemaInfo.getTableName()) + "$"
 					+ newIndex.getName();
 			SchemaChangeLog changeLog = new SchemaChangeLog(key1, key2, SchemeInnerType.TYPE_INDEX);
 			schemaChangeMgr.addSchemeChangeLog(changeLog);
@@ -2192,17 +2206,17 @@ public class TableEditorPart extends
 		if (oldSchemaInfo == null) {
 			title = Messages.newTableShellTitle;
 
-			tableNameText.setText("");
+			classNameText.setText("");
 			owner = database.getUserName();
 			if (reuseOIDBtn != null) {
 				reuseOIDBtn.setSelection(true);
 			}
 		} else {
-			String tableName = oldSchemaInfo.getClassname();
-			title = Messages.bind(Messages.editTableShellTitle, tableName);
+			String className = oldSchemaInfo.getClassname();
+			title = Messages.bind(Messages.editTableShellTitle, className);
 
-			tableNameText.setText(tableName);
-			tableNameText.setEnabled(false);
+			classNameText.setText(className);
+			classNameText.setEnabled(false);
 			owner = oldSchemaInfo.getOwner();
 			if (reuseOIDBtn != null) {
 				reuseOIDBtn.setSelection(oldSchemaInfo.isReuseOid());
@@ -2275,21 +2289,21 @@ public class TableEditorPart extends
 	 * @return
 	 */
 	private boolean verifyTableName() {
-		if (WidgetUtil.disposed(tableNameText)) {
+		if (WidgetUtil.disposed(classNameText)) {
 			return false;
 		}
 
-		if (tableNameText.getEnabled()) {
-			String tableName = tableNameText.getText();
+		if (classNameText.getEnabled()) {
+			String className = classNameText.getText();
 			String msg = null;
-			if (StringUtil.isEmpty(tableName)) {
+			if (StringUtil.isEmpty(className)) {
 				msg = Messages.errNoTableName;
 			} else {
 				boolean canNotUseMultibytes = ValidateUtil.notSupportMB(database)
-						&& ValidateUtil.notASCII(tableName);
+						&& ValidateUtil.notASCII(className);
 
-				if (!ValidateUtil.isValidIdentifier(tableName)) {
-					msg = Messages.bind(Messages.renameInvalidTableNameMSG, "table", tableName);
+				if (!ValidateUtil.isValidIdentifier(className)) {
+					msg = Messages.bind(Messages.renameInvalidTableNameMSG, "table", className);
 				} else if (canNotUseMultibytes) {
 					msg = Messages.errMultiBytes;
 				} else {
@@ -2297,8 +2311,8 @@ public class TableEditorPart extends
 				}
 			}
 
-			CommonUITool.showErrorBaloon(tableNameComp, tableNameText, errorBaloon, "", msg);
-			tableNameText.setFocus();
+			CommonUITool.showErrorBaloon(tableNameComp, classNameText, errorBaloon, "", msg);
+			classNameText.setFocus();
 			return false;
 		}
 
@@ -2358,7 +2372,7 @@ public class TableEditorPart extends
 	 * @param unique
 	 */
 	private void addNewUniqueLog(Constraint unique) {
-		String key = newSchemaInfo.getClassname() + "$" + unique.getName();
+		String key = newSchemaInfo.getTableName() + "$" + unique.getName();
 		SchemaChangeLog changeLog = new SchemaChangeLog(null, key, SchemeInnerType.TYPE_INDEX);
 		schemaChangeMgr.addSchemeChangeLog(changeLog);
 	}
@@ -2373,7 +2387,7 @@ public class TableEditorPart extends
 			return;
 		}
 
-		String key = newSchemaInfo.getClassname() + "$" + unique.getName();
+		String key = newSchemaInfo.getTableName() + "$" + unique.getName();
 		SchemaChangeLog changeLog = new SchemaChangeLog(key, null, SchemeInnerType.TYPE_INDEX);
 		schemaChangeMgr.addSchemeChangeLog(changeLog);
 	}
@@ -2472,12 +2486,21 @@ public class TableEditorPart extends
 		addPartitionBtn.setText(Messages.btnAddPartition);
 		addPartitionBtn.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				String tableName = tableNameText.getText();
-				if (tableName.trim().length() == 0) {
+				String ownerName = ownerCombo.getText();
+				if (ownerName.trim().length() == 0) {
 					CommonUITool.openErrorBox(getSite().getShell(), Messages.msgNoTableName);
 					return;
 				}
-				newSchemaInfo.setClassname(tableName);
+				
+				String className = classNameText.getText();
+				if (className.trim().length() == 0) {
+					CommonUITool.openErrorBox(getSite().getShell(), Messages.msgNoTableName);
+					return;
+				}
+				
+				newSchemaInfo.setOwner(ownerName);
+				newSchemaInfo.setClassname(className);
+				newSchemaInfo.setTableName(ownerName + "." + className);
 
 				Wizard wizard = new CreatePartitionWizard(database.getDatabaseInfo(),
 						newSchemaInfo, partitionInfoList, isNewTableFlag, null);
@@ -2573,13 +2596,22 @@ public class TableEditorPart extends
 			partitionInfo = (PartitionInfo) selection.getFirstElement();
 		}
 
-		String tableName = tableNameText.getText();
-		if (WidgetUtil.disposed(tableNameText) || StringUtil.isEmpty(tableName)) {
+		String ownerName = ownerCombo.getText();
+		if (WidgetUtil.disposed(ownerCombo) || StringUtil.isEmpty(ownerName)) {
 			CommonUITool.openErrorBox(getSite().getShell(), Messages.msgNoTableName);
 			return;
 		}
-
-		newSchemaInfo.setClassname(tableName);
+		
+		String className = classNameText.getText();
+		if (WidgetUtil.disposed(classNameText) || StringUtil.isEmpty(className)) {
+			CommonUITool.openErrorBox(getSite().getShell(), Messages.msgNoTableName);
+			return;
+		}
+		
+		newSchemaInfo.setOwner(ownerName);
+		newSchemaInfo.setClassname(className);
+		newSchemaInfo.setTableName(ownerName + "." + className);
+		
 		CreatePartitionWizard wizard = new CreatePartitionWizard(database.getDatabaseInfo(),
 				newSchemaInfo, partitionInfoList, isNewTableFlag, partitionInfo);
 		CMWizardDialog dialog = new CMWizardDialog(getSite().getShell(), wizard);
@@ -2688,7 +2720,7 @@ public class TableEditorPart extends
 	public IStatus postTaskFinished(ITask task) {
 		if (database != null && database.getDatabaseInfo() != null
 				&& task instanceof CommonSQLExcuterTask) {
-			database.getDatabaseInfo().removeSchema(tableName);
+			database.getDatabaseInfo().removeSchema(getTableName());
 		}
 		return Status.OK_STATUS;
 	}
@@ -2704,11 +2736,11 @@ public class TableEditorPart extends
 				return;
 			}
 
-			String id = node.getId() + ICubridNodeLoader.NODE_SEPARATOR + tableName;
+			String id = node.getId() + ICubridNodeLoader.NODE_SEPARATOR + getTableName();
 			boolean isPartition = newSchemaInfo.getPartitionList() != null
 					&& newSchemaInfo.getPartitionList().size() > 0;
-			ClassInfo newClassInfo = new ClassInfo(tableName, owner, ClassType.NORMAL, false,
-					isPartition);
+			ClassInfo newClassInfo = new ClassInfo(getTableName(), owner, ClassType.NORMAL, false,
+					isPartition, CompatibleUtil.isAfter112(database.getDatabaseInfo()));
 			ICubridNode newNode = CubridTablesFolderLoader.createUserTableNode(node, id,
 					newClassInfo, node.getLoader().getLevel(), new NullProgressMonitor());
 
@@ -2733,7 +2765,7 @@ public class TableEditorPart extends
 				return;
 			}
 
-			database.getDatabaseInfo().removeSchema(tableName);
+			database.getDatabaseInfo().removeSchema(getTableName());
 			if (oldPartitionInfoList.isEmpty() && !partitionInfoList.isEmpty()) {
 				editedTableNode.setIconPath("icons/navigator/schema_table_partition.png");
 				editedTableNode.setType(NodeType.USER_PARTITIONED_TABLE_FOLDER);
@@ -2820,10 +2852,13 @@ public class TableEditorPart extends
 			IDatabaseSpec dbSpec = database.getDatabaseInfo();
 			isSupportTableComment = SchemaCommentHandler.isInstalledMetaTable(dbSpec, conn);
 			database.getDatabaseInfo().setSupportTableComment(isSupportTableComment);
+			if (CompatibleUtil.isAfter112(database.getDatabaseInfo())) {
+				database.getDatabaseInfo().setSupportUserSchema(true);
+			}
 
 			if (isSupportTableComment && !isNewTableFlag && newSchemaInfo != null) {
 				Map<String, SchemaComment> map = SchemaCommentHandler.loadDescription(dbSpec, conn,
-						newSchemaInfo.getClassname());
+						newSchemaInfo.getOwner(), newSchemaInfo.getClassname());
 
 				for (DBAttribute attr : newSchemaInfo.getAttributes()) {
 					SchemaComment schemaComment = SchemaCommentHandler.find(map,
@@ -2882,7 +2917,7 @@ public class TableEditorPart extends
 
 	public void setFocus() {
 		if (isNewTableFlag) {
-			tableNameText.setFocus();
+			classNameText.setFocus();
 		} else {
 			okBtn.setFocus();
 		}
@@ -2996,5 +3031,9 @@ public class TableEditorPart extends
 
 	public boolean isSupportTableComment() {
 		return isSupportTableComment;
+	}
+	
+	public String getTableName() {
+		return owner + "." + className;
 	}
 }

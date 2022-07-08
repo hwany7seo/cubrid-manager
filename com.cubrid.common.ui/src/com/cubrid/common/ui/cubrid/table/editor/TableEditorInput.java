@@ -90,7 +90,7 @@ public class TableEditorInput implements IEditorInput {
 			return Messages.newTableMsgTitle;
 		} else {
 			return Messages.bind(Messages.editTableMsgTitle,
-					schemaInfo.getClassname());
+					schemaInfo.getTableName());
 		}
 	}
 
@@ -103,7 +103,7 @@ public class TableEditorInput implements IEditorInput {
 			return Messages.newTableMsgTitle;
 		} else {
 			return Messages.bind(Messages.editTableMsgTitle,
-					schemaInfo.getClassname());
+					schemaInfo.getTableName());
 		}
 	}
 

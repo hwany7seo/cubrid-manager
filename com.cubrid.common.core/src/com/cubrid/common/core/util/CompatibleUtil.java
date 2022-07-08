@@ -391,6 +391,16 @@ public final class CompatibleUtil {
     /**
      * Is the version of database after the 11.2.0
      *
+     * @param database IDatabaseSpec
+     * @return true:11.2.0 or higher
+     */
+    public static boolean isAfter112(IDatabaseSpec database) {
+        return compareVersion(database.getVersion(), VER_11_2_0) >= 0;
+    }
+    
+    /**
+     * Is the version of database after the 11.2.0
+     *
      * @param database IServerSpec
      * @return true:11.2.0 or higher
      */

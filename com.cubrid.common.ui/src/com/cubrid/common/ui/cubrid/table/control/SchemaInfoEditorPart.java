@@ -323,7 +323,7 @@ public class SchemaInfoEditorPart extends
 	 */
 	private void createTitle() {
 		Label schemaNameLabel = new Label(topComposite, SWT.LEFT | SWT.WRAP);
-		schemaNameLabel.setText(schemaInfo.getClassname());
+		schemaNameLabel.setText(schemaInfo.getTableName());
 		schemaNameLabel.setFont(ResourceManager.getFont(
 				schemaNameLabel.getFont().toString(), 16, SWT.BOLD));
 		schemaNameLabel.setBackground(Display.getCurrent().getSystemColor(

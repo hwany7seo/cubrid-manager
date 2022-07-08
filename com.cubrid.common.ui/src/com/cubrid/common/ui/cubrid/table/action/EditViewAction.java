@@ -147,11 +147,11 @@ public class EditViewAction extends
 
 		GetViewAllColumnsTask getAllDBVclassTask = new GetViewAllColumnsTask(
 				database.getDatabaseInfo());
-		getAllDBVclassTask.setClassName(node.getName());
+		getAllDBVclassTask.setTableName(node.getName());
 
 		GetAllAttrTask getAllAttrTask = new GetAllAttrTask(
 				database.getDatabaseInfo());
-		getAllAttrTask.setClassName(node.getName());
+		getAllAttrTask.setTableName(node.getName());
 
 		JDBCGetAllDbUserTask getAllDbUserTask = new JDBCGetAllDbUserTask(
 				database.getDatabaseInfo());

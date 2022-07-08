@@ -138,14 +138,14 @@ public class TableSchemaCompareComposite extends
 
 	public void createSchemaViewer(Composite parent) {
 		String sourceSchema = getTableSchema(sourceDB,
-				compSchemaModel.getSourceSchemas(), l_tableSchema.getName());
+				compSchemaModel.getSourceSchemas(), l_tableSchema.getOwnerName(), l_tableSchema.getClassName());
 
 		String targetSchema = null;
 		if (targetDB.isVirtual()) {
 			targetSchema = r_tableSchema.getSchemaInfo();
 		} else {
 			targetSchema = getTableSchema(targetDB,
-					compSchemaModel.getTargetSchemas(), r_tableSchema.getName());
+					compSchemaModel.getTargetSchemas(), r_tableSchema.getOwnerName(), r_tableSchema.getClassName());
 		}
 		if (targetSchema == null)
 			targetSchema = "";
@@ -200,14 +200,14 @@ public class TableSchemaCompareComposite extends
 		}
 
 		String sourceSchema = getTableSchema(sourceDB,
-				compSchemaModel.getSourceSchemas(), l_tableSchema.getName());
+				compSchemaModel.getSourceSchemas(), l_tableSchema.getOwnerName(), l_tableSchema.getClassName());
 
 		String targetSchema = null;
 		if (targetDB.isVirtual()) {
 			targetSchema = r_tableSchema.getSchemaInfo();
 		} else {
 			targetSchema = getTableSchema(targetDB,
-					compSchemaModel.getTargetSchemas(), r_tableSchema.getName());
+					compSchemaModel.getTargetSchemas(), r_tableSchema.getOwnerName(), r_tableSchema.getClassName());
 		}
 		if (targetSchema == null) {
 			targetSchema = "";
@@ -223,24 +223,26 @@ public class TableSchemaCompareComposite extends
 	}
 
 	private String getTableSchema(CubridDatabase db,
-			Map<String, SchemaInfo> schemas, String tableName) { // FIXME logic code move to core module
+			Map<String, SchemaInfo> schemas, String ownerName, String className) { // FIXME logic code move to core module
 		String tableSchemaInfo = "";
 
 		try {
-			SchemaInfo schemaInfo = schemas.get(tableName);
+			SchemaInfo schemaInfo = schemas.get(ownerName + "." + className);
 			if (schemaInfo == null) {
 				return "";
 			}
 			if (schemaInfo.getVirtual().equals(ClassType.VIEW.getText())) {
 				GetAllClassListTask getAllClassListTask = new GetAllClassListTask(
 						db.getDatabaseInfo());
-				getAllClassListTask.setTableName(tableName);
+				getAllClassListTask.setOwnerName(ownerName);
+				getAllClassListTask.setClassName(className);
 				getAllClassListTask.getClassInfoTaskExcute();
 				ClassInfo classInfo = getAllClassListTask.getClassInfo();
 
 				GetAllAttrTask getAllAttrTask = new GetAllAttrTask(
 						db.getDatabaseInfo());
-				getAllAttrTask.setClassName(tableName);
+				getAllAttrTask.setOwnerName(ownerName);
+				getAllAttrTask.setClassName(className);
 				getAllAttrTask.getAttrList();
 				List<DBAttribute> attrList = getAllAttrTask.getAllAttrList();
 
@@ -249,7 +251,8 @@ public class TableSchemaCompareComposite extends
 				/*Get view column*/
 				GetViewAllColumnsTask getAllDBVclassTask = new GetViewAllColumnsTask(
 						db.getDatabaseInfo());
-				getAllDBVclassTask.setClassName(tableName);
+				getAllDBVclassTask.setOwnerName(ownerName);
+				getAllDBVclassTask.setClassName(className);
 				getAllDBVclassTask.getAllVclassListTaskExcute();
 
 				/*Get query list*/
@@ -262,7 +265,7 @@ public class TableSchemaCompareComposite extends
 				}
 
 				tableSchemaInfo = GetInfoDataUtil.getViewCreateSQLScript(true,
-						db, classInfo, tableName, viewColListData,
+						db, classInfo, ownerName + "." + className, viewColListData,
 						queryListData);
 			} else {
 				SchemaDDL schemaDDL = null;

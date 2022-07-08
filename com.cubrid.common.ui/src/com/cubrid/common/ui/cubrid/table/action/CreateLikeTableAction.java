@@ -160,7 +160,7 @@ public class CreateLikeTableAction extends
 						+ ICubridNodeLoader.NODE_SEPARATOR + tableName;
 				ClassInfo newClassInfo = new ClassInfo(tableName, null,
 						ClassType.NORMAL, classInfo.isSystemClass(),
-						classInfo.isPartitionedClass());
+						classInfo.isPartitionedClass(), classInfo.isSupportUserSchema());
 				newNode = CubridTablesFolderLoader.createUserTableNode(
 						node.getParent(), id, newClassInfo,
 						node.getParent().getLoader().getLevel(),
@@ -178,7 +178,7 @@ public class CreateLikeTableAction extends
 				String id = node.getId() + ICubridNodeLoader.NODE_SEPARATOR
 						+ tableName;
 				ClassInfo newClassInfo = new ClassInfo(tableName, null,
-						ClassType.NORMAL, false, false);
+						ClassType.NORMAL, false, false, false);
 				newNode = CubridTablesFolderLoader.createUserTableNode(
 						node, id, newClassInfo, node.getLoader().getLevel(),
 						new NullProgressMonitor());

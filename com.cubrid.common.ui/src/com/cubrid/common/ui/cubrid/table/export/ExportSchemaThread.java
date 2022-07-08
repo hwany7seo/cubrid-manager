@@ -358,7 +358,7 @@ public class ExportSchemaThread extends
 		} else {
 			sb.append("CREATE VIEW ");
 		}
-		sb.append(QuerySyntax.escapeKeyword(viewInfo.getClassname()));
+		sb.append(QuerySyntax.escapeKeyword(viewInfo.getTableName()));
 		sb.append("(");
 
 		for (DBAttribute addr : viewInfo.getAttributes()) { // "Name", "Data

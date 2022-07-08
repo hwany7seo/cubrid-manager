@@ -285,7 +285,7 @@ public class ERAttributeCellModifier implements
 					if (!StringUtil.isEmpty(newName)) {
 						if (!columns.contains(erColumn)) {
 							erColumn.getAttr().setInherit(
-									editor.getNewSchemaInfo().getClassname());
+									editor.getNewSchemaInfo().getTableName());
 							table.addColumn(erColumn);
 							editor.removeElementByName(newName);
 						}

@@ -75,6 +75,8 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 	private List<PartitionInfo> partitions = null;
 	// cubrid 9.1
 	private String collation;
+	// added for cubrid 11.2 or higher
+	private String tableName = null;
 
 	public DBAttribute getAutoIncrementColumn() {
 		if (attributes == null) {
@@ -416,7 +418,7 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 			return false;
 		} else {
 			String attrName = attr.getName();
-			boolean isInherited = attr.getInherit().equals(this.getClassname()) ? false
+			boolean isInherited = attr.getInherit().equals(this.getTableName()) ? false
 					: true;
 			for (Constraint constraint : constraints) {
 				String constraintName = constraint.getName();
@@ -454,18 +456,18 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 	 *
 	 * @param newClassName String the given new class name
 	 */
-	private void fireClassNameChanged(String newClassName) {
+	private void fireClassNameChanged(String newTableName) {
 		List<DBAttribute> list = new ArrayList<DBAttribute>();
 		list.addAll(getAttributes());
 		list.addAll(getClassAttributes());
 		for (DBAttribute a : list) {
-			if (a.getInherit().equals(classname)) {
-				a.setInherit(newClassName);
+			if (a.getInherit().equals(tableName)) {
+				a.setInherit(newTableName);
 			}
 		}
 		if (this.partitions != null && !this.partitions.isEmpty()) {
 			for (PartitionInfo info : partitions) {
-				info.setClassName(newClassName);
+				info.setClassName(newTableName);
 			}
 		}
 	}
@@ -602,7 +604,8 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 	public String toString() {
 		StringBuffer bf = new StringBuffer();
 		bf.append("DB name:" + this.dbname + "\n");
-		bf.append("table name:" + this.classname + "\n");
+		bf.append("table name:" + this.tableName + "\n");
+		bf.append("class name:" + this.classname + "\n");
 		bf.append("\tOwner:" + this.owner + "\n");
 		bf.append("\ttype:" + this.type + "\n");
 		bf.append("\tvirtual:" + this.virtual + "\n");
@@ -1054,7 +1057,7 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 	 *         argument obj.
 	 */
 	public int compareTo(SchemaInfo obj) {
-		return classname.compareTo(obj.classname);
+		return tableName.compareTo(obj.tableName);
 	}
 
 	/**
@@ -1205,7 +1208,7 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 		return true;
 	}
 
-	public String getClassname() {
+	public String getClassnamebb() {
 		return classname;
 	}
 
@@ -1213,11 +1216,20 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 	 *
 	 * @param classname String the given class name
 	 */
-	public void setClassname(String classname) {
-		fireClassNameChanged(classname);
+	public void setClassnamebb(String classname) {
+		//fireClassNameChanged(classname);
 		this.classname = classname;
 	}
 
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		fireClassNameChanged(tableName);
+		this.tableName = tableName;
+	}
+	
 	public String getType() {
 		return type;
 	}
@@ -1308,7 +1320,7 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 		}
 		List<DBAttribute> list = new ArrayList<DBAttribute>();
 		for (DBAttribute classAttribute : classAttributes) {
-			if (classAttribute.getInherit().equals(this.getClassname())) {
+			if (classAttribute.getInherit().equals(this.getTableName())) {
 				list.add(classAttribute);
 			}
 		}
@@ -1327,7 +1339,7 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 		}
 		List<DBAttribute> list = new ArrayList<DBAttribute>();
 		for (DBAttribute attribute : attributes) {
-			if (attribute.getInherit().equals(this.getClassname())) {
+			if (attribute.getInherit().equals(this.getTableName())) {
 				list.add(attribute);
 			}
 		}
@@ -1346,7 +1358,7 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 		}
 		List<DBAttribute> list = new ArrayList<DBAttribute>();
 		for (DBAttribute classAttribute : classAttributes) {
-			if (!classAttribute.getInherit().equals(this.getClassname())) {
+			if (!classAttribute.getInherit().equals(this.getTableName())) {
 				list.add(classAttribute);
 			}
 		}
@@ -1365,7 +1377,7 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 		}
 		List<DBAttribute> list = new ArrayList<DBAttribute>();
 		for (DBAttribute attribute : attributes) {
-			if (!attribute.getInherit().equals(this.getClassname())) {
+			if (!attribute.getInherit().equals(this.getTableName())) {
 				list.add(attribute);
 			}
 		}

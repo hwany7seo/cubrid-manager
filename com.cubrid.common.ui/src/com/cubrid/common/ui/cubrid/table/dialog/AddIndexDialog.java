@@ -280,7 +280,7 @@ public class AddIndexDialog extends
 				return;
 			}
 			String indexName = indexNameText.getText().trim();
-			String tableName = schemaInfo.getClassname();
+			String tableName = schemaInfo.getTableName();
 			if (("").equals(indexName)) { //$NON-NLS-1$
 				indexName = indexConstraint.getDefaultName(tableName);
 			}

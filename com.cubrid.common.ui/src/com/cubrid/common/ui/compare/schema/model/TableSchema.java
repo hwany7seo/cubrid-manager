@@ -38,6 +38,21 @@ public class TableSchema implements
 	public String getName() {
 		return this.tableName;
 	}
+	
+	public String getOwnerName() {
+		String tableName = this.tableName;
+		if (tableName.indexOf(".") <= 0 && tableName.indexOf(".") > tableName.length()) {
+			return "";
+		}
+		return this.tableName.substring(0, this.tableName.indexOf("."));
+	}
+	
+	public String getClassName() {
+		if (tableName.indexOf(".") <= 0 && tableName.indexOf(".") > tableName.length()) {
+			return "";
+		}
+		return this.tableName.substring(tableName.indexOf(".")+1);
+	}
 
 	public void setSchemaInfo(String tableSchema) {
 		this.tableSchema = tableSchema;

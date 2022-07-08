@@ -604,7 +604,7 @@ public class ExportSettingForLoadDBPage extends
 								//export all view now so don't need select view node
 								continue;
 							}
-							ICubridNode classNode = new DefaultSchemaNode(tableName, tableName,
+							ICubridNode classNode = new DefaultSchemaNode(tableName, tableName, null,
 									iconPath);
 							classNode.setContainer(true);
 							classNode.setType(NodeType.TABLE_COLUMN_FOLDER);

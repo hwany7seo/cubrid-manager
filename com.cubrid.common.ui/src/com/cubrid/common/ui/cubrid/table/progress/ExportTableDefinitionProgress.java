@@ -178,16 +178,33 @@ public class ExportTableDefinitionProgress implements
 			return exportTableList;
 		}
 
+		boolean isSupportUserSchema = false;
+		
+		if (CubridDatabase.hasValidDatabaseInfo(database)) {
+			isSupportUserSchema = database.getDatabaseInfo().isSupportUserSchema();
+		}
+		
 		ArrayList<String> tableList = new ArrayList<String>();
 		Statement stmt = null;
 		ResultSet rs = null;
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT c.class_name, c.class_type ");
-		sql.append("FROM db_class c, db_attribute a ");
-		sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
-		sql.append("AND a.from_class_name IS NULL AND c.class_type='CLASS' ");
-		sql.append("GROUP BY c.class_name, c.class_type ");
-		sql.append("ORDER BY c.class_type, c.class_name");
+		if (isSupportUserSchema) {
+			sql.append("SELECT c.owner_name, c.class_name, c.class_type ");
+			sql.append("FROM db_class c, db_attribute a ");
+			sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
+			sql.append("AND c.owner_name=a.owner_name ");
+			sql.append("AND a.from_class_name IS NULL AND c.class_type='CLASS' ");
+			sql.append("GROUP BY c.owner_name, c.class_name, c.class_type ");
+			sql.append("ORDER BY c.owner_name, c.class_type, c.class_name");
+		} else {
+			sql.append("SELECT c.owner_name, c.class_name, c.class_type ");
+			sql.append("FROM db_class c, db_attribute a ");
+			sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
+			sql.append("AND a.from_class_name IS NULL AND c.class_type='CLASS' ");
+			sql.append("GROUP BY c.owner_name, c.class_name, c.class_type ");
+			sql.append("ORDER BY c.owner_name, c.class_type, c.class_name");
+		}
+				
 		String query = sql.toString();
 
 		// [TOOLS-2425]Support shard broker
@@ -199,7 +216,9 @@ public class ExportTableDefinitionProgress implements
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 			while (rs.next()) {
-				String tableName = rs.getString(1);
+				String tableName = "";
+				tableName = rs.getString(1) + "." + rs.getString(2);
+
 				if (ConstantsUtil.isExtensionalSystemTable(tableName)) {
 					continue;
 				}

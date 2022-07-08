@@ -68,13 +68,15 @@ public class GetSchemaDDLTask extends
 
 	/*It may be null*/
 	private IProgressMonitor monitor;
-	private String schemaName;
+	private String ownerName;
+	private String className;
 	private boolean isTable;
 	private String ddl;
 
-	public GetSchemaDDLTask(DatabaseInfo dbInfo, String schemaName, boolean isTable, IProgressMonitor monitor) {
+	public GetSchemaDDLTask(DatabaseInfo dbInfo, String ownerName, String className, boolean isTable, IProgressMonitor monitor) {
 		super("GetSchemaDDLTask", dbInfo);
-		this.schemaName = schemaName;
+		this.ownerName = ownerName;
+		this.className = className;
 		this.isTable = isTable;
 		this.monitor = monitor;
 	}
@@ -85,7 +87,7 @@ public class GetSchemaDDLTask extends
 	public void execute() {
 		try {
 			if (CompatibleUtil.isAfter900(databaseInfo)) {
-				String sql = QueryUtil.getShowCreateSQL(schemaName, isTable);
+				String sql = QueryUtil.getShowCreateSQL(className, isTable);
 				sql = DatabaseInfo.wrapShardQuery(databaseInfo, sql);
 				StringBuilder sb = new StringBuilder();
 
@@ -122,7 +124,8 @@ public class GetSchemaDDLTask extends
 				if (!isTable) {
 					// Get class info
 					GetAllClassListTask getAllClassListTask = new GetAllClassListTask(databaseInfo, connection);
-					getAllClassListTask.setTableName(schemaName);
+					getAllClassListTask.setOwnerName(ownerName);
+					getAllClassListTask.setClassName(className);
 					getAllClassListTask.getClassInfoTaskExcute();
 					// If failed
 					if (getAllClassListTask.getErrorMsg() != null || getAllClassListTask.isCancel()) {
@@ -139,7 +142,8 @@ public class GetSchemaDDLTask extends
 
 					// Get view column
 					GetViewAllColumnsTask getAllDBVclassTask = new GetViewAllColumnsTask(databaseInfo, connection);
-					getAllDBVclassTask.setClassName(schemaName);
+					getAllDBVclassTask.setOwnerName(ownerName);
+					getAllDBVclassTask.setClassName(className);
 					getAllDBVclassTask.getAllVclassListTaskExcute();
 					// If failed
 					if (getAllDBVclassTask.getErrorMsg() != null || getAllDBVclassTask.isCancel()) {
@@ -169,7 +173,8 @@ public class GetSchemaDDLTask extends
 
 					// Get all attribute
 					GetAllAttrTask getAllAttrTask = new GetAllAttrTask(databaseInfo, connection);
-					getAllAttrTask.setClassName(schemaName);
+					getAllAttrTask.setOwnerName(ownerName);
+					getAllAttrTask.setClassName(className);
 					getAllAttrTask.getAttrList();
 					// If failed
 					if (getAllAttrTask.getErrorMsg() != null) {
@@ -180,10 +185,14 @@ public class GetSchemaDDLTask extends
 					List<DBAttribute> attrList = getAllAttrTask.getAllAttrList();
 
 					List<Map<String, String>> viewColListData = GetInfoDataUtil.getViewColMapList(attrList);
-					sqlScript.append(GetInfoDataUtil.getViewCreateSQLScript(false, databaseInfo, classInfo, schemaName,
+					String viewName = className;
+					if (databaseInfo.isSupportUserSchema()) {
+						viewName = ownerName + "." + className;
+					}
+					sqlScript.append(GetInfoDataUtil.getViewCreateSQLScript(false, databaseInfo, classInfo, viewName,
 							viewColListData, queryListData));
 				} else {
-					String ddl = SQLGenerateUtils.getCreateSQL(databaseInfo, schemaName);
+					String ddl = SQLGenerateUtils.getCreateSQL(databaseInfo, ownerName, className);
 					sqlScript.append(ddl == null ? "" : ddl);
 				}
 

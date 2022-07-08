@@ -50,6 +50,7 @@ import com.cubrid.cubridmanager.core.cubrid.table.model.DataType;
  */
 public class GetAllAttrTask extends
 		JDBCTask {
+	private String ownerName = null;
 	private String className = null;
 	private List<DBAttribute> allAttrList = null;
 
@@ -78,16 +79,24 @@ public class GetAllAttrTask extends
 				errorMsg = Messages.error_getConnection;
 				return allAttrList;
 			}
-
-			String sql = "SELECT attr_name, def_order FROM db_attribute WHERE class_name=?"
+			
+			String sql = ""; 
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT attr_name, def_order FROM db_attribute WHERE class_name=? AND owner_name=?"
 					+ " ORDER BY def_order";
-
+			} else {
+				sql = "SELECT attr_name, def_order FROM db_attribute WHERE class_name=?"
+						+ " ORDER BY def_order";
+			}
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
 
 			stmt = connection.prepareStatement(sql);
 			((PreparedStatement) stmt).setString(1,
 					className.toLowerCase(Locale.getDefault()));
+			if (databaseInfo.isSupportUserSchema()) {
+				((PreparedStatement) stmt).setString(2, ownerName);
+			}
 			rs = ((PreparedStatement) stmt).executeQuery();
 			while (rs.next()) {
 				String attrName = rs.getString("attr_name");
@@ -173,6 +182,20 @@ public class GetAllAttrTask extends
 		this.className = className;
 	}
 
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+	
+	public void setTableName(String tableName) {
+		if (tableName.indexOf(".") > 0) {
+			String[] temp = tableName.split(",");
+			if (temp.length == 2) {
+				this.ownerName = temp[0];
+				this.className = temp[1];
+			}
+		}
+	}
+	
 	public List<DBAttribute> getAllAttrList() {
 		return allAttrList;
 	}
