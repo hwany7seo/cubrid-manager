@@ -118,13 +118,24 @@ public class GetTablesTask extends
 	 */
 	public List<String> getUserTablesNotContainSubPartitionTable() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT c.class_name, c.class_type ");
-		sb.append("FROM db_class c, db_attribute a ");
-		sb.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
-		sb.append("AND a.from_class_name IS NULL ");
-		sb.append("AND c.class_type = 'CLASS' ");
-		sb.append("GROUP BY c.class_name, c.class_type ");
-		sb.append("ORDER BY c.class_type, c.class_name");
+		if (databaseInfo.isSupportUserSchema()) {
+			sb.append("SELECT c.owner_name, c.class_name, c.class_type ");
+			sb.append("FROM db_class c, db_attribute a ");
+			sb.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
+			sb.append("AND c.owner_name=a.owner_name ");
+			sb.append("AND a.from_class_name IS NULL ");
+			sb.append("AND c.class_type = 'CLASS' ");
+			sb.append("GROUP BY c.owner_name, c.class_name, c.class_type ");
+			sb.append("ORDER BY c.owner_name, c.class_type, c.class_name");
+		} else {
+			sb.append("SELECT c.class_name, c.class_type ");
+			sb.append("FROM db_class c, db_attribute a ");
+			sb.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
+			sb.append("AND a.from_class_name IS NULL ");
+			sb.append("AND c.class_type = 'CLASS' ");
+			sb.append("GROUP BY c.class_name, c.class_type ");
+			sb.append("ORDER BY c.class_type, c.class_name");
+		}
 		String sql = sb.toString();
 		// [TOOLS-2425]Support shard broker
 		sql = databaseInfo.wrapShardQuery(sql);
@@ -155,7 +166,11 @@ public class GetTablesTask extends
 			stmt = connection.createStatement();
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
-				tlist.add(rs.getString("class_name"));
+				if (databaseInfo.isSupportUserSchema()) {
+					tlist.add(rs.getString("owner_name") + "." + rs.getString("class_name"));
+				} else {
+					tlist.add(rs.getString("class_name"));
+				}
 			}
 		} catch (SQLException e) {
 			errorMsg = e.getMessage();

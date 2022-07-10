@@ -247,7 +247,7 @@ public class AddResolutionDialog extends
 			String alias = aliasText.getText().trim();
 			resolution = new DBResolution();
 			resolution.setName(col);
-			resolution.setClassName(sup);
+			resolution.setTableName(sup);
 			resolution.setAlias(alias);
 			resolution.setClassResolution(isClassResolution);
 		} else {
@@ -398,7 +398,7 @@ public class AddResolutionDialog extends
 			resolutions = schema.getResolutions();
 		}
 		for (DBResolution r : resolutions) {
-			if (r.getName().equals(col) && r.getClassName().equals(sup)
+			if (r.getName().equals(col) && r.getTableName().equals(sup)
 					&& r.getAlias().equals(alias)) {
 				setErrorMessage(Messages.errExistResolution);
 				return false;

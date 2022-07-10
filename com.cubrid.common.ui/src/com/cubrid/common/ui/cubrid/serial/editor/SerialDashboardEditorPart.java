@@ -103,6 +103,11 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 	private TableViewer serialsDetailInfoTable;
 	private List<SerialInfo> serialList;
 
+	private static final String SERIAL_MIN =           "-1000000000000000000000000000000000000";
+	private static final String SERIAL_MIN_AFTER_120 = "-99999999999999999999999999999999999999";
+	private static final String SERIAL_MAX = 		   "10000000000000000000000000000000000000";
+	private static final String SERIAL_MAX_AFTER_120 = "99999999999999999999999999999999999999";
+
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout(1, false));
 
@@ -160,6 +165,10 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 		serialsDetailInfoTable.getTable().setHeaderVisible(true);
 		serialsDetailInfoTable.getTable().setLinesVisible(true);
 		CommonUITool.hackForYosemite(serialsDetailInfoTable.getTable());
+
+		final TableViewerColumn ownerColumn = new TableViewerColumn(serialsDetailInfoTable, SWT.LEFT);
+		ownerColumn.getColumn().setWidth(80);
+		ownerColumn.getColumn().setText(Messages.serialsDetailInfoPartTableOwnerCol);
 
 		final TableViewerColumn nameColumn = new TableViewerColumn(serialsDetailInfoTable, SWT.LEFT);
 		nameColumn.getColumn().setWidth(150);
@@ -275,7 +284,7 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 	private void openEditSerialDialog(SerialInfo serialInfo) {
 		Set<String> typeSet = new HashSet<String>();
 		typeSet.add(NodeType.SERIAL);
-		ICubridNode serialNode = CommonUITool.findNode(database, typeSet, serialInfo.getName());
+		ICubridNode serialNode = CommonUITool.findNode(database, typeSet, serialInfo.getUniqueName(isSupportUserSchema()));
 		if (serialNode != null) {
 			EditSerialAction action = (EditSerialAction) ActionManager.getInstance().getAction(EditSerialAction.ID);
 			if (action.run(database, (ISchemaNode) serialNode) == IDialogConstants.OK_ID) {
@@ -293,7 +302,7 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 				Set<String> typeSet = new HashSet<String>();
 				typeSet.add(NodeType.SERIAL);
 
-				ICubridNode serialNode = CommonUITool.findNode(database, typeSet, serialInfo.getName());
+				ICubridNode serialNode = CommonUITool.findNode(database, typeSet, serialInfo.getUniqueName(isSupportUserSchema()));
 				selectNodeList.add((ISchemaNode)serialNode);
 			}
 
@@ -427,27 +436,28 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 					String incrValue = serialInfo.getIncrementValue();
 					boolean isSupportCache = CompatibleUtil.isSupportCache(database.getDatabaseInfo());
 					switch (columnIndex) {
-						case 0 : return serialInfo.getName();
-						case 1 : return serialInfo.getCurrentValue();
-						case 2 : return serialInfo.getIncrementValue();
-						case 3 :
+						case 0 : return serialInfo.getOwner();
+						case 1 : return serialInfo.getName();
+						case 2 : return serialInfo.getCurrentValue();
+						case 3 : return serialInfo.getIncrementValue();
+						case 4 :
 							String minValue = serialInfo.getMinValue();
 
 							if (incrValue.indexOf("-") >= 0
-									&& "-1000000000000000000000000000000000000".equals(minValue)) {
+									&& serialMinValue().equals(minValue)) {
 								return "NOMINVALUE";
 							} else {
 								return minValue;
 							}
-						case 4 :
+						case 5 :
 							String maxValue = serialInfo.getMaxValue();
 							if (incrValue.indexOf("-") < 0
-									&& "10000000000000000000000000000000000000".equals(maxValue)) {
+									&& serialMaxValue().equals(maxValue)) {
 								return "NOMAXVALUE";
 							} else {
 								return maxValue;
 							}
-						case 5 :
+						case 6 :
 							String cacheCount = serialInfo.getCacheCount();
 							if (isSupportCache
 									&& cacheCount == null
@@ -456,7 +466,7 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 							} else {
 								return cacheCount;
 							}
-						case 6 :
+						case 7 :
 							return serialInfo.isCyclic() ? "YES" : "NO";
 					}
 				}
@@ -500,7 +510,7 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			SerialInfo s1 = (SerialInfo)e1;
 			SerialInfo s2 = (SerialInfo)e2;
-			return s1.getName().compareTo(s2.getName());
+			return s1.getOwner().compareTo(s2.getOwner());
 		}
 	}
 
@@ -520,5 +530,23 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 
 	public CubridDatabase getDatabase() {
 		return database;
+	}
+
+	private String serialMinValue() {
+		if (database != null && database.getDatabaseInfo().isSupportUserSchema()){
+			return SERIAL_MIN_AFTER_120;
+		}
+		return SERIAL_MIN;
+	}
+
+	private String serialMaxValue() {
+		if (database != null && database.getDatabaseInfo().isSupportUserSchema()){
+			return SERIAL_MAX_AFTER_120;
+		}
+		return SERIAL_MAX;
+	}
+
+	private boolean isSupportUserSchema() {
+		return database.getDatabaseInfo().isSupportUserSchema();
 	}
 }

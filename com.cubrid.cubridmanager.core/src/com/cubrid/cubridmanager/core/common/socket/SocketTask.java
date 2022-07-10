@@ -72,6 +72,7 @@ public abstract class SocketTask extends AbstractTask {
 	protected boolean isNeedMultiSend = false;
 	// Before send message,whether need server connected status
 	protected boolean isNeedServerConnected = true;
+	
 	protected String appendSendMsg = null;
 	//for unit test,add it
 	private TreeNode responseNode = null;

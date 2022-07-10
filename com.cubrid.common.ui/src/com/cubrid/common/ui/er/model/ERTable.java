@@ -84,7 +84,7 @@ public class ERTable extends
 
 	public ERTable(SchemaInfo schemaInfo, ERSchema erSchema) {
 		super();
-		this.name = schemaInfo.getClassname();
+		this.name = schemaInfo.getUniqueName();
 		this.schemaInfo = schemaInfo;
 		this.erSchema = erSchema;
 		initDefaultLogicalInfo(schemaInfo);
@@ -95,7 +95,7 @@ public class ERTable extends
 		if (StringUtil.isNotEmpty(desc)) {
 			logicalName = desc;
 		} else {
-			logicalName = schemaInfo.getClassname();
+			logicalName = schemaInfo.getUniqueName();
 		}
 	}
 
@@ -153,6 +153,7 @@ public class ERTable extends
 		SchemaInfo schemaInfo = new SchemaInfo();
 		schemaInfo.setType("user");
 		schemaInfo.setClassname(tableName);
+		schemaInfo.setUniqueName(tableName);
 		schemaInfo.setDbname(dbName);
 		schemaInfo.setVirtual(ClassType.NORMAL.getText());
 		schemaInfo.setReuseOid(false);
@@ -635,6 +636,7 @@ public class ERTable extends
 		if (!name.equals(oldName)) {
 			this.name = name;
 			schemaInfo.setClassname(name);
+			schemaInfo.setUniqueName(name);
 			updateSourceTableConstraint(oldName, name);
 			firePropertyChange(TEXT_CHANGE, null, name);
 		}
@@ -924,6 +926,7 @@ public class ERTable extends
 		if (!name.equals(oldName)) {
 			this.name = name;
 			this.schemaInfo.setClassname(name);
+			this.schemaInfo.setUniqueName(name);
 		}
 	}
 

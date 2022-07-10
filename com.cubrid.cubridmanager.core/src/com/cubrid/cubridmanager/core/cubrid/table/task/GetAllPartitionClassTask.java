@@ -77,8 +77,15 @@ public class GetAllPartitionClassTask extends
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				String partitionClassName = rs.getString("partition_class_name");
-				if (!map.containsKey(partitionClassName)) {
-					map.put(partitionClassName, partitionClassName);
+				String partitionName;
+				if (databaseInfo.isSupportUserSchema()) {
+					String ownerName = rs.getString("owner_name");
+					partitionName = ownerName + "." + partitionClassName;
+				} else {
+					partitionName = partitionClassName;
+				}
+				if (!map.containsKey(partitionName)) {
+					map.put(partitionName, partitionName);
 				}
 			}
 		} catch (SQLException e) {

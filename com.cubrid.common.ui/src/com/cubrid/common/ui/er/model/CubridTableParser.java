@@ -99,11 +99,11 @@ public class CubridTableParser {
 			return;
 		}
 		for (SchemaInfo schemaInfo : schemaInfos) {
-			if (erSchema.getTable(schemaInfo.getClassname()) != null) {
-				existedTableNames.add(schemaInfo.getClassname());
+			if (erSchema.getTable(schemaInfo.getUniqueName()) != null) {
+				existedTableNames.add(schemaInfo.getUniqueName());
 				continue;
 			}
-			this.schemaInfos.put(schemaInfo.getClassname(), schemaInfo);
+			this.schemaInfos.put(schemaInfo.getUniqueName(), schemaInfo);
 		}
 
 		Set<String> tables = this.schemaInfos.keySet();
@@ -111,9 +111,9 @@ public class CubridTableParser {
 			SchemaInfo schemaInfo = this.schemaInfos.get(name);
 			ERTable erTable = null;
 			try {
-				if (erSchema.getTable(schemaInfo.getClassname()) != null) {
+				if (erSchema.getTable(schemaInfo.getUniqueName()) != null) {
 					// the table has been built by referenced table
-					erTable = erSchema.getTable(schemaInfo.getClassname());
+					erTable = erSchema.getTable(schemaInfo.getUniqueName());
 				} else {
 					erTable = new ERTable(schemaInfo, erSchema);
 					boolean success = erSchema.addTable(erTable);
@@ -229,7 +229,7 @@ public class CubridTableParser {
 			// load it and do not build the relationship and delete the
 			// constraint
 			schemaInfo.removeFKConstraint(fkConstaint);
-			addEle2RemovedFKConstraints(schemaInfo.getClassname(), fkConstaint);
+			addEle2RemovedFKConstraints(schemaInfo.getUniqueName(), fkConstaint);
 			return;
 		}
 		if (StringUtil.isEqualNotIgnoreNull(referencedTableName, erTable.getName())) {// self reference FK
@@ -238,10 +238,10 @@ public class CubridTableParser {
 
 		if (referenceNames.size() != referredPkColumnNames.size()) {
 			throw new ERException(Messages.bind(Messages.errFKColumnMatch, new String[] {
-					schemaInfo.getClassname(), fkConstaint.getName() }));
+					schemaInfo.getUniqueName(), fkConstaint.getName() }));
 		}
 
-		ERTable referencedT = erSchema.getTable(referencedTable.getClassname());
+		ERTable referencedT = erSchema.getTable(referencedTable.getUniqueName());
 		boolean needBuildRefedTable = false;
 		if (referencedT == null && !isSelfRef) {
 			referencedT = new ERTable(referencedTable, erSchema);
@@ -307,7 +307,7 @@ public class CubridTableParser {
 			Constraint pkConstaint = referedSchemaInfo.getPK();
 			if (pkConstaint == null) {
 				throw new ERException(Messages.bind(Messages.errFKColumnMatch, new String[] {
-						schemaInfo.getClassname(), fkConstaint.getName() }));
+						schemaInfo.getUniqueName(), fkConstaint.getName() }));
 			}
 			List<String> pklist = pkConstaint.getAttributes();
 			for (int i = 0; i < pklist.size(); i++) {

@@ -27,6 +27,7 @@
  */
 package com.cubrid.common.ui.spi.model.loader.schema;
 
+import java.security.acl.Owner;
 import java.util.Collections;
 import java.util.List;
 
@@ -102,9 +103,9 @@ public class CubridSystemViewFolderLoader extends
 			if (allClassInfoList != null) {
 				for (ClassInfo classInfo : allClassInfoList) {
 					String id = parent.getId() + NODE_SEPARATOR
-							+ classInfo.getClassName();
+							+ classInfo.getUniqueName();
 					ICubridNode classNode = new DefaultSchemaNode(id,
-							classInfo.getClassName(),
+							classInfo.getUniqueName(), classInfo.getUniqueName(),
 							"icons/navigator/schema_view_item.png");
 					classNode.setType(NodeType.SYSTEM_VIEW);
 					classNode.setEditorId(SchemaInfoEditorPart.ID);

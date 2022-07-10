@@ -60,6 +60,8 @@ import com.cubrid.cubridmanager.core.utils.ModelUtil.ClassType;
 public class CreateLikeTableAction extends
 		SelectionAction {
 
+	private boolean isSupportUserSchema = false;
+
 	public static final String ID = CreateLikeTableAction.class.getName();
 
 	/**
@@ -146,6 +148,7 @@ public class CreateLikeTableAction extends
 
 		CreateLikeTableDialog dialog = new CreateLikeTableDialog(getShell());
 		dialog.setDatabase(node.getDatabase());
+		isSupportUserSchema = node.getDatabase().getDatabaseInfo().isSupportUserSchema();
 		if (NodeType.USER_TABLE.equals(node.getType())) {
 			String tableName = node.getName();
 			dialog.setLikeTableName(tableName);
@@ -158,9 +161,16 @@ public class CreateLikeTableAction extends
 				ClassInfo classInfo = (ClassInfo) node.getAdapter(ClassInfo.class);
 				String id = node.getParent().getId()
 						+ ICubridNodeLoader.NODE_SEPARATOR + tableName;
-				ClassInfo newClassInfo = new ClassInfo(tableName, null,
+				ClassInfo newClassInfo = null;
+				if (isSupportUserSchema) {
+					newClassInfo = new ClassInfo(getClassName(tableName), getOwnerName(tableName),
 						ClassType.NORMAL, classInfo.isSystemClass(),
-						classInfo.isPartitionedClass());
+						classInfo.isPartitionedClass(), classInfo.isSupportUserSchema());
+				} else {
+					newClassInfo = new ClassInfo(tableName, null,
+							ClassType.NORMAL, classInfo.isSystemClass(),
+							classInfo.isPartitionedClass(), classInfo.isSupportUserSchema());
+				}
 				newNode = CubridTablesFolderLoader.createUserTableNode(
 						node.getParent(), id, newClassInfo,
 						node.getParent().getLoader().getLevel(),
@@ -178,7 +188,7 @@ public class CreateLikeTableAction extends
 				String id = node.getId() + ICubridNodeLoader.NODE_SEPARATOR
 						+ tableName;
 				ClassInfo newClassInfo = new ClassInfo(tableName, null,
-						ClassType.NORMAL, false, false);
+						ClassType.NORMAL, false, false, false);
 				newNode = CubridTablesFolderLoader.createUserTableNode(
 						node, id, newClassInfo, node.getLoader().getLevel(),
 						new NullProgressMonitor());
@@ -188,5 +198,19 @@ public class CreateLikeTableAction extends
 					new CubridNodeChangedEvent(newNode,
 							CubridNodeChangedEventType.NODE_ADD));
 		}
+	}
+
+	private String getClassName(String tableName) {
+		if (isSupportUserSchema) {
+			return tableName.substring(tableName.indexOf(".")+1);
+		}
+		return tableName;
+	}
+
+	private String getOwnerName(String tableName) {
+		if (isSupportUserSchema) {
+			return tableName.substring(0, tableName.indexOf("."));
+		}
+		return tableName;
 	}
 }

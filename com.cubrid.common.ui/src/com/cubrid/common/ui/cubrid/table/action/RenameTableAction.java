@@ -163,22 +163,29 @@ public class RenameTableAction extends
 		String tableName = table.getName();
 		CubridDatabase db = table.getDatabase();
 		DatabaseInfo dbInfo = db.getDatabaseInfo();
+		boolean isSupportUserSchema = dbInfo.isSupportUserSchema();
 		GetTablesTask getTableTask = new GetTablesTask(dbInfo);
 		List<String> tableList = getTableTask.getAllTableAndViews();
 
 		RenameTableDialog dlg = new RenameTableDialog(
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), tableName,
-				isTable, tableList, true);
+				isTable, tableList, true, isSupportUserSchema);
 		int ret = dlg.open();
 		if (ret == IDialogConstants.OK_ID) {
-			String newName = dlg.getNewName();
+			String newClassName = dlg.getNewName();
+			String newTableName;
+			if (isSupportUserSchema) {
+				newTableName = dlg.getOwnerName() + "." + newClassName;
+			} else {
+				newTableName = newClassName;
+			}
 			RenameTableOrViewTask task = new RenameTableOrViewTask(dbInfo);
 			task.setOldClassName(tableName);
-			task.setNewClassName(newName);
+			task.setNewClassName(newTableName);
 			task.setTable(isTable);
 			String taskName = Messages.bind(
 					com.cubrid.common.ui.cubrid.table.Messages.renameTableTaskName,
-					new String[]{tableName, newName });
+					new String[]{tableName, newTableName });
 			TaskExecutor taskExecutor = new CommonTaskExec(taskName);
 			taskExecutor.addTask(task);
 			new ExecTaskWithProgress(taskExecutor).exec();
@@ -199,10 +206,18 @@ public class RenameTableAction extends
 				}
 
 				ClassInfo classInfo = (ClassInfo) table.getAdapter(ClassInfo.class);
-				classInfo.setClassName(newName);
+				classInfo.setClassName(newClassName);
+				classInfo.setSupportUserSchema(dbInfo.isSupportUserSchema());
 				table.setId(table.getParent().getId()
-						+ ICubridNodeLoader.NODE_SEPARATOR + newName);
-				table.setLabel(newName);
+						+ ICubridNodeLoader.NODE_SEPARATOR + newTableName);
+				if (isSupportUserSchema) {
+					String label = "[" + dlg.getOwnerName() + "] " + newClassName;
+					table.setLabel(label);
+				} else {
+					String label = "[" + dlg.getOwnerName() + "] " + newClassName;
+					table.setLabel(newTableName);
+				}
+				table.setUniqueName(newTableName);
 				viewer.refresh(table, true);
 				LayoutManager.getInstance().getWorkbenchContrItem().reopenEditorOrView(
 						table);

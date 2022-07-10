@@ -101,8 +101,11 @@ public class AttributeTableViewerLabelProvider implements ITableLabelProvider, I
 		case PK: {
 			String attrName = dbAttribute.getName();
 			Constraint pk = schema.getPK(supers);
-			if (null != pk && pk.getAttributes().contains(attrName)) {
-				return PK_IMAGE;
+			if (null != pk) {
+				List<String> attr = pk.getAttributes();
+				if (null != attr && attr.contains(attrName)) {
+					return PK_IMAGE;
+				}
 			}
 			return editableMode ? UNCHECK_IMAGE : null;
 		}

@@ -125,7 +125,7 @@ public class BrokersParameterPropertyPage extends
 
 	private static final String MASTER_SHMID_LBL_NAME = "MASTER_SHM_ID:";
 	private static final String ADMIN_LOG_LBL_NAME = "ADMIN_LOG_FILE:";
-	private static final String ENABLE_ACCESS_CONTROL = "ENABLE_ACCESS_CONTROL:";
+	private static final String ENABLE_ACCESS_CONTROL = "ACCESS_CONTROL:";
 	private static final String ACCESS_CONTROL_FILE = "ACCESS_CONTROL_FILE:";
 	private Button addBtn;
 	private Button editBtn;
