@@ -59,10 +59,10 @@ public class CubridSchemaInfoManager {
 		if (schemaInfo == null) {
 			return;
 		}
-		if (schemaInfoMap.get(schemaInfo.getClassname()) != null) {
+		if (schemaInfoMap.get(schemaInfo.getUniqueName()) != null) {
 			return;
 		}
-		schemaInfoMap.put(schemaInfo.getClassname(), schemaInfo);
+		schemaInfoMap.put(schemaInfo.getUniqueName(), schemaInfo);
 	}
 
 	public void removeSchemaInfo(String name) {
@@ -76,10 +76,10 @@ public class CubridSchemaInfoManager {
 		if (schemaInfo == null) {
 			return;
 		}
-		if (schemaInfoMap.get(schemaInfo.getClassname()) == null) {
+		if (schemaInfoMap.get(schemaInfo.getUniqueName()) == null) {
 			return;
 		}
-		schemaInfoMap.remove(schemaInfo.getClassname());
+		schemaInfoMap.remove(schemaInfo.getUniqueName());
 	}
 
 	public void cleanAllSchemaInfos() {

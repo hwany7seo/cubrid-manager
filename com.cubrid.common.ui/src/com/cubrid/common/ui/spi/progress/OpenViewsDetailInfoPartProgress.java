@@ -78,24 +78,41 @@ public class OpenViewsDetailInfoPartProgress implements IRunnableWithProgress {
 					database.getDatabaseInfo(), true);
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT c.class_name, v.vclass_def, c.owner_name \n");
-			sb.append("FROM db_class c, db_attribute a, db_vclass v \n");
-			sb.append("WHERE c.class_name=a.class_name \n");
-			sb.append("AND c.class_name=v.vclass_name \n");
-			sb.append("AND c.is_system_class='NO' \n");
-			sb.append("AND a.from_class_name IS NULL \n");
-			sb.append("AND c.class_type='VCLASS' \n");
-			sb.append("GROUP BY c.class_name, c.class_type, \n");
-			//8.2.2 need to group by these 2 column
-			sb.append("v.vclass_def ,c.owner_name \n");
-			sb.append("ORDER BY c.class_type, c.class_name");
+			if (database.getDatabaseInfo().isSupportUserSchema()) {
+				sb.append("SELECT c.class_name, v.vclass_def, c.owner_name \n");
+				sb.append("FROM db_class c, db_attribute a, db_vclass v \n");
+				sb.append("WHERE c.class_name=a.class_name \n");
+				sb.append("AND c.class_name=v.vclass_name \n");
+				sb.append("AND c.owner_name=v.owner_name \n");
+				sb.append("AND c.is_system_class='NO' \n");
+				sb.append("AND a.from_class_name IS NULL \n");
+				sb.append("AND c.class_type='VCLASS' \n");
+				sb.append("GROUP BY c.class_name, c.class_type, \n");
+				//8.2.2 need to group by these 2 column
+				sb.append("v.vclass_def ,c.owner_name \n");
+				sb.append("ORDER BY c.owner_name, c.class_type, c.class_name");
+			} else {
+				sb.append("SELECT c.class_name, v.vclass_def, c.owner_name \n");
+				sb.append("FROM db_class c, db_attribute a, db_vclass v \n");
+				sb.append("WHERE c.class_name=a.class_name \n");
+				sb.append("AND c.class_name=v.vclass_name \n");
+				sb.append("AND c.is_system_class='NO' \n");
+				sb.append("AND a.from_class_name IS NULL \n");
+				sb.append("AND c.class_type='VCLASS' \n");
+				sb.append("GROUP BY c.class_name, c.class_type, \n");
+				//8.2.2 need to group by these 2 column
+				sb.append("v.vclass_def ,c.owner_name \n");
+				sb.append("ORDER BY c.class_type, c.class_name");
+			}
 
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sb.toString());
 			while (rs.next()) {
-				ViewDetailInfo view = new ViewDetailInfo(rs.getString(1));
+				String className = rs.getString(1);
+				String ownerName = rs.getString(3);
+				ViewDetailInfo view = new ViewDetailInfo(className);
 				view.setViewDef(rs.getString(2));
-				view.setViewOwnerName(rs.getString(3));
+				view.setViewOwnerName(ownerName);
 				viewList.add(view);
 			}
 			success = true;

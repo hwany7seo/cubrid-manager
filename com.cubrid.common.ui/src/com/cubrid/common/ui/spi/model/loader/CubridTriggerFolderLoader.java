@@ -29,6 +29,7 @@ package com.cubrid.common.ui.spi.model.loader;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -121,9 +122,23 @@ public class CubridTriggerFolderLoader extends
 			}
 			if (triggerList != null && !triggerList.isEmpty()) {
 				for (Trigger trigger : triggerList) {
-					String id = parent.getId() + NODE_SEPARATOR
+					if (databaseInfo.isSupportUserSchema()) {
+						int idx = trigger.getName().indexOf(".");
+						if (idx > 0) {
+							String triggerName = trigger.getName();
+							trigger.setOwner(triggerName.substring(0, idx));
+							trigger.setName(triggerName.substring(idx+1));
+						}
+					}
+					String id;
+					if (trigger.getOwner() != null && !trigger.getOwner().isEmpty()) {
+						id = parent.getId() + NODE_SEPARATOR
+							+ trigger.getOwner()+ "." + trigger.getName();
+					} else {
+						id = parent.getId() + NODE_SEPARATOR
 							+ trigger.getName();
-					ICubridNode triggerNode = createTriggerNode(id, trigger);
+					}
+					ICubridNode triggerNode = createTriggerNode(databaseInfo, id, trigger);
 					parent.addChild(triggerNode);
 				}
 			}
@@ -144,9 +159,17 @@ public class CubridTriggerFolderLoader extends
 	 * @param trigger The model object
 	 * @return ICubridNode
 	 */
-	public static ICubridNode createTriggerNode(String id, Trigger trigger) {
-		ICubridNode triggerNode = new DefaultSchemaNode(id, trigger.getName(),
-				"icons/navigator/trigger_item.png");
+	public static ICubridNode createTriggerNode(DatabaseInfo databaseInfo, String id, Trigger trigger) {
+		ICubridNode triggerNode;
+		if (databaseInfo.isSupportUserSchema()) {
+			triggerNode = new DefaultSchemaNode(id, 
+					"[" + trigger.getOwner().toUpperCase(Locale.getDefault()) + "] " + trigger.getName(),
+					trigger.getOwner() + "." + trigger.getName(),
+					"icons/navigator/trigger_item.png");
+		} else {
+			triggerNode = new DefaultSchemaNode(id, trigger.getName(),trigger.getName(),
+					"icons/navigator/trigger_item.png");
+		}
 		triggerNode.setType(NodeType.TRIGGER);
 		triggerNode.setModelObj(trigger);
 		triggerNode.setContainer(false);

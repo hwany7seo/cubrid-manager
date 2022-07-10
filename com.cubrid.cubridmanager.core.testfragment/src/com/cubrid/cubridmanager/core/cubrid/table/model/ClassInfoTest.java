@@ -53,9 +53,10 @@ public class ClassInfoTest extends
 		;
 		boolean isSystemClass = true;
 		boolean isPartitionedClass = true;
+		boolean isSupportUserSchema = true;
 		//test constructor
 		ClassInfo classInfo = new ClassInfo(className, ownerName, classType,
-				isSystemClass, isPartitionedClass);
+				isSystemClass, isPartitionedClass, isSupportUserSchema);
 		assertNotNull(classInfo);
 
 		//test 	getters and setters	
@@ -64,11 +65,13 @@ public class ClassInfoTest extends
 		classInfo.setClassType(classType);
 		classInfo.setSystemClass(isSystemClass);
 		classInfo.setPartitionedClass(isPartitionedClass);
+		classInfo.setSupportUserSchema(isSupportUserSchema);
 		assertEquals(classInfo.getClassName(), className);
 		assertEquals(classInfo.getOwnerName(), ownerName);
 		assertEquals(classInfo.getClassType(), classType);
 		assertTrue(classInfo.isSystemClass());
 		assertTrue(classInfo.isPartitionedClass());
+		assertTrue(classInfo.isSupportUserSchema());
 	}
 
 }

@@ -39,6 +39,7 @@ import java.util.List;
  */
 public class TableIndex {
 	private String indexName;
+	private String ownerName = "";
 	private boolean isPrimaryKey;
 	private boolean isForeignKey;
 	private boolean isUnique;
@@ -61,6 +62,17 @@ public class TableIndex {
 		this.indexName = indexName;
 	}
 
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	/**
+	 * @param indexName the indexName to set
+	 */
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+	
 	/**
 	 * Whether is primary key
 	 * 

@@ -30,6 +30,7 @@ package com.cubrid.common.ui.cubrid.trigger.editor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -158,6 +159,15 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 				| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
 		triggersDetailInfoTable.getTable().setHeaderVisible(true);
 		triggersDetailInfoTable.getTable().setLinesVisible(true);
+		
+		final TableViewerColumn ownerColumn = new TableViewerColumn(
+				triggersDetailInfoTable, SWT.LEFT);
+		if (database != null && database.getDatabaseInfo().isSupportUserSchema()) {
+			ownerColumn.getColumn().setWidth(80);
+		} else {
+			ownerColumn.getColumn().setWidth(0);
+		}
+		ownerColumn.getColumn().setText(Messages.triggersDetailInfoPartTableOwnerCol);
 		
 		final TableViewerColumn nameColumn = new TableViewerColumn(
 				triggersDetailInfoTable, SWT.LEFT);
@@ -411,17 +421,31 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 			if (element instanceof Trigger) {
 				Trigger trigger = (Trigger)element;
 				if (trigger != null) {
+					String owner;
+					String name = trigger.getName();
+					if (database.getDatabaseInfo().isSupportUserSchema()) {
+						int idx = name.indexOf(".");
+						if (idx > 0) {
+							owner = name.substring(0, idx).toUpperCase(Locale.getDefault());
+							name = name.substring(idx + 1);
+						} else {
+							owner = "";
+						}
+					} else {
+						owner = "";
+					}
 					switch (columnIndex) {
-						case 0 : return trigger.getName();
-						case 1 : return trigger.getTarget_class();
-						case 2 : return trigger.getEventType();
-						case 3 : 
-							return trigger.getStatus();
+						case 0 : return owner;
+						case 1 : return name;
+						case 2 : return trigger.getTarget_class();
+						case 3 : return trigger.getEventType();
 						case 4 : 
+							return trigger.getStatus();
+						case 5 : 
 							return trigger.getPriority();
-						case 5 :
-							return trigger.getActionTime();
 						case 6 :
+							return trigger.getActionTime();
+						case 7 :
 							return trigger.getActionType();
 					}
 				}

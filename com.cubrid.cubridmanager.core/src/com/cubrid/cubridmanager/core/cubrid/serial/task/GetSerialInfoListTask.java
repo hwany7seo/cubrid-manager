@@ -77,7 +77,7 @@ public class GetSerialInfoListTask extends JDBCTask {
 
 			//databaseInfo.getServerInfo().compareVersionKey("8.2.2") >= 0;
 			boolean isSupportCache = CompatibleUtil.isSupportCache(databaseInfo);
-			String sql = "SELECT owner.name, db_serial.* FROM db_serial WHERE class_name IS NULL";
+			String sql = "SELECT owner.name, db_serial.* FROM db_serial WHERE class_name IS NULL ORDER BY owner.name, class_name";
 
 			// [TOOLS-2425]Support shard broker
 			if (databaseInfo.isShard()) {

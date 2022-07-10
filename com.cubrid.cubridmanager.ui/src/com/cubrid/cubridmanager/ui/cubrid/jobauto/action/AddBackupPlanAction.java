@@ -112,7 +112,7 @@ public class AddBackupPlanAction extends SelectionAction {
 			BackupPlanInfo backupPlanInfo = editBackupPlanDlg.getBackupPlanInfo();
 			String newBackupId = backupPlanInfo.getBackupid();
 			DefaultSchemaNode newNode = new DefaultSchemaNode(newBackupId,
-					newBackupId, ICON_PATH);
+					newBackupId, newBackupId, ICON_PATH);
 			newNode.setContainer(false);
 			newNode.setType(CubridNodeType.BACKUP_PLAN);
 			newNode.setModelObj(backupPlanInfo);

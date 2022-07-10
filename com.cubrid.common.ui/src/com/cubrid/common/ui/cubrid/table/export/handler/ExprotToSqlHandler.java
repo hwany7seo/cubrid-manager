@@ -102,7 +102,7 @@ public class ExprotToSqlHandler extends
 			conn = getConnection();
 			fs = FileUtil.getBufferedWriter(exportConfig.getDataFilePath(tableName),
 					exportConfig.getFileCharset());
-			String sql = getSelectSQL(conn, tableName);
+			String sql = getSelectSQL(conn, tableName, dbInfo.isSupportUserSchema());
 			isPaginating = isPagination(tableName, sql, whereCondition);
 			while (hasNextPage) {
 				try {

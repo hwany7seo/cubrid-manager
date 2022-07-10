@@ -216,6 +216,16 @@ public final class ActionSupportUtil {
 			}
 
 			boolean isSameUser = StringUtil.isEqualIgnoreCase(userInfo.getName(), getOwner(schemaNode));
+			if (!isSameUser && type == NodeType.TRIGGER) {
+				if (dbInfo.isSupportUserSchema()) {
+					int idx = schemaNode.getName().indexOf(".");
+					if (idx > 0) {
+						String ownerName = schemaNode.getName().substring(0, idx);
+						isSameUser = StringUtil.isEqualIgnoreCase(userInfo.getName(), ownerName);
+					}
+				}
+			}
+			
 			if (isSameUser) {
 				return true;
 			}

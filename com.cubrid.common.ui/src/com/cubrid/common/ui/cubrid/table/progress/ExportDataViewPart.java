@@ -261,17 +261,24 @@ public class ExportDataViewPart extends
 	 * @param isEnable
 	 */
 	private void setHistroyWidgetStatus(boolean isEnable) {
-		historyLabel.setEnabled(isEnable);
-		historyText.setEnabled(isEnable);
-		saveButton.setEnabled(isEnable);
-		closeButton.setEnabled(isEnable);
+		if (historyLabel != null && !historyLabel.isDisposed())
+			historyLabel.setEnabled(isEnable);
+		if (historyText != null && !historyText.isDisposed())
+			historyText.setEnabled(isEnable);
+		if (saveButton != null && !saveButton.isDisposed())
+			saveButton.setEnabled(isEnable);
+		if (closeButton != null && !closeButton.isDisposed())
+			closeButton.setEnabled(isEnable);
+
 		if (isEnable) {
 			String dateStringNow = DateUtil.getDatetimeStringOnNow("MM/dd HH:mm");
 			String databaseName = database.getDatabaseInfo().getDbName();
 			String historyName = Messages.bind(Messages.defaultExportHistoryName, databaseName,
 					dateStringNow);
-			historyText.setText(historyName);
-			saveButton.forceFocus();
+			if (historyText != null && !historyText.isDisposed())
+				historyText.setText(historyName);
+			if (saveButton != null && !saveButton.isDisposed())
+				saveButton.forceFocus();
 		}
 	}
 

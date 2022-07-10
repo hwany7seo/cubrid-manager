@@ -577,14 +577,15 @@ public class CopyDatabaseDialog extends
 		if (spaceInfoList == null) {
 			spaceInfoList = new ArrayList<Map<String, String>>();
 			for (DbSpaceInfo bean : volumeList) {
-				Map<String, String> map = new HashMap<String, String>();
+ 				Map<String, String> map = new HashMap<String, String>();
 				if (bean.getType().equals("Active_log")) {
 					srcLogDir = bean.getLocation();
 				}
 				if (!bean.getType().equals("GENERIC")
 						&& !bean.getType().equals("DATA")
 						&& !bean.getType().equals("TEMP")
-						&& !bean.getType().equals("INDEX")) {
+						&& !bean.getType().equals("INDEX")
+						&& !bean.getType().equals("PERMANENT")) {
 					continue;
 				}
 				map.put("0", bean.getSpacename());

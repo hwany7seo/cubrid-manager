@@ -195,6 +195,11 @@ public class ViewDashboardEditorPart extends CubridEditorPart {
 		viewsDetailInfoTable.getTable().setHeaderVisible(true);
 		viewsDetailInfoTable.getTable().setLinesVisible(true);
 
+		final TableViewerColumn ownerColumn = new TableViewerColumn(
+				viewsDetailInfoTable, SWT.LEFT);
+		ownerColumn.getColumn().setWidth(80);
+		ownerColumn.getColumn().setText(Messages.viewDetailInfoPartTableOwnerColumn);
+		
 		final TableViewerColumn columnViewName = new TableViewerColumn(
 				viewsDetailInfoTable, SWT.LEFT);
 		columnViewName.getColumn().setWidth(150);
@@ -205,11 +210,6 @@ public class ViewDashboardEditorPart extends CubridEditorPart {
 		scriptDescColumn.getColumn().setWidth(200);
 		scriptDescColumn.getColumn().setText(Messages.viewDetailInfoPartTableDefColumn);
 
-		final TableViewerColumn ownerColumn = new TableViewerColumn(
-				viewsDetailInfoTable, SWT.LEFT);
-		ownerColumn.getColumn().setWidth(80);
-		ownerColumn.getColumn().setText(Messages.viewDetailInfoPartTableOwnerColumn);
-
 		viewsDetailInfoTable.setContentProvider(new ViewsDetailTableViewerContentProvider());
 		viewsDetailInfoTable.setLabelProvider(new ViewsDetailTableViewerLabelProvider());
 
@@ -219,7 +219,7 @@ public class ViewDashboardEditorPart extends CubridEditorPart {
 				ViewDetailInfo oneViewDetail = (ViewDetailInfo)selection.getFirstElement();
 				//if had opend,set it selection
 				for (CTabItem tabItem : tabFolder.getItems()) {
-					if (tabItem.getText().equals(oneViewDetail.getViewName())) {
+					if (tabItem.getText().equals(oneViewDetail.getViewUniqueName(database.getDatabaseInfo().isSupportUserSchema()))) {
 						tabFolder.setSelection(tabItem);
 						return;
 					}
@@ -228,7 +228,7 @@ public class ViewDashboardEditorPart extends CubridEditorPart {
 				ViewDashboardComposite viewComp = new ViewDashboardComposite(tabFolder, SWT.NONE);
 				viewComp.initialize();
 
-				SchemaInfo schemaInfo = database.getDatabaseInfo().getSchemaInfo(oneViewDetail.getViewName());
+				SchemaInfo schemaInfo = database.getDatabaseInfo().getSchemaInfo(oneViewDetail.getViewUniqueName(database.getDatabaseInfo().isSupportUserSchema()));
 				viewComp.setInput(schemaInfo);
 
 			}
@@ -361,7 +361,7 @@ public class ViewDashboardEditorPart extends CubridEditorPart {
 		viewComp.initialize();
 		if (viewList.size() > 0) {
 			ViewDetailInfo oneViewDetail = viewList.get(0);
-			SchemaInfo schemaInfo = database.getDatabaseInfo().getSchemaInfo(oneViewDetail.getViewName());
+			SchemaInfo schemaInfo = database.getDatabaseInfo().getSchemaInfo(oneViewDetail.getViewUniqueName(database.getDatabaseInfo().isSupportUserSchema()));
 			viewComp.setInput(schemaInfo);
 		}
 	}
@@ -405,7 +405,7 @@ public class ViewDashboardEditorPart extends CubridEditorPart {
 			Set<String> typeSet = new HashSet<String>();
 			typeSet.add(NodeType.USER_VIEW);
 
-			ICubridNode viewNode = CommonUITool.findNode(database, typeSet, viewInfo.getViewName());
+			ICubridNode viewNode = CommonUITool.findNode(database, typeSet, viewInfo.getViewUniqueName(database.getDatabaseInfo().isSupportUserSchema()));
 			if (viewNode != null) {
 				EditViewAction action = (EditViewAction) ActionManager.getInstance().getAction(EditViewAction.ID);
 				if (action.run(database, (ISchemaNode) viewNode) == IDialogConstants.OK_ID) {
@@ -427,7 +427,7 @@ public class ViewDashboardEditorPart extends CubridEditorPart {
 				typeSet.add(NodeType.USER_VIEW);
 
 				ICubridNode viewNode = CommonUITool.findNode(database, typeSet,
-						viewInfo.getViewName());
+						viewInfo.getViewUniqueName(database.getDatabaseInfo().isSupportUserSchema()));
 				selectNodeList.add((ISchemaNode)viewNode);
 			}
 
@@ -462,7 +462,7 @@ public class ViewDashboardEditorPart extends CubridEditorPart {
 	 */
 	public boolean findItemName(String itemName) {
 		for (ViewDetailInfo view : viewList) {
-			if(view.getViewName().equals(itemName)) {
+			if(view.getViewUniqueName(database.getDatabaseInfo().isSupportUserSchema()).equals(itemName)) {
 				return true;
 			}
 		}
@@ -522,9 +522,9 @@ public class ViewDashboardEditorPart extends CubridEditorPart {
 				ViewDetailInfo viewDetail = (ViewDetailInfo)element;
 				if (viewDetail != null) {
 					switch (columnIndex) {
-						case 0 : return viewDetail.getViewName();
-						case 1 : return viewDetail.getViewDef();
-						case 2 : return viewDetail.getViewOwnerName();
+						case 0 : return viewDetail.getViewOwnerName();
+						case 1 : return viewDetail.getViewName();
+						case 2 : return viewDetail.getViewDef();
 					}
 				}
 			}

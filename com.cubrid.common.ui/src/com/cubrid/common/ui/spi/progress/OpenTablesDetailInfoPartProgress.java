@@ -44,16 +44,28 @@ public class OpenTablesDetailInfoPartProgress implements IRunnableWithProgress {
 	public boolean loadUserSchemaList(Connection conn, Map<String, TableDetailInfo> tablesMap) { // FIXME move this logic to core module
 		final int LIMIT_TABLE_COUNT = 500;
 
-		StringBuilder sql = new StringBuilder()
-		.append("SELECT \n")
-		.append("    class_name, \n")
-		.append("    class_type, \n")
-		.append("    partitioned \n")
-		.append("FROM \n")
-		.append("    db_class \n")
-		.append("WHERE \n")
-		.append("    is_system_class = 'NO'");
-
+		StringBuilder sql = new StringBuilder();
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			sql.append("SELECT \n");
+			sql.append("    class_name, \n");
+			sql.append("    class_type, \n");
+			sql.append("    partitioned, \n");
+			sql.append("    owner_name \n");
+			sql.append("FROM \n");
+			sql.append("    db_class \n");
+			sql.append("WHERE \n");
+			sql.append("    is_system_class = 'NO'");
+		} else {
+			sql.append("SELECT \n");
+			sql.append("    class_name, \n");
+			sql.append("    class_type, \n");
+			sql.append("    partitioned \n");
+			sql.append("FROM \n");
+			sql.append("    db_class \n");
+			sql.append("WHERE \n");
+			sql.append("    is_system_class = 'NO'");
+		}
+			
 		String query = sql.toString();
 
 		// [TOOLS-2425]Support shard broker
@@ -76,6 +88,10 @@ public class OpenTablesDetailInfoPartProgress implements IRunnableWithProgress {
 					String tableName = rs.getString(1);
 					String classType = rs.getString(2);
 					String partitioned = rs.getString(3);
+					if (database.getDatabaseInfo().isSupportUserSchema()) {
+						String OwnerName = rs.getString(4);
+						tableName = OwnerName + "." + tableName;
+					}
 
 					TableDetailInfo info = new TableDetailInfo();
 					tablesMap.put(tableName, info);
@@ -154,9 +170,14 @@ public class OpenTablesDetailInfoPartProgress implements IRunnableWithProgress {
 		.append("              \"data_type\" = 'BIT VARYING' THEN 1 \n")
 		.append("          ELSE 0 \n")
 		.append("    END ) AS size_over_column, \n")
-		.append("    MAX(c.class_type) AS class_type, \n")
-		.append("    MAX(c.partitioned) AS partitioned \n")
-		.append("FROM \n")
+		.append("    MAX(c.class_type) AS class_type, \n");
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			sql.append("    MAX(c.partitioned) AS partitioned, \n")
+			.append("    c.owner_name \n");
+		} else {
+			sql.append("    MAX(c.partitioned) AS partitioned \n");
+		}
+		sql.append("FROM \n")
 		.append("    db_class c, \n")
 		.append("    db_attribute a \n")
 		.append("WHERE \n")
@@ -166,8 +187,14 @@ public class OpenTablesDetailInfoPartProgress implements IRunnableWithProgress {
 		.append("    AND \n")
 		.append("    c.class_type = 'CLASS' \n")
 		.append("    AND \n")
-		.append("    a.from_class_name IS NULL \n")
-		.append("GROUP BY c.class_name\n");
+		.append("    a.from_class_name IS NULL \n");
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			sql.append("    AND \n")
+			.append("    c.owner_name = a.owner_name \n")
+			.append("GROUP BY c.owner_name, c.class_name\n");
+		} else {
+			sql.append("GROUP BY c.class_name\n");
+		}
 
 		query = sql.toString();
 
@@ -188,7 +215,11 @@ public class OpenTablesDetailInfoPartProgress implements IRunnableWithProgress {
 				boolean columnOverSize = rs.getInt(4) > 0;
 				String classType = rs.getString(5);
 				String partitioned = rs.getString(6);
-
+				if (database.getDatabaseInfo().isSupportUserSchema()) {
+					String OwnerName = rs.getString(7);
+					tableName = OwnerName + "." + tableName;
+				}
+				
 				TableDetailInfo info = null;
 				if (tablesMap.containsKey(tableName)) {
 					info = tablesMap.get(tableName);
@@ -237,9 +268,14 @@ public class OpenTablesDetailInfoPartProgress implements IRunnableWithProgress {
 		.append("              i.is_unique = 'NO' \n")
 		.append("              AND \n")
 		.append("              i.is_primary_key = 'NO' THEN 1 \n")
-		.append("          ELSE 0 \n")
-		.append("    END ) AS count_index \n")
-		.append("FROM \n")
+		.append("          ELSE 0 \n");
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			sql.append("    END ) AS count_index, \n")
+			.append("    c.owner_name \n");
+		} else {
+			sql.append("    END ) AS count_index \n");
+		}
+		sql.append("FROM \n")
 		.append("    db_class c, \n")
 		.append("    db_index_key k, \n")
 		.append("    db_index i \n")
@@ -248,16 +284,26 @@ public class OpenTablesDetailInfoPartProgress implements IRunnableWithProgress {
 		.append("    AND \n")
 		.append("    k.class_name = i.class_name \n")
 		.append("    AND \n")
-		.append("    k.index_name = i.index_name \n")
-		.append("    AND \n")
+		.append("    k.index_name = i.index_name \n");
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			sql.append("    AND \n")
+			.append("    c.owner_name = k.owner_name \n")
+			.append("    AND \n")
+			.append("    k.owner_name = i.owner_name \n");
+		}
+		sql.append("    AND \n")
 		.append("    c.class_type = 'CLASS' \n")
 		.append("    AND \n")
 		.append("    c.is_system_class = 'NO' \n")
 		.append("    AND \n")
 		.append("    i.key_count >= 1 \n")
 		.append("    AND \n")
-		.append("    NOT EXISTS (SELECT 1 FROM db_partition p WHERE c.class_name = LOWER(p.partition_class_name)) \n")
-		.append("GROUP BY c.class_name;\n");
+		.append("    NOT EXISTS (SELECT 1 FROM db_partition p WHERE c.class_name = LOWER(p.partition_class_name)) \n");
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			sql.append("GROUP BY c.owner_name, c.class_name;\n");
+		} else {
+			sql.append("GROUP BY c.class_name;\n");
+		}
 		query = sql.toString();
 
 		// [TOOLS-2425]Support shard broker
@@ -277,7 +323,11 @@ public class OpenTablesDetailInfoPartProgress implements IRunnableWithProgress {
 				int pkCount = rs.getInt(3);
 				int fkCount = rs.getInt(4);
 				int indexCount = rs.getInt(5);
-
+				if (database.getDatabaseInfo().isSupportUserSchema()) {
+					String OwnerName = rs.getString(6);
+					tableName = OwnerName + "." + tableName;
+				}
+				
 				TableDetailInfo info = null;
 				if (tablesMap.containsKey(tableName)) {
 					info = tablesMap.get(tableName);
@@ -291,6 +341,7 @@ public class OpenTablesDetailInfoPartProgress implements IRunnableWithProgress {
 				info.setPkCount(pkCount);
 				info.setFkCount(fkCount);
 				info.setIndexCount(indexCount);
+				info.setClassType("CLASS");
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -330,7 +381,7 @@ public class OpenTablesDetailInfoPartProgress implements IRunnableWithProgress {
 				Map<String, SchemaComment> comments = null;
 				if (SchemaCommentHandler.isInstalledMetaTable(databaseInfo, conn)) {
 					try {
-						comments = SchemaCommentHandler.loadTableDescriptions(databaseInfo, conn);
+						comments = SchemaCommentHandler.loadTableDescriptions(databaseInfo, conn, databaseInfo.isSupportUserSchema());
 					} catch (SQLException e) {
 						LOGGER.error(e.getMessage(), e);
 					}

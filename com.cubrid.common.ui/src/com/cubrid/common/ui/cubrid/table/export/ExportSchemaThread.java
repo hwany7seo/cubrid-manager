@@ -254,7 +254,7 @@ public class ExportSchemaThread extends
 				task.execute();
 				boolean isSupportCache = CompatibleUtil.isSupportCache(dbInfo);
 				for (SerialInfo serial : task.getSerialInfoList()) {
-					fs.write(QueryUtil.createSerialSQLScript(serial, isSupportCache));
+					fs.write(QueryUtil.createSerialSQLScript(serial, isSupportCache, dbInfo.isSupportUserSchema()));
 					fs.write(StringUtil.NEWLINE);
 					hasSerial = true;
 				}
@@ -284,10 +284,19 @@ public class ExportSchemaThread extends
 		Statement stmt = null;
 		CUBRIDResultSetProxy rs = null;
 
-		String sql = "SELECT c.class_name, c.class_type" + " FROM db_class c, db_attribute a"
+		String sql;
+		if (dbInfo.isSupportUserSchema()) {
+			sql = "SELECT c.class_name, c.owner_name, c.class_type" + " FROM db_class c, db_attribute a"
 				+ " WHERE c.class_name=a.class_name AND c.is_system_class='NO'"
-				+ " AND c.class_type='VCLASS'" + " GROUP BY c.class_name, c.class_type"
-				+ " ORDER BY c.class_type, c.class_name";
+				+ " AND c.owner_name=a.owner_name"
+				+ " AND c.class_type='VCLASS'" + " GROUP BY c.owner_name, c.class_name, c.class_type"
+				+ " ORDER BY c.owner_name, c.class_type, c.class_name";
+		} else {
+			sql = "SELECT c.class_name, c.class_type" + " FROM db_class c, db_attribute a"
+					+ " WHERE c.class_name=a.class_name AND c.is_system_class='NO'"
+					+ " AND c.class_type='VCLASS'" + " GROUP BY c.class_name, c.class_type"
+					+ " ORDER BY c.class_type, c.class_name";
+		}
 
 		// [TOOLS-2425]Support shard broker
 		sql = dbInfo.wrapShardQuery(sql);
@@ -298,7 +307,14 @@ public class ExportSchemaThread extends
 
 			rs = (CUBRIDResultSetProxy) stmt.executeQuery(sql);
 			while (rs.next()) {
-				viewNameList.add(rs.getString(1));
+				if (dbInfo.isSupportUserSchema()) {
+					String className = rs.getString(1);
+					String ownerName = rs.getString(2);
+					viewNameList.add(ownerName + "." + className);
+				} else {
+					String className = rs.getString(1);
+					viewNameList.add(className);
+				}
 			}
 		} catch (Exception e) {
 			LOGGER.error("", e);
@@ -311,8 +327,14 @@ public class ExportSchemaThread extends
 					ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
 
 			for (String viewName : viewNameList) {
-				String querySpecSql = "SELECT vclass_def FROM db_vclass WHERE vclass_name='"
+				String querySpecSql;
+				if (dbInfo.isSupportUserSchema()) {
+					querySpecSql = "SELECT vclass_def FROM db_vclass WHERE CONCAT(owner_name, '.' , vclass_name)='"
 						+ viewName + "'";
+				} else {
+					querySpecSql = "SELECT vclass_def FROM db_vclass WHERE vclass_name='"
+						+ viewName + "'";
+				}
 
 				// [TOOLS-2425]Support shard broker
 				querySpecSql = dbInfo.wrapShardQuery(querySpecSql);
@@ -358,7 +380,7 @@ public class ExportSchemaThread extends
 		} else {
 			sb.append("CREATE VIEW ");
 		}
-		sb.append(QuerySyntax.escapeKeyword(viewInfo.getClassname()));
+		sb.append(viewInfo.getUniqueName());
 		sb.append("(");
 
 		for (DBAttribute addr : viewInfo.getAttributes()) { // "Name", "Data

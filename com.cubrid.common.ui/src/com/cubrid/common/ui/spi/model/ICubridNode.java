@@ -310,4 +310,6 @@ public interface ICubridNode extends
 	 * @return Object
 	 */
 	public Object getData(String key);
+	
+	public void setUniqueName(String tableName);
 }

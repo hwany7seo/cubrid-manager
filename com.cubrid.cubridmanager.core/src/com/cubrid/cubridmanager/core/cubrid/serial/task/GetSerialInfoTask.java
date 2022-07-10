@@ -80,7 +80,12 @@ public class GetSerialInfoTask extends JDBCTask {
 
 			boolean isSupportCache = CompatibleUtil.isSupportCache(databaseInfo);
 
-			String sql = "SELECT owner.name, db_serial.* FROM db_serial WHERE name=?";
+			String sql;
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT owner.name, db_serial.* FROM db_serial WHERE CONCAT(owner.name, '.' , name)=?";
+			} else {
+				sql = "SELECT owner.name, db_serial.* FROM db_serial WHERE name=?";
+			}
 			// [TOOLS-2425]Support shard broker
 			if (databaseInfo.isShard()) {
 				sql = databaseInfo.wrapShardQuery(sql);

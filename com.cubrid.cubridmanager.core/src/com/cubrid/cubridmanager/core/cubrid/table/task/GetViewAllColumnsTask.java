@@ -72,7 +72,12 @@ public class GetViewAllColumnsTask extends
 				return;
 			}
 
-			String sql = "SELECT vclass_name, vclass_def FROM db_vclass WHERE vclass_name=?";
+			String sql;
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT vclass_name, vclass_def FROM db_vclass WHERE CONCAT(owner_name, '.' , vclass_name)=?";
+			}  else {
+				sql = "SELECT vclass_name, vclass_def FROM db_vclass WHERE vclass_name=?";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);

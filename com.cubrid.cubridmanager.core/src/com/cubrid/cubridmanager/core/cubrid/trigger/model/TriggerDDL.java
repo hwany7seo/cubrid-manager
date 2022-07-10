@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 import com.cubrid.common.core.common.model.Trigger;
 import com.cubrid.common.core.util.QuerySyntax;
 import com.cubrid.common.core.util.StringUtil;
+import com.cubrid.cubridmanager.core.cubrid.database.model.DatabaseInfo;
 
 /**
  * 
@@ -49,15 +50,18 @@ public final class TriggerDDL {
 	static String newLine = StringUtil.NEWLINE;
 	static String endLineChar = ";";
 
+	public static String getDDL(Trigger trigger) {
+		return getDDL(trigger, false);
+	}
 	/**
 	 * Get the ddl
 	 * 
 	 * @param trigger Trigger
 	 * @return String
 	 */
-	public static String getDDL(Trigger trigger) {
+	public static String getDDL(Trigger trigger, boolean isSupportUserSchema) {
 		StringBuffer bf = new StringBuffer();
-		appendHead(trigger, bf);
+		appendHead(trigger, bf, isSupportUserSchema);
 		appendStatus(trigger, bf);
 		appendPriority(trigger, bf);
 		appendEvent(trigger, bf);
@@ -200,14 +204,30 @@ public final class TriggerDDL {
 	 * @param trigger Trigger
 	 * @param bf StringBuffer
 	 */
-	private static void appendHead(Trigger trigger, StringBuffer bf) {
+	private static void appendHead(Trigger trigger, StringBuffer bf, boolean isSupportUserSchema) {
 		//CREATE TRIGGER trigger_name
 		bf.append("CREATE TRIGGER ");
 		String triggerName = trigger.getName();
+		String ownerName = trigger.getOwner();
 		if (triggerName == null || triggerName.trim().equals("")) {
 			bf.append("<trigger_name>");
 		} else {
-			bf.append(QuerySyntax.escapeKeyword(triggerName));
+			if (ownerName == null || ownerName.isEmpty()) {
+				if (isSupportUserSchema) {
+					int idx = triggerName.indexOf(".");
+					if (idx > 0) {
+						String owner = triggerName.substring(0, idx);
+						String name = triggerName.substring(idx + 1);
+						bf.append(QuerySyntax.escapeKeyword(owner) + "." + QuerySyntax.escapeKeyword(name));
+					} else {
+						bf.append(QuerySyntax.escapeKeyword(triggerName));
+					}
+				} else {
+					bf.append(QuerySyntax.escapeKeyword(triggerName));
+				}
+			} else {
+				bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+			}
 		}
 		bf.append(newLine);
 	}
@@ -221,6 +241,7 @@ public final class TriggerDDL {
 	 */
 	public static String getAlterDDL(Trigger oldTrigger, Trigger newTrigger) {
 		String triggerName = oldTrigger.getName();
+		String ownerName = oldTrigger.getOwner();
 		String oldPriority = oldTrigger.getPriority();
 		String oldStatus = oldTrigger.getStatus();
 		String oldDescription = oldTrigger.getDescription();
@@ -234,7 +255,11 @@ public final class TriggerDDL {
 		}
 		if (statusChanged) {
 			bf.append("ALTER TRIGGER ");
-			bf.append(QuerySyntax.escapeKeyword(triggerName));
+			if (ownerName == null || ownerName.isEmpty()) {
+				bf.append(QuerySyntax.escapeKeyword(triggerName));
+			} else {
+				bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+			}
 			bf.append(" STATUS ").append(newStatus);
 			bf.append(endLineChar);
 			bf.append(newLine);
@@ -246,7 +271,11 @@ public final class TriggerDDL {
 		}
 		if (priorityChanged) {
 			bf.append("ALTER TRIGGER ");
-			bf.append(QuerySyntax.escapeKeyword(triggerName));
+			if (ownerName == null || ownerName.isEmpty()) {
+				bf.append(QuerySyntax.escapeKeyword(triggerName));
+			} else {
+				bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+			}
 			bf.append(" PRIORITY ").append(newPriority);
 			bf.append(endLineChar);
 			bf.append(newLine);
@@ -259,7 +288,11 @@ public final class TriggerDDL {
 
 		if (commentChanged) {
 			bf.append("ALTER TRIGGER ");
-			bf.append(QuerySyntax.escapeKeyword(triggerName));
+			if (ownerName == null || ownerName.isEmpty()) {
+				bf.append(QuerySyntax.escapeKeyword(triggerName));
+			} else {
+				bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+			}
 			newDescription = String.format("'%s'", newDescription);
 			bf.append(String.format(" COMMENT %s", StringUtil.escapeQuotes(newDescription)));
 			bf.append(endLineChar);

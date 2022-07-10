@@ -27,6 +27,8 @@
  */
 package com.cubrid.cubridmanager.core.cubrid.table.model;
 
+import java.util.Locale;
+
 import com.cubrid.cubridmanager.core.utils.ModelUtil.ClassType;
 
 /**
@@ -43,21 +45,32 @@ public class ClassInfo {
 	private ClassType classType;
 	private boolean isSystemClass;
 	private boolean isPartitionedClass;
+	private boolean isSupportUserSchema;
+	private boolean debugInputUserSchema = false;
 
 	public ClassInfo(String className) {
 		this.className = className;
 	}
 
 	public ClassInfo(String className, String ownerName, ClassType classType,
-			boolean isSystemClass, boolean isPartitionedClass) {
+			boolean isSystemClass, boolean isPartitionedClass, boolean isSupportUserSchema) {
 		this.className = className;
 		this.ownerName = ownerName;
 		this.classType = classType;
 		this.isSystemClass = isSystemClass;
 		this.isPartitionedClass = isPartitionedClass;
+		this.isSupportUserSchema = isSupportUserSchema;
+		this.debugInputUserSchema = true;
 	}
 
 	public String getClassName() {
+		if (!debugInputUserSchema) {
+			try {
+				throw new Exception(); 
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 		return className;
 	}
 
@@ -71,6 +84,26 @@ public class ClassInfo {
 
 	public void setOwnerName(String ownerName) {
 		this.ownerName = ownerName;
+	}
+
+	public String getUniqueName() {
+		if (!debugInputUserSchema) {
+			try {
+				throw new Exception(); 
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if (isSupportUserSchema) {
+			if (isSystemClass) {
+				return className;
+			} else {
+				return ownerName + "." + className;
+			}
+		} else {
+			return className;
+		}
 	}
 
 	public ClassType getClassType() {
@@ -95,6 +128,15 @@ public class ClassInfo {
 
 	public void setPartitionedClass(boolean isPartitionedClass) {
 		this.isPartitionedClass = isPartitionedClass;
+	}
+
+	public boolean isSupportUserSchema() {
+		return isSupportUserSchema;
+	}
+
+	public void setSupportUserSchema(boolean isSupportUserSchema) {
+		this.debugInputUserSchema = true;
+		this.isSupportUserSchema = isSupportUserSchema;
 	}
 
 }

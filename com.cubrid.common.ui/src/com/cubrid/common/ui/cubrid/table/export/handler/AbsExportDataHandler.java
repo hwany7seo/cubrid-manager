@@ -207,12 +207,12 @@ public abstract class AbsExportDataHandler {
 		}
 	}
 
-	protected String getSelectSQL(Connection conn, String name) {
+	protected String getSelectSQL(Connection conn, String name, boolean isSupportUserSchema) {
 		String sql = null;
 		if (exportConfig.getSQL(name) != null) {
 			sql = exportConfig.getSQL(name);
 		} else {
-			sql = QueryUtil.getSelectSQL(conn, name);
+			sql = QueryUtil.getSelectSQL(conn, name, isSupportUserSchema);
 		}
 		return sql;
 	}
@@ -514,7 +514,7 @@ public abstract class AbsExportDataHandler {
 				task.execute();
 				boolean isSupportCache = CompatibleUtil.isSupportCache(databaseInfo);
 				for (SerialInfo serial : task.getSerialInfoList()) {
-					schemaWriter.write(QueryUtil.createSerialSQLScript(serial, isSupportCache));
+					schemaWriter.write(QueryUtil.createSerialSQLScript(serial, isSupportCache, databaseInfo.isSupportUserSchema()));
 					schemaWriter.write(StringUtil.NEWLINE);
 				}
 				schemaWriter.flush();
@@ -571,7 +571,7 @@ public abstract class AbsExportDataHandler {
 				triggerNameTask.execute();
 				triggerList = triggerNameTask.getTriggerInfoList();
 				for (Trigger t: triggerList) {
-					triggerWriter.write(TriggerDDL.getDDL(t));
+					triggerWriter.write(TriggerDDL.getDDL(t, databaseInfo.isSupportUserSchema()));
 					triggerWriter.write(StringUtil.NEWLINE);
 				}
 				triggerWriter.flush();
@@ -604,7 +604,11 @@ public abstract class AbsExportDataHandler {
 		sqlbuf.append(QuerySyntax.escapeKeyword("current_val")).append(", ");
 		sqlbuf.append(QuerySyntax.escapeKeyword("increment_val")).append(", ");
 		sqlbuf.append(QuerySyntax.escapeKeyword("started"));
-		sqlbuf.append(" FROM db_serial WHERE name = '").append(serialName).append("'");
+		if (dbInfo.isSupportUserSchema()) {
+			sqlbuf.append(" FROM db_serial WHERE CONCAT(owner.name, '.', name) = '").append(serialName).append("'");
+		} else {
+			sqlbuf.append(" FROM db_serial WHERE name = '").append(serialName).append("'");
+		}
 
 		String sql = DatabaseInfo.wrapShardQuery(dbInfo, sqlbuf.toString());
 

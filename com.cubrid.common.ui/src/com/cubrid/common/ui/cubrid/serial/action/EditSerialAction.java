@@ -142,7 +142,7 @@ public class EditSerialAction extends
 					SerialInfo serialInfo = null;
 					if (task instanceof GetSerialInfoTask) {
 						GetSerialInfoTask getSerialInfoTask = (GetSerialInfoTask) task;
-						serialInfo = getSerialInfoTask.getSerialInfo(node.getLabel());
+						serialInfo = getSerialInfoTask.getSerialInfo(node.getName());
 					}
 					final String msg = task.getErrorMsg();
 					if (openErrorBox(shell, msg, monitor)) {
