@@ -120,7 +120,7 @@ public class GetInfoDataUtil {
 			sb.append("CREATE VIEW ");
 		} else {
 			if (CompatibleUtil.isSupportReplaceView(database)
-					&& classInfo.getClassName().equalsIgnoreCase(viewName)) {
+					&& classInfo.getTableName().equalsIgnoreCase(viewName)) {
 				sb.append("CREATE OR REPLACE VIEW ");
 			} else {
 				sb.append("CREATE VIEW ");

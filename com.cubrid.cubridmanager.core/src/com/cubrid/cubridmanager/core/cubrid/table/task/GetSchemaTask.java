@@ -79,7 +79,7 @@ public class GetSchemaTask extends JDBCTask {
 	private IProgressMonitor monitor;
 	public GetSchemaTask(DatabaseInfo dbInfo, String tableName) {
 		super("GetSchemaTask", dbInfo);
-		this.tableName = tableName.toLowerCase(Locale.getDefault());
+		this.tableName = tableName;
 	}
 	
 	public GetSchemaTask(DatabaseInfo dbInfo, String tableName, IProgressMonitor monitor) {
@@ -89,7 +89,7 @@ public class GetSchemaTask extends JDBCTask {
 
 	public GetSchemaTask(Connection connection, DatabaseInfo dbInfo, String tableName) {
 		super("GetSchemaTask", dbInfo, connection);
-		this.tableName = tableName.toLowerCase(Locale.getDefault());
+		this.tableName = tableName;
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class GetSchemaTask extends JDBCTask {
 				partitionedClassListTask = new GetPartitionedClassListTask(
 						databaseInfo);
 			}
-			List<PartitionInfo> partitionInfoList = partitionedClassListTask.getPartitionItemList(schemaInfo.getClassname());
+			List<PartitionInfo> partitionInfoList = partitionedClassListTask.getPartitionItemList(schemaInfo.getTableName());
 			schemaInfo.setPartitionList(partitionInfoList);
 		}
 	}
@@ -203,11 +203,16 @@ public class GetSchemaTask extends JDBCTask {
 
 		if (supportComment) {
 			schemaComment = SchemaCommentHandler.loadDescription(
-					databaseInfo, connection, tableName).get(tableName + "*");
+					databaseInfo, connection, databaseInfo.isSupportUserSchema(), tableName).get(tableName + "*");
 		}
 
 		//get table information
-		String sql = "SELECT * FROM db_class WHERE class_name=?";
+		String sql = "";
+		if (databaseInfo.isSupportUserSchema()) {
+			sql = "SELECT * FROM db_class WHERE LOWER(CONCAT(owner_name, '.', class_name))=?";
+		} else {
+			sql = "SELECT * FROM db_class WHERE class_name=?";
+		}
 
 		// [TOOLS-2425]Support shard broker
 		sql = databaseInfo.wrapShardQuery(sql);
@@ -222,6 +227,7 @@ public class GetSchemaTask extends JDBCTask {
 				String type = rs.getString("class_type");
 				String isSystemClass = rs.getString("is_system_class");
 				String owner = rs.getString("owner_name");
+				String className = rs.getString("class_name");
 				schemaInfo = new SchemaInfo();
 				if ("CLASS".equals(type)) {
 					schemaInfo.setVirtual(SchemaInfo.VIRTUAL_NORMAL);
@@ -245,7 +251,12 @@ public class GetSchemaTask extends JDBCTask {
 					schemaInfo.setDescription(schemaComment.getDescription());
 				}
 				schemaInfo.setOwner(owner);
-				schemaInfo.setClassname(tableName);
+				schemaInfo.setClassname(className);
+				if (databaseInfo.isSupportUserSchema()) {
+					schemaInfo.setTableName(owner + "." + className);
+				} else {
+					schemaInfo.setTableName(className);
+				}
 				schemaInfo.setDbname(databaseInfo.getDbName());
 				schemaInfo.setPartitionGroup(rs.getString("partitioned"));
 			}
@@ -275,7 +286,7 @@ public class GetSchemaTask extends JDBCTask {
 			key = SchemaInfo.VIRTUAL_VIEW.toUpperCase();
 		}
 		String sql = "SHOW CREATE " + key + " "
-				+ QuerySyntax.escapeKeyword(schemaInfo.getClassname());
+				+ QuerySyntax.escapeKeyword(schemaInfo.getTableName());
 
 		return sql;
 	}
@@ -375,9 +386,16 @@ public class GetSchemaTask extends JDBCTask {
 	 */
 	private void getDBResolutionInfo(SchemaInfo schemaInfo) throws SQLException {
 		if (schemaInfo != null) {
-			String sql = "SELECT attr_name, from_class_name, attr_type, from_attr_name" +
+			String sql = "";
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT attr_name, from_owner_name, from_class_name, attr_type, from_attr_name" +
+					" FROM db_attribute WHERE LOWER(CONCAT (owner_name, ',', class_name))=? AND attr_name<>from_attr_name" +
+					" AND from_attr_name IS NOT NULL";
+			} else {
+				sql = "SELECT attr_name, from_class_name, attr_type, from_attr_name" +
 					" FROM db_attribute WHERE class_name=? AND attr_name<>from_attr_name" +
 					" AND from_attr_name IS NOT NULL";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
@@ -389,7 +407,13 @@ public class GetSchemaTask extends JDBCTask {
 				while (rs.next()) {
 					DBResolution dbr = new DBResolution();
 					dbr.setAlias(rs.getString("attr_name"));
-					dbr.setClassName(rs.getString("from_class_name"));
+					String tableName = "";
+					if (databaseInfo.isSupportUserSchema()) {
+						tableName = rs.getString("from_owner_name") + "." + rs.getString("from_class_name");
+					} else {
+						tableName = rs.getString("from_class_name");
+					}
+					dbr.setTableName(tableName);
 					dbr.setClassResolution(!rs.getString("attr_type").equals(
 							"INSTANCE"));
 					dbr.setName(rs.getString("from_attr_name"));
@@ -459,9 +483,18 @@ public class GetSchemaTask extends JDBCTask {
 			return;
 		}
 
+		boolean isSupportUserSchema = databaseInfo.isSupportUserSchema();
+		
 		Map<String, Map<String, String>> foreignKeys = getForeignKeyInfo();
-		String sql = "SELECT index_name, is_unique, is_reverse, is_primary_key, is_foreign_key, key_count"
-				+ " FROM db_index WHERE class_name=? ORDER BY index_name";
+		
+		String sql = "";
+		if (isSupportUserSchema) {
+			sql = "SELECT owner_name, index_name, is_unique, is_reverse, is_primary_key, is_foreign_key, key_count"
+				+ " FROM db_index WHERE LOWER(CONCAT(owner_name, ',', class_name))=? ORDER BY index_name";
+		} else {
+			sql = "SELECT index_name, is_unique, is_reverse, is_primary_key, is_foreign_key, key_count"
+					+ " FROM db_index WHERE class_name=? ORDER BY index_name";
+		}
 
 		// [TOOLS-2425]Support shard broker
 		sql = databaseInfo.wrapShardQuery(sql);
@@ -473,14 +506,20 @@ public class GetSchemaTask extends JDBCTask {
 			rs = ((PreparedStatement) stmt).executeQuery();
 			while (rs.next()) {
 				String constraintName = rs.getString("index_name");
+				String realConstraintName = "";
+				if(isSupportUserSchema) {
+					realConstraintName = rs.getString("owner_name") + '.' + constraintName;
+				} else {
+					realConstraintName = constraintName;
+				}
 				String pk = rs.getString("is_primary_key");
 				String fk = rs.getString("is_foreign_key");
 				String unique = rs.getString("is_unique");
 				String reverse = rs.getString("is_reverse");
 				int keyCount = rs.getInt("key_count");
 				Constraint c = new Constraint(false);
-				c.setName(constraintName);
-				constraint2Unique.put(constraintName, unique);
+				c.setName(realConstraintName);
+				constraint2Unique.put(realConstraintName, unique);
 				if (StringUtil.booleanValueWithYN(pk)) {
 					c.setType(Constraint.ConstraintType.PRIMARYKEY.getText());
 				} else if (StringUtil.booleanValueWithYN(fk)) {
@@ -513,8 +552,13 @@ public class GetSchemaTask extends JDBCTask {
 		String regex = String.format("\\[%s\\].\\[[\\w#]*\\]", tableName);
 		String prefixIndexLength = isSupportPrefixIndexLength ? ", key_prefix_length" : "";
 		String funcIndex = isSupportFuncIndex ? ", func" : "";
-		sql = "SELECT key_attr_name, asc_desc, key_order" + prefixIndexLength + funcIndex
-				+ " FROM db_index_key WHERE index_name=? AND class_name=? ORDER BY key_order";
+		if (isSupportUserSchema) {
+			sql = "SELECT key_attr_name, asc_desc, key_order" + prefixIndexLength + funcIndex
+					+ " FROM db_index_key WHERE LOWER(CONCAT(owner_name, '.', index_name)=? AND CONCAT(owner_name, '.', class_name))=? ORDER BY key_order";
+		} else {
+			sql = "SELECT key_attr_name, asc_desc, key_order" + prefixIndexLength + funcIndex
+					+ " FROM db_index_key WHERE index_name=? AND class_name=? ORDER BY key_order";
+		}
 
 		// [TOOLS-2425]Support shard broker
 		sql = databaseInfo.wrapShardQuery(sql);
@@ -591,9 +635,16 @@ public class GetSchemaTask extends JDBCTask {
 	 */
 	private void getTypeInfo(SchemaInfo schemaInfo) throws SQLException {
 		if (schemaInfo != null) {
-			String sql = "SELECT a.attr_name, a.attr_type,"
+			String sql = "";
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT a.attr_name, a.attr_type,"
 					+ " a.data_type, a.prec, a.scale"
-					+ " FROM db_attr_setdomain_elm a" + " WHERE a.class_name=?";
+					+ " FROM db_attr_setdomain_elm a" + " WHERE LOWER(CONCAT(a.owner_name, '.', a.class_name))=?";
+			} else {
+				sql = "SELECT a.attr_name, a.attr_type,"
+						+ " a.data_type, a.prec, a.scale"
+						+ " FROM db_attr_setdomain_elm a" + " WHERE a.class_name=?";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
@@ -663,17 +714,26 @@ public class GetSchemaTask extends JDBCTask {
 			List<SerialInfo> serialInfoList = new ArrayList<SerialInfo>();
 			//databaseInfo.getServerInfo().compareVersionKey("8.2.2") >= 0;
 			boolean isSupportCache = CompatibleUtil.isSupportCache(databaseInfo);
-			String sql = "SELECT owner.name, db_serial.* FROM db_serial WHERE class_name=?";
+			
+			String sql = "";
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT db_serial.* FROM db_serial WHERE class_name=? AND owner=?";
+			} else {
+				sql = "SELECT db_serial.* FROM db_serial WHERE class_name=?";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
 			try {
 				stmt = connection.prepareStatement(sql);
-				((PreparedStatement) stmt).setString(1, tableName);
+				((PreparedStatement) stmt).setString(1, schemaInfo.getOwner());
+				if (databaseInfo.isSupportUserSchema()) {
+					((PreparedStatement) stmt).setString(1, schemaInfo.getClassname());
+				}
 				rs = ((PreparedStatement) stmt).executeQuery();
 				while (rs.next()) {
 					String name = rs.getString("name");
-					String owner = rs.getString("owner.name");
+					String owner = rs.getString("owner");
 					String currentVal = rs.getString("current_val");
 					String incrementVal = rs.getString("increment_val");
 					String maxVal = rs.getString("max_val");
@@ -729,13 +789,20 @@ public class GetSchemaTask extends JDBCTask {
 			boolean supportComment = SchemaCommentHandler.isInstalledMetaTable(databaseInfo, connection);
 			Map<String, SchemaComment> comments = null;
 			if (supportComment) {
-				comments = SchemaCommentHandler.loadDescriptions(databaseInfo, connection);
+				comments = SchemaCommentHandler.loadDescriptions(databaseInfo, connection, databaseInfo.isSupportUserSchema());
 			}
 
-			sql = "SELECT *"
-					+ " FROM db_attribute"
-					+ " WHERE class_name=? "
-					+ " ORDER BY def_order";
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT *"
+						+ " FROM db_attribute"
+						+ " WHERE CONCAT(owner_name, '.' , class_name)=?"
+						+ " ORDER BY def_order";
+			} else {
+				sql = "SELECT *"
+						+ " FROM db_attribute"
+						+ " WHERE class_name=? "
+						+ " ORDER BY def_order";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
@@ -749,6 +816,15 @@ public class GetSchemaTask extends JDBCTask {
 					String attrName = rs.getString("attr_name");
 					String type = rs.getString("attr_type");
 					String inherit = rs.getString("from_class_name");
+					String realInherit = null;
+					if (databaseInfo.isSupportUserSchema()) {
+						String fromOwnerName = rs.getString("from_owner_name");
+						if (fromOwnerName != null && inherit != null) {
+							realInherit = fromOwnerName + "." + inherit;
+						}
+					} else {
+						realInherit = inherit;
+					}
 					String dataType = rs.getString("data_type");
 					String prec = rs.getString("prec");
 					String scale = rs.getString("scale");
@@ -758,10 +834,10 @@ public class GetSchemaTask extends JDBCTask {
 					DBAttribute attr = new DBAttribute();
 					attr.setName(attrName);
 
-					if (inherit == null) {
+					if (realInherit == null) {
 						attr.setInherit(tableName);
 					} else {
-						attr.setInherit(inherit);
+						attr.setInherit(realInherit);
 					}
 					if ("YES".equals(isNull)) { //null
 						attr.setNotNull(false);
@@ -808,7 +884,7 @@ public class GetSchemaTask extends JDBCTask {
 			
 			// Get enumeration
 			if (CompatibleUtil.isSupportEnumVersion(databaseInfo) && enumColumnList.size() > 0) {
-				String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getClassname());
+				String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getTableName());
 				StringBuilder sb = new StringBuilder();
 				sb.append("SHOW COLUMNS FROM ").append(escapedTableName).append(" WHERE FIELD IN (");
 				try{
@@ -929,8 +1005,14 @@ public class GetSchemaTask extends JDBCTask {
 			return;
 		}
 
-		String sql = "SELECT super_class_name FROM db_direct_super_class"
-				+ " WHERE class_name=?";
+		String sql = "";
+		if (databaseInfo.isSupportUserSchema()) {
+			sql = "SELECT super_class_name, super_owner_name FROM db_direct_super_class"
+				+ " WHERE LOWER(CONCAT(owner_name, '.', class_name))=?";
+		} else {
+			sql = "SELECT super_class_name FROM db_direct_super_class"
+					+ " WHERE class_name=?";
+		}
 
 		// [TOOLS-2425]Support shard broker
 		sql = databaseInfo.wrapShardQuery(sql);
@@ -941,7 +1023,13 @@ public class GetSchemaTask extends JDBCTask {
 			rs = ((PreparedStatement) stmt).executeQuery();
 			while (rs.next()) {
 				String superClass = rs.getString(1);
-				schemaInfo.addSuperClass(superClass);
+				String realSuperClass = "";
+				if (databaseInfo.isSupportUserSchema()) {
+					realSuperClass = rs.getString(2) + "." + superClass;
+				} else {
+					realSuperClass = superClass;
+				}
+				schemaInfo.addSuperClass(realSuperClass);
 			}	
 		} finally {
 			QueryUtil.freeQuery(stmt, rs);

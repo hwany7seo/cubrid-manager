@@ -50,7 +50,7 @@ public class PartitionInfoTest extends
 	 */
 	public final void testPartitionInfo() {
 
-		String className = "className";
+		String tableName = "tableName";
 		String partitionName = "partitionName";
 		String partitionClassName = "partitionClassName";
 		PartitionType partitionType = PartitionType.HASH;
@@ -59,21 +59,21 @@ public class PartitionInfoTest extends
 		int rows = -1;
 		// test getters and setters
 		PartitionInfo partitionInfo1 = new PartitionInfo();
-		PartitionInfo partitionInfo2 = new PartitionInfo(className,
+		PartitionInfo partitionInfo2 = new PartitionInfo(tableName,
 				partitionType);
-		PartitionInfo partitionInfo3 = new PartitionInfo(className,
+		PartitionInfo partitionInfo3 = new PartitionInfo(tableName,
 				partitionName, partitionType, partitionExpr, partitionValues,
 				rows);
-		PartitionInfo partitionInfo4 = new PartitionInfo(className,
+		PartitionInfo partitionInfo4 = new PartitionInfo(tableName,
 				partitionName, partitionClassName, partitionType,
 				partitionExpr, partitionValues, rows);
 		partitionInfo4.setPartitionValues(partitionValues);
-		partitionInfo4.setClassName(className);
+		partitionInfo4.setTableName(tableName);
 		partitionInfo4.setPartitionName(partitionName);
 		partitionInfo4.setPartitionType(partitionType);
 		partitionInfo4.setPartitionExpr(partitionExpr);
 		partitionInfo4.setRows(rows);
-		assertEquals(partitionInfo4.getClassName(), className);
+		assertEquals(partitionInfo4.getTableName(), tableName);
 		assertEquals(partitionInfo4.getPartitionName(), partitionName);
 		assertNotSame(partitionInfo4.getPartitionClassName(),
 				partitionClassName);
@@ -104,11 +104,11 @@ public class PartitionInfoTest extends
 		partitionInfo4.removePartitionValue("value");
 		partitionInfo4.equals(partitionInfo4);
 		partitionInfo4.equals("aaa");
-		PartitionInfo partitionInfo5 = new PartitionInfo(className,
+		PartitionInfo partitionInfo5 = new PartitionInfo(tableName,
 				partitionName, partitionClassName, partitionType,
 				partitionExpr, partitionValues, rows);
 		partitionInfo5.setPartitionValues(partitionValues);
-		partitionInfo5.setClassName(className);
+		partitionInfo5.setTableName(tableName);
 		partitionInfo5.setPartitionName(partitionName);
 		partitionInfo5.setPartitionType(partitionType);
 		partitionInfo5.setPartitionExpr(partitionExpr);
@@ -116,42 +116,42 @@ public class PartitionInfoTest extends
 		partitionInfo4.equals(partitionInfo5);
 		partitionInfo5.addPartitionValue("value5");
 		partitionInfo5.setPartitionValues(partitionValues);
-		partitionInfo5.setClassName("className5");
+		partitionInfo5.setTableName("className5");
 		partitionInfo5.setPartitionName("partitionName5");
 		partitionInfo5.setPartitionType(PartitionType.LIST);
 		partitionInfo5.setPartitionExpr("partitionExpr5");
 		partitionInfo5.setRows(5);
 		partitionInfo4.equals(partitionInfo5);
 		partitionInfo5.setPartitionType(partitionType);
-		partitionInfo5.setClassName(className);		
+		partitionInfo5.setTableName(tableName);		
 		partitionInfo4.equals(partitionInfo5);
 		partitionInfo5.setPartitionType(partitionType);
-		partitionInfo5.setClassName(className);		
+		partitionInfo5.setTableName(tableName);		
 		partitionInfo5.setPartitionName(partitionName);		
 		partitionInfo4.equals(partitionInfo5);
 		partitionInfo5.setPartitionType(partitionType);
-		partitionInfo5.setClassName(className);		
+		partitionInfo5.setTableName(tableName);		
 		partitionInfo5.setPartitionName(partitionName);		
 		partitionInfo4.setPartitionType(PartitionType.LIST);
 		partitionInfo5.setPartitionType(PartitionType.RANGE);
 		partitionInfo4.equals(partitionInfo5);
 		partitionInfo4.setPartitionType(PartitionType.LIST);
 		partitionInfo5.setPartitionType(PartitionType.LIST);
-		partitionInfo5.setClassName(className);		
+		partitionInfo5.setTableName(tableName);		
 		partitionInfo5.setPartitionName(partitionName);
 		partitionInfo5.setPartitionExpr(partitionExpr);
 		partitionInfo4.equals(partitionInfo5);		
 		
 		partitionInfo1.setPartitionType(PartitionType.HASH);
 		partitionInfo2.setPartitionType(PartitionType.HASH);
-		partitionInfo1.setClassName(null);
-		partitionInfo2.setClassName(null);
+		partitionInfo1.setTableName(null);
+		partitionInfo2.setTableName(null);
 		partitionInfo1.equals(partitionInfo2);
-		partitionInfo1.setClassName("a");
-		partitionInfo2.setClassName(null);
+		partitionInfo1.setTableName("a");
+		partitionInfo2.setTableName(null);
 		partitionInfo1.equals(partitionInfo2);
-		partitionInfo1.setClassName(null);
-		partitionInfo2.setClassName("b");
+		partitionInfo1.setTableName(null);
+		partitionInfo2.setTableName("b");
 		partitionInfo1.equals(partitionInfo2);
 	}
 }

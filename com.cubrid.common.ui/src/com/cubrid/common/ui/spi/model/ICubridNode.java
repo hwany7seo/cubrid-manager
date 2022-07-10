@@ -188,7 +188,7 @@ public interface ICubridNode extends
 	 * 
 	 * @return String the label
 	 */
-	public String getLabel();
+	public String getLabelbb();
 
 	/**
 	 * Set displayed label of this node

@@ -82,7 +82,7 @@ public class MoreTablesNode {
 		for (int i = currentIndex, j = 0; i < nextIndex; i++, j++) {
 			ClassInfo classInfo = userTableInfoList.get(i);
 			String id = moreNode.getId() + ICubridNodeLoader
-					.NODE_SEPARATOR + classInfo.getClassName();
+					.NODE_SEPARATOR + classInfo.getTableName();
 			ICubridNode child = CubridTablesFolderLoader
 					.createClassNode(id, classInfo, 1);
 			children[j] = child;

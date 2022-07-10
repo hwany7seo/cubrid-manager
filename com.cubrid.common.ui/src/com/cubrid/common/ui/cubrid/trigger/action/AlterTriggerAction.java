@@ -181,9 +181,11 @@ public class AlterTriggerAction extends
 					if (CompatibleUtil.isCommentSupports(database.getDatabaseInfo())) {
 						try {
 							SchemaComment schemaComment = SchemaCommentHandler.loadObjectDescription(
-									database.getDatabaseInfo(), JDBCConnectionManager.getConnection(
-											database.getDatabaseInfo(), true), trigger.getName(),
-											CommentType.TRIGGER);
+									database.getDatabaseInfo(), 
+									JDBCConnectionManager.getConnection(database.getDatabaseInfo(), true), 
+									database.getDatabaseInfo().isSupportUserSchema(), 
+									trigger.getName(), 
+									CommentType.TRIGGER);
 							trigger.setDescription(schemaComment.getDescription());
 						} catch (SQLException e) {
 							CommonUITool.openErrorBox(e.getMessage());

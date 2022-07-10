@@ -161,8 +161,8 @@ public class TableModelTest extends
 		DBResolution bean = new DBResolution();
 		bean.setName("name");
 		assertEquals(bean.getName(), "name");
-		bean.setClassName("className");
-		assertEquals(bean.getClassName(), "className");
+		bean.setTableName("className");
+		assertEquals(bean.getTableName(), "className");
 		bean.setAlias("alias");
 		assertEquals(bean.getAlias(), "alias");
 		bean.isClassResolution();

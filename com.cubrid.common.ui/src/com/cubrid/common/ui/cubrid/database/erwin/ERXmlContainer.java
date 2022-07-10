@@ -295,7 +295,7 @@ public class ERXmlContainer {
 		for (String tableName : tableSchemas.keySet()) {
 			ERWinSchemaInfo schemaInfo = new ERWinSchemaInfo();
 			schemaInfo.setType("user");
-			schemaInfo.setClassname(tableName);
+			schemaInfo.setTableName(tableName);
 			schemaInfos.put(tableName, schemaInfo);
 		}
 

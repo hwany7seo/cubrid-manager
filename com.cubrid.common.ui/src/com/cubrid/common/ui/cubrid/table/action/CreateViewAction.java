@@ -91,6 +91,8 @@ public class CreateViewAction extends SelectionAction {
 		TaskExecutor taskExcutor = new CommonTaskExec(null);
 		DatabaseInfo databaseInfo = database.getDatabaseInfo();
 		JDBCGetAllDbUserTask task = new JDBCGetAllDbUserTask(databaseInfo);
+		boolean isSupportUserSchema = databaseInfo.isSupportUserSchema();
+		
 		taskExcutor.addTask(task);
 		new ExecTaskWithProgress(taskExcutor).busyCursorWhile();
 		if (!taskExcutor.isSuccess()) {
@@ -117,9 +119,9 @@ public class CreateViewAction extends SelectionAction {
 			String viewName = dialog.getNewViewName();
 			String owner = dialog.getOwner();
 			String id = folderNode.getId() + ICubridNodeLoader.NODE_SEPARATOR
-					+ viewName;
-			ClassInfo newClassInfo = new ClassInfo(viewName, owner,
-					ClassType.VIEW, false, false);
+				+ owner + "." + viewName;
+			ClassInfo newClassInfo = new ClassInfo(dialog.getNewViewName(), owner,
+					ClassType.VIEW, false, false, isSupportUserSchema);
 			ICubridNode newNode = CubridViewsFolderLoader.createUserViewNode(
 					id, newClassInfo);
 			CommonUITool.addNodeToTree(treeViewer, folderNode, newNode);

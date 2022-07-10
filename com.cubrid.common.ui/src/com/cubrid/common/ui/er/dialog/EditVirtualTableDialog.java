@@ -210,6 +210,7 @@ public class EditVirtualTableDialog extends
 		if (isNewTable) {
 			SchemaInfo newSchemaInfo = new SchemaInfo();
 			newSchemaInfo.setClassname(""); //$NON-NLS-1$
+			newSchemaInfo.setTableName(""); //$NON-NLS-1$
 			newSchemaInfo.setOwner(database.getUserName());
 			newSchemaInfo.setDbname(database.getName());
 			newSchemaInfo.setType(Messages.userSchema);
@@ -843,6 +844,12 @@ public class EditVirtualTableDialog extends
 					} else if (verifyTableName()) {
 						String tableName = tableNameText.getText();
 						newSchemaInfo.setClassname(tableName);
+						newSchemaInfo.setOwner(database.getUserName());
+						if (isSupportUserSchema()) {
+							newSchemaInfo.setTableName(database.getUserName() + "." + tableName);
+						} else {
+							newSchemaInfo.setTableName(tableName);
+						}
 					}
 				}
 			});
@@ -2375,5 +2382,12 @@ public class EditVirtualTableDialog extends
 
 	public void setErSchema(ERSchema erSchema) {
 		this.erSchema = erSchema;
+	}
+	
+	private boolean isSupportUserSchema() {
+		if (database != null) {
+			return database.getDatabaseInfo().isSupportUserSchema();
+		}
+		return false;
 	}
 }

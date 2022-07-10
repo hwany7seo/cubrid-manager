@@ -66,6 +66,7 @@ public class Trigger implements
 		Comparable<Trigger> { // FIXME use javadoc style comment such as /** ~ */ for all methods
 	// trigger name
 	private String name;
+	private String ownerName;
 	// the time to evaluate trigger condition: before,after,deferred
 	private String conditionTime;
 	// 8 types: insert,update,delete(statement
@@ -125,6 +126,14 @@ public class Trigger implements
 		this.name = name;
 	}
 
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+	
 	public String getConditionTime() {
 		return conditionTime;
 	}

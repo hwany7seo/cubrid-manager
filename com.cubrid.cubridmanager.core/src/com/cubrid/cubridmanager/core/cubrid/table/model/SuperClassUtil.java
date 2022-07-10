@@ -70,7 +70,7 @@ public class SuperClassUtil {
 	public static boolean isInResolutions(List<DBResolution> resolutions,
 			String column, String table) {
 		for (DBResolution r : resolutions) {
-			if (r.getName().equals(column) && r.getClassName().equals(table)) {
+			if (r.getName().equals(column) && r.getTableName().equals(table)) {
 				return true;
 			}
 		}
@@ -89,7 +89,7 @@ public class SuperClassUtil {
 	public static DBResolution getResolution(List<DBResolution> resolutions,
 			String column, String table) {
 		for (DBResolution r : resolutions) {
-			if (r.getName().equals(column) && r.getClassName().equals(table)) {
+			if (r.getName().equals(column) && r.getTableName().equals(table)) {
 				return r;
 			}
 		}
@@ -112,7 +112,7 @@ public class SuperClassUtil {
 			List<DBResolution> resolutions, DBResolution removedResolution,
 			List<String[]> conflicts) {
 		String column = removedResolution.getName();
-		String table = removedResolution.getClassName();
+		String table = removedResolution.getTableName();
 		boolean started = false;
 		boolean found = false;
 		DBResolution firstResolution = null;
@@ -439,7 +439,7 @@ public class SuperClassUtil {
 			DBResolution resolution = resolutions.get(j);
 			boolean found = false;
 			for (String[] conflict : conflicts) {
-				if (conflict[2].equals(resolution.getClassName())
+				if (conflict[2].equals(resolution.getTableName())
 						&& conflict[0].equals(resolution.getName())) {
 					found = true;
 				}
@@ -569,7 +569,7 @@ public class SuperClassUtil {
 				if (list.contains(schema)) {
 					newAttrList.add(attr);
 				} else {
-					String tableName = schema.getClassname();
+					String tableName = schema.getTableName();
 					DBResolution r = getResolution(resolutions, columnName,
 							tableName);
 					if (r != null && r.getAlias() != null
@@ -622,7 +622,7 @@ public class SuperClassUtil {
 						continue;
 					}
 
-					if (attr.getInherit().equals(newSchemaInfo.getClassname())) {
+					if (attr.getInherit().equals(newSchemaInfo.getTableName())) {
 						localAttr = new NewAttribute(attr, schema);
 					} else {
 						attrList.add(new NewAttribute(attr, schema));
@@ -653,7 +653,7 @@ public class SuperClassUtil {
 					for (int j = size - 1; j >= 0; j--) {
 						NewAttribute attr = lowestAttrList.get(j);
 						String column = attr.attr.getName();
-						String table = attr.schema.getClassname();
+						String table = attr.schema.getTableName();
 
 						DBResolution r = getResolution(resolutions, column,
 								table);
@@ -684,7 +684,7 @@ public class SuperClassUtil {
 			List<DBResolution> newResolutions, List<String[]> conflicts,
 			SchemaInfo newSchemaInfo) {
 		List<String> localAttrList = new ArrayList<String>();
-		String table = newSchemaInfo.getClassname();
+		String table = newSchemaInfo.getTableName();
 		if (table == null) {
 			table = "";
 		}
@@ -708,7 +708,7 @@ public class SuperClassUtil {
 					if (r.getAlias().equals("")) {
 						found = true;
 					} else {
-						if (tbl.equals(r.getClassName())) {
+						if (tbl.equals(r.getTableName())) {
 							hasAlias = true;
 						}
 					}
@@ -798,7 +798,7 @@ public class SuperClassUtil {
 			DBResolution resolution = resolutions.get(j);
 			boolean found = false;
 			for (String superClassName : newSupers) {
-				if (superClassName.equals(resolution.getClassName())) {
+				if (superClassName.equals(resolution.getTableName())) {
 					found = true;
 				}
 			}
@@ -853,7 +853,7 @@ public class SuperClassUtil {
 					if (a == null) {
 						continue;
 					}
-					String[] strs = {columnName, a.getType(), s.getClassname() };
+					String[] strs = {columnName, a.getType(), s.getTableName() };
 					retList.add(strs);
 				}
 			}

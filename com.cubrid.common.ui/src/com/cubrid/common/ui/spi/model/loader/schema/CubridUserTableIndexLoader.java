@@ -120,7 +120,7 @@ public class CubridUserTableIndexLoader extends
 						label += keyAttrName.replace('[', '(').replace(']', ')');
 					}
 
-					ICubridNode node = new DefaultSchemaNode(nodeId, label,
+					ICubridNode node = new DefaultSchemaNode(nodeId, label, label,
 							"icons/navigator/table_index_item.png");
 					if (index.isPrimaryKey()) {
 						node.setIconPath("icons/primary_key.png");

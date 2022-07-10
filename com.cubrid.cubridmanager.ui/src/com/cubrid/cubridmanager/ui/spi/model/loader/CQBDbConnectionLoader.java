@@ -124,7 +124,7 @@ public class CQBDbConnectionLoader extends
 		String spFolderId = database.getId() + NODE_SEPARATOR + SP_FOLDER_ID;
 		ICubridNode spFolder = database.getChild(spFolderId);
 		if (spFolder == null) {
-			spFolder = new DefaultSchemaNode(spFolderId, SP_FOLDER_NAME,
+			spFolder = new DefaultSchemaNode(spFolderId, SP_FOLDER_NAME, SP_FOLDER_NAME,
 					"icons/navigator/procedure_group.png");
 			spFolder.setType(NodeType.STORED_PROCEDURE_FOLDER);
 			spFolder.setContainer(true);
@@ -156,7 +156,7 @@ public class CQBDbConnectionLoader extends
 		ICubridNode serialFolder = database.getChild(serialFolderId);
 		if (serialFolder == null) {
 			serialFolder = new DefaultSchemaNode(serialFolderId,
-					SERIAL_FOLDER_NAME, "icons/navigator/serial_group.png");
+					SERIAL_FOLDER_NAME, SP_FOLDER_NAME, "icons/navigator/serial_group.png");
 			serialFolder.setType(NodeType.SERIAL_FOLDER);
 			serialFolder.setContainer(true);
 			ICubridNodeLoader loader = new CubridSerialFolderLoader();
@@ -191,7 +191,7 @@ public class CQBDbConnectionLoader extends
 		ICubridNode tiggerFolder = database.getChild(tiggerFolderId);
 		if (tiggerFolder == null) {
 			tiggerFolder = new DefaultSchemaNode(tiggerFolderId,
-					TRIGGER_FOLDER_NAME, "icons/navigator/trigger_group.png");
+					TRIGGER_FOLDER_NAME, TRIGGER_FOLDER_NAME, "icons/navigator/trigger_group.png");
 			tiggerFolder.setType(NodeType.TRIGGER_FOLDER);
 			tiggerFolder.setContainer(true);
 			ICubridNodeLoader loader = new CubridTriggerFolderLoader();
@@ -223,7 +223,7 @@ public class CQBDbConnectionLoader extends
 		ICubridNode viewsFolder = database.getChild(viewsFolderId);
 		if (viewsFolder == null) {
 			viewsFolder = new DefaultSchemaNode(viewsFolderId,
-					VIEWS_FOLDER_NAME, "icons/navigator/schema_view.png");
+					VIEWS_FOLDER_NAME, VIEWS_FOLDER_NAME, "icons/navigator/schema_view.png");
 			viewsFolder.setType(NodeType.VIEW_FOLDER);
 			viewsFolder.setContainer(true);
 			ICubridNodeLoader loader = new CubridViewsFolderLoader();
@@ -254,7 +254,7 @@ public class CQBDbConnectionLoader extends
 				+ USERS_FOLDER_ID;
 		ICubridNode userFolder = database.getChild(userFolderId);
 		if (userFolder == null) {
-			userFolder = new DefaultSchemaNode(userFolderId, USERS_FOLDER_NAME,
+			userFolder = new DefaultSchemaNode(userFolderId, USERS_FOLDER_NAME, USERS_FOLDER_NAME,
 					"icons/navigator/user_group.png");
 			userFolder.setType(NodeType.USER_FOLDER);
 			userFolder.setContainer(true);
@@ -287,7 +287,7 @@ public class CQBDbConnectionLoader extends
 		ICubridNode tablesFolder = database.getChild(tablesFolderId);
 		if (tablesFolder == null) {
 			tablesFolder = new DefaultSchemaNode(tablesFolderId,
-					TABLES_FOLDER_NAME, "icons/navigator/schema_table.png");
+					TABLES_FOLDER_NAME, TABLES_FOLDER_NAME, "icons/navigator/schema_table.png");
 			tablesFolder.setType(NodeType.TABLE_FOLDER);
 			tablesFolder.setContainer(true);
 			ICubridNodeLoader loader = new CubridTablesFolderLoader();

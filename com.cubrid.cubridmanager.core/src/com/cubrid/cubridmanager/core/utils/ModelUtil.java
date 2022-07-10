@@ -400,7 +400,7 @@ public final class ModelUtil {
 				ResultSet rs = null;
 				try {
 					connection = JDBCConnectionManager.getConnection(dbInfo, true);
-					String escapedTableName = QuerySyntax.escapeKeyword(schema.getClassname());
+					String escapedTableName = QuerySyntax.escapeKeyword(schema.getTableName());
 					StringBuilder sb = new StringBuilder();
 					sb.append("SHOW COLUMNS FROM ").append(escapedTableName).append(" WHERE FIELD IN (");
 					stmt = connection.createStatement();

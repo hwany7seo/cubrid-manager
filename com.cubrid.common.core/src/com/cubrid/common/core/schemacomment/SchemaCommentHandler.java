@@ -184,9 +184,9 @@ public class SchemaCommentHandler {
 		return meta;
 	}
 
-	public static Map<String, SchemaComment> loadDescriptions(IDatabaseSpec dbSpec, Connection conn)
+	public static Map<String, SchemaComment> loadDescriptions(IDatabaseSpec dbSpec, Connection conn, boolean isSupportUserSchema)
 			throws SQLException {
-		return loadDescription(dbSpec, conn, null);
+		return loadDescription(dbSpec, conn, isSupportUserSchema, null);
 	}
 
 	public static Map<String, SchemaComment> loadTableDescriptions(IDatabaseSpec dbSpec, Connection conn) 
@@ -237,7 +237,7 @@ public class SchemaCommentHandler {
 	}
 
 	public static Map<String, SchemaComment> loadDescription(IDatabaseSpec dbSpec, 
-			Connection conn, String tableName) throws SQLException {
+			Connection conn, boolean isSupportUserSchema, String tableName) throws SQLException {
 		boolean isSupportInEngine = CompatibleUtil.isCommentSupports(dbSpec);
 		String sql = null;
 		String tableCondition = null;
@@ -251,8 +251,13 @@ public class SchemaCommentHandler {
 					+ "SELECT class_name as table_name, attr_name as column_name, comment as description "
 					+ "FROM db_attribute %s";
 			if (StringUtil.isNotEmpty(tableName)) {
-				tableCondition = "AND class_name = '" + tableName + "' ";
-				columnCondition = "WHERE class_name = '" + tableName + "'";
+				if (isSupportUserSchema) {
+					tableCondition = "AND CONCAT(owner_name, '.' ,class_name)='" + tableName + "' ";
+					columnCondition = "WHERE CONCAT(owner_name, '.' ,class_name) = '" + tableName + "'";
+				} else {
+					tableCondition = "AND class_name = '" + tableName + "' ";
+					columnCondition = "WHERE class_name = '" + tableName + "'";
+				}
 			} else {
 				tableCondition = "AND comment is not null ";
 				columnCondition = "WHERE comment is not null";
@@ -295,45 +300,85 @@ public class SchemaCommentHandler {
 	}
 
 	public static SchemaComment loadObjectDescription(IDatabaseSpec dbSpec,
-			Connection conn, String objName, CommentType type) throws SQLException {
+			Connection conn, boolean isSupportUserschema, String objName, CommentType type) throws SQLException {
 		String sql = null;
-
-		switch (type) {
-		case INDEX:
-			sql = "SELECT index_name, comment " +
-					"FROM db_index " +
-					"WHERE index_name = ?";
-			break;
-		case VIEW:
-			sql = "SELECT vclass_name, comment " +
-					"FROM db_vclass " +
-					"WHERE vclass_name = ?";
-			break;
-		case SP:
-			sql = "SELECT sp_name, comment " +
-					"FROM db_stored_procedure " +
-					"WHERE sp_name = ?";
-			break;
-		case TRIGGER:
-			sql = "SELECT name, comment " +
-			"FROM db_trigger " +
-			"WHERE name = ?";
-			break;
-		case SERIAL:
-			sql = "SELECT name, comment " +
-					"FROM db_serial " +
-					"WHERE name = ?";
-			break;
-		case USER:
-			sql = "SELECT name, comment " +
-					"FROM db_user " +
-					"WHERE name = ?";
-			break;
-		case PARTITION:
-			sql = "SELECT partition_name, comment " +
-					"FROM db_partition " +
-					"WHERE partition_name = ?";
-			break;
+		 
+		if (isSupportUserschema) {
+			switch (type) {
+			case INDEX:
+				sql = "SELECT index_name, comment " +
+						"FROM db_index " +
+						"WHERE LOWER(CONCAT(owner_name, '.', index_name)) = ?";
+				break;
+			case VIEW:
+				sql = "SELECT vclass_name, comment " +
+						"FROM db_vclass " +
+						"WHERE LOWER(CONCAT(owner_name, '.', vclass_name)) = ?";
+				break;
+			case SP:
+				sql = "SELECT sp_name, comment " +
+						"FROM db_stored_procedure " +
+						"WHERE LOWER(CONCAT(owner, '.' , sp_name)) = ?";
+				break;
+			case TRIGGER:
+				sql = "SELECT name, comment " +
+						"FROM db_trigger " +
+						"WHERE LOWER(CONCAT(owner, '.' , name)) = ?";
+				break;
+			case SERIAL:
+				sql = "SELECT name, comment " +
+						"FROM db_serial " +
+						"WHERE LOWER(CONCAT(owner, '.' , name)) = ?";
+				break;
+			case USER:
+				sql = "SELECT name, comment " +
+						"FROM db_user " +
+						"WHERE name = ?";
+				break;
+			case PARTITION:
+				sql = "SELECT partition_name, comment " +
+						"FROM db_partition " +
+						"WHERE LOWER(CONCAT(owner_name, '.', partition_name)) = ?";
+				break;
+			}
+		} else {
+			switch (type) {
+			case INDEX:
+				sql = "SELECT index_name, comment " +
+						"FROM db_index " +
+						"WHERE index_name = ?";
+				break;
+			case VIEW:
+				sql = "SELECT vclass_name, comment " +
+						"FROM db_vclass " +
+						"WHERE vclass_name = ?";
+				break;
+			case SP:
+				sql = "SELECT sp_name, comment " +
+						"FROM db_stored_procedure " +
+						"WHERE sp_name = ?";
+				break;
+			case TRIGGER:
+				sql = "SELECT name, comment " +
+				"FROM db_trigger " +
+				"WHERE name = ?";
+				break;
+			case SERIAL:
+				sql = "SELECT name, comment " +
+						"FROM db_serial " +
+						"WHERE name = ?";
+				break;
+			case USER:
+				sql = "SELECT name, comment " +
+						"FROM db_user " +
+						"WHERE name = ?";
+				break;
+			case PARTITION:
+				sql = "SELECT partition_name, comment " +
+						"FROM db_partition " +
+						"WHERE partition_name = ?";
+				break;
+			}
 		}
 
 		// [TOOLS-2425]Support shard broker

@@ -72,8 +72,12 @@ public class GetUserClassIndexesTask extends
 				errorMsg = Messages.error_getConnection;
 				return indexes;
 			}
-
-			String sql = "SELECT * FROM db_index WHERE class_name=?";
+			String sql;
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT * FROM db_index WHERE CONCAT(owner_name, '.' , class_name)=?";
+			} else {
+				sql = "SELECT * FROM db_index WHERE class_name=?";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
@@ -83,7 +87,12 @@ public class GetUserClassIndexesTask extends
 					tableName.toLowerCase(Locale.getDefault()));
 			rs = ((PreparedStatement) stmt).executeQuery();
 			while (rs.next()) {
-				String indexName = rs.getString("index_name");
+				String indexName;
+				if (databaseInfo.isSupportUserSchema()) {
+					indexName = rs.getString("owner_name") + "." + rs.getString("index_name");
+				} else {
+					indexName = rs.getString("index_name");
+				}
 				String pk = rs.getString("is_primary_key");
 				String fk = rs.getString("is_foreign_key");
 				String unique = rs.getString("is_unique");

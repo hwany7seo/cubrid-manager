@@ -64,6 +64,7 @@ public class RenameTableDialog extends
 	private boolean isPhysical;
 
 	private Text newTableText = null;
+	private Text OwnerText = null;
 	private String newName;
 	private String tableOrView;
 

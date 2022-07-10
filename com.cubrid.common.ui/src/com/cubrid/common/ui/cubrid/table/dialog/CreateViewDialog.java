@@ -614,11 +614,11 @@ public class CreateViewDialog extends
 			}
 
 			ownerOld = classInfo.getOwnerName();
-			String[] strs = new String[] { classInfo.getClassName(),
+			String[] strs = new String[] { classInfo.getTableName(),
 					isPropertyQuery ? Messages.msgPropertyInfo : Messages.msgEditInfo };
 			setTitle(Messages.bind(Messages.editViewMsgTitle, strs));
 			setMessage(Messages.editViewMsg);
-			strs = new String[] { classInfo.getClassName(),
+			strs = new String[] { classInfo.getTableName(),
 					isPropertyQuery ? Messages.msgPropertyInfo : Messages.msgEditInfo };
 			String title = Messages.bind(Messages.editViewShellTitle, strs);
 			getShell().setText(title);
@@ -727,7 +727,7 @@ public class CreateViewDialog extends
 			DatabaseInfo dbInfo = database.getDatabaseInfo();
 			conn = JDBCConnectionManager.getConnection(dbInfo, true);
 			schemaComment = SchemaCommentHandler.loadObjectDescription(
-					dbInfo, conn, viewName, CommentType.VIEW);
+					dbInfo, conn, database.getDatabaseInfo().isSupportUserSchema(), viewName, CommentType.VIEW);
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage());
 			CommonUITool.openErrorBox(e.getMessage());
@@ -813,14 +813,19 @@ public class CreateViewDialog extends
 		if (classInfo == null || "".equals(viewNameText.getText())) {
 			return "";
 		}
-		String classNameOld = classInfo.getClassName();
-		String classNameNew = viewNameText.getText();
+		String classNameOld = classInfo.getTableName();
+		String classNameNew;
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			classNameNew = ownerCombo.getText() + "." + viewNameText.getText();
+		} else {
+			classNameNew = viewNameText.getText();
+		}
 		boolean isSameClass = StringUtil.isEqualIgnoreCase(classNameOld, classNameNew);
 		if (isNewTableFlag || isSameClass) {
 			return "";
 		}
 
-		String ddl = "DROP VIEW " + QuerySyntax.escapeKeyword(classInfo.getClassName()) + ";";
+		String ddl = "DROP VIEW " + QuerySyntax.escapeKeyword(classInfo.getTableName()) + ";";
 		return ddl;
 	}
 
@@ -852,8 +857,14 @@ public class CreateViewDialog extends
 		if (isNewTableFlag) {
 			ddl.append("CREATE VIEW ");
 		} else {
-			boolean isSameClass = StringUtil.isEqualIgnoreCase(classInfo.getClassName(),
+			boolean isSameClass;
+			if (database.getDatabaseInfo().isSupportUserSchema()) {
+				isSameClass = StringUtil.isEqualIgnoreCase(classInfo.getTableName(),
+					ownerCombo.getText() + "." + viewNameText.getText());
+			} else {
+				isSameClass = StringUtil.isEqualIgnoreCase(classInfo.getTableName(),
 					viewNameText.getText());
+			}
 			boolean canSupport = CompatibleUtil.isSupportReplaceView(database.getDatabaseInfo());
 			if (canSupport && isSameClass) {
 				ddl.append("CREATE OR REPLACE VIEW ");
@@ -866,7 +877,11 @@ public class CreateViewDialog extends
 		if (viewNameText == null || StringUtil.isEmpty(viewNameText.getText())) {
 			ddl.append("[VIEWNAME]");
 		} else {
-			viewName = viewNameText.getText();
+			if (database.getDatabaseInfo().isSupportUserSchema()) {
+				viewName = ownerCombo.getText() + "." + viewNameText.getText();
+			} else {
+				viewName = viewNameText.getText();
+			}
 		}
 		if (viewName != null) {
 			ddl.append(QuerySyntax.escapeKeyword(viewName));

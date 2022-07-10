@@ -39,6 +39,7 @@ public class DefaultSchemaNode extends
 		ISchemaNode {
 
 	private CubridDatabase cubridDatabase = null;
+	private String tableName = null;
 
 	/**
 	 * The constructor
@@ -49,6 +50,13 @@ public class DefaultSchemaNode extends
 	 */
 	public DefaultSchemaNode(String id, String label, String iconPath) {
 		super(id, label, iconPath);
+		this.tableName = label;
+	}
+	
+	
+	public DefaultSchemaNode(String id, String label, String tableName, String iconPath) {
+		super(id, label, tableName, iconPath);
+		this.tableName = tableName;
 	}
 
 	/**
@@ -133,5 +141,9 @@ public class DefaultSchemaNode extends
 		return obj;
 	}
 	
+	@Override
+	public String getName() {
+		return tableName;
+	}
 	
 }

@@ -82,8 +82,17 @@ public class GetPartitionedClassListTask extends JDBCTask {
 				errorMsg = Messages.error_getConnection;
 				return allClassInfoList;
 			}
-			String sql = "SELECT b.* FROM db_partition a, db_class b WHERE a.class_name=?"
+			
+			boolean isSupportUserSchema = databaseInfo.isSupportUserSchema();
+			
+			String sql;
+			if (isSupportUserSchema) {
+				sql = "SELECT b.* FROM db_partition a, db_class b WHERE LOWER(CONCAT(a.owner_name, '.' , a.class_name))=?"
 					+ " AND LOWER(b.class_name)=LOWER(a.partition_class_name)";
+			} else {
+				sql = "SELECT b.* FROM db_partition a, db_class b WHERE a.class_name=?"
+						+ " AND LOWER(b.class_name)=LOWER(a.partition_class_name)";
+			}
 			stmt = connection.prepareStatement(sql);
 			((PreparedStatement) stmt).setString(1,
 					tableName.toLowerCase(Locale.getDefault()));
@@ -103,8 +112,9 @@ public class GetPartitionedClassListTask extends JDBCTask {
 						&& isSystemClazz.trim().equalsIgnoreCase("YES")) {
 					isSystemClass = true;
 				}
+				
 				ClassInfo classInfo = new ClassInfo(className, ownerName, type,
-						isSystemClass, true);
+						isSystemClass, true, isSupportUserSchema);
 				allClassInfoList.add(classInfo);
 			}
 		} catch (SQLException e) {
@@ -134,8 +144,14 @@ public class GetPartitionedClassListTask extends JDBCTask {
 				return result;
 			}
 
-			String sql = "SELECT * FROM db_partition WHERE class_name='"
-					+ tableName.trim().toLowerCase() + "'";
+			String sql = "";
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT * FROM db_partition WHERE LOWER(CONCAT(owner_name, '.' , class_name))='"
+						+ tableName + "'";
+			} else {
+				sql = "SELECT * FROM db_partition WHERE class_name='"
+						+ tableName.trim().toLowerCase() + "'";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
@@ -146,6 +162,8 @@ public class GetPartitionedClassListTask extends JDBCTask {
 			String exprDataType = null;
 			while (rs.next()) {
 				String className = rs.getString("class_name");
+				String ownerName = rs.getString("owner_name");
+				String TableName = ownerName + "." + className;
 				String partitionName = rs.getString("partition_name");
 				String partitionClassName = rs.getString("partition_class_name");
 				String partitionExpr = rs.getString("partition_expr");
@@ -176,7 +194,7 @@ public class GetPartitionedClassListTask extends JDBCTask {
 						}
 					}
 				}
-				PartitionInfo partitionItem = new PartitionInfo(className,
+				PartitionInfo partitionItem = new PartitionInfo(TableName,
 						partitionName, partitionClassName, partitionType,
 						partitionExpr, partitionValues, -1);
 				if (isCommentSupport) {
@@ -184,7 +202,7 @@ public class GetPartitionedClassListTask extends JDBCTask {
 				}
 				if (exprDataType == null && partitionExpr != null
 						&& partitionExpr.trim().length() > 0) {
-					exprDataType = getExprDataType(className, partitionExpr);
+					exprDataType = getExprDataType(TableName, partitionExpr);
 				}
 				partitionItem.setPartitionExprType(exprDataType);
 				result.add(partitionItem);

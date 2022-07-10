@@ -313,7 +313,7 @@ public class ExportTableDefinitionProgress implements
 		isInstalledMetaTable = SchemaCommentHandler.isInstalledMetaTable(dbSpec, conn);
 		if (isInstalledMetaTable) {
 			try {
-				schemaCommentMap = SchemaCommentHandler.loadDescriptions(dbSpec, conn);
+				schemaCommentMap = SchemaCommentHandler.loadDescriptions(dbSpec, conn, database.getDatabaseInfo().isSupportUserSchema());
 			} catch (Exception e) {
 				LOGGER.error("load schema comment error", e);
 			}

@@ -514,7 +514,7 @@ public class QueryPlanCompositeWithHistory extends Composite implements ISubTabS
 					CommonUITool.openErrorBox(Messages.msgPlanEditTable);
 					return;
 				}
-				ISchemaNode node = new DefaultSchemaNode(tableName, tableName, null);
+				ISchemaNode node = new DefaultSchemaNode(tableName, tableName, tableName, null);
 				node.setDatabase(editor.getSelectedDatabase());
 				EditTableAction action = (EditTableAction) ActionManager.getInstance().getAction(EditTableAction.ID);
 				if (action == null) {
@@ -537,7 +537,7 @@ public class QueryPlanCompositeWithHistory extends Composite implements ISubTabS
 					CommonUITool.openErrorBox(Messages.msgPlanEditIndex);
 					return;
 				}
-				ISchemaNode node = new DefaultSchemaNode(tableName, tableName, null);
+				ISchemaNode node = new DefaultSchemaNode(tableName, tableName, tableName, null);
 				node.setDatabase(editor.getSelectedDatabase());
 				EditTableAction action = (EditTableAction) ActionManager.getInstance().getAction(EditTableAction.ID);
 				if (action == null) {

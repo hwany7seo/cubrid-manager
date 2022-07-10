@@ -27,6 +27,8 @@
  */
 package com.cubrid.cubridmanager.core.cubrid.table.model;
 
+import java.util.Locale;
+
 import com.cubrid.cubridmanager.core.utils.ModelUtil.ClassType;
 
 /**
@@ -40,21 +42,29 @@ public class ClassInfo {
 
 	private String className;
 	private String ownerName;
+	private String tableName;
 	private ClassType classType;
 	private boolean isSystemClass;
 	private boolean isPartitionedClass;
+	private boolean isSupportUserSchema;
 
 	public ClassInfo(String className) {
 		this.className = className;
 	}
 
 	public ClassInfo(String className, String ownerName, ClassType classType,
-			boolean isSystemClass, boolean isPartitionedClass) {
+			boolean isSystemClass, boolean isPartitionedClass, boolean isSupportUserSchema) {
 		this.className = className;
 		this.ownerName = ownerName;
 		this.classType = classType;
 		this.isSystemClass = isSystemClass;
 		this.isPartitionedClass = isPartitionedClass;
+		this.isSupportUserSchema = isSupportUserSchema;
+		if (isSupportUserSchema) {
+			tableName = ownerName + "." + className;
+		} else {
+			tableName = className;
+		}
 	}
 
 	public String getClassName() {
@@ -73,6 +83,14 @@ public class ClassInfo {
 		this.ownerName = ownerName;
 	}
 
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+	
 	public ClassType getClassType() {
 		return classType;
 	}
@@ -95,6 +113,14 @@ public class ClassInfo {
 
 	public void setPartitionedClass(boolean isPartitionedClass) {
 		this.isPartitionedClass = isPartitionedClass;
+	}
+
+	public boolean isSupportUserSchema() {
+		return isSupportUserSchema;
+	}
+
+	public void setSupportUserSchema(boolean isSupportUserSchema) {
+		this.isSupportUserSchema = isSupportUserSchema;
 	}
 
 }

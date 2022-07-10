@@ -88,7 +88,7 @@ public class CubridPartitionedTableLoader extends
 
 			monitorCancel(monitor, new ITask[] {task});
 
-			List<ClassInfo> classInfoList = task.getAllPartitionedClassInfoList(parent.getLabel());
+			List<ClassInfo> classInfoList = task.getAllPartitionedClassInfoList(parent.getName());
 			final String errorMsg = task.getErrorMsg();
 			if (!monitor.isCanceled() && errorMsg != null
 					&& errorMsg.trim().length() > 0) {
@@ -110,14 +110,23 @@ public class CubridPartitionedTableLoader extends
 			parent.removeAllChild();
 
 			if (classInfoList != null && !classInfoList.isEmpty()) {
-				for (ClassInfo clasInfo : classInfoList) {
+				for (ClassInfo classInfo : classInfoList) {
 					String id = parent.getId() + NODE_SEPARATOR
-							+ clasInfo.getClassName();
-					ICubridNode partitionedClassNode = new DefaultSchemaNode(
-							id, clasInfo.getClassName(),
+							+ classInfo.getTableName();
+					
+					ICubridNode partitionedClassNode;
+					if (databaseInfo.isSupportUserSchema()) {
+						partitionedClassNode = new DefaultSchemaNode(
+							id, classInfo.getClassName() + " (" + classInfo.getOwnerName() + ")", 
+							classInfo.getTableName(),
 							"icons/navigator/schema_table_item.png");
+					} else {
+						partitionedClassNode = new DefaultSchemaNode(
+							id, classInfo.getClassName(), classInfo.getClassName(),
+							"icons/navigator/schema_table_item.png");
+					}
 					partitionedClassNode.setType(NodeType.USER_PARTITIONED_TABLE);
-					partitionedClassNode.setModelObj(clasInfo);
+					partitionedClassNode.setModelObj(classInfo);
 					partitionedClassNode.setContainer(false);
 					partitionedClassNode.setEditorId(SchemaInfoEditorPart.ID);
 					parent.addChild(partitionedClassNode);

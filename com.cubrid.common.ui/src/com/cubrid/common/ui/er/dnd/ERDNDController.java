@@ -58,6 +58,7 @@ import com.cubrid.common.core.common.model.IDatabaseSpec;
 import com.cubrid.common.core.common.model.SchemaInfo;
 import com.cubrid.common.core.schemacomment.SchemaCommentHandler;
 import com.cubrid.common.core.schemacomment.model.SchemaComment;
+import com.cubrid.common.core.util.CompatibleUtil;
 import com.cubrid.common.core.util.QueryUtil;
 import com.cubrid.common.core.util.StringUtil;
 import com.cubrid.common.ui.er.SchemaEditorInput;
@@ -154,9 +155,9 @@ public class ERDNDController {
 		Iterator<SchemaInfo> it = schemaInfoList.iterator();
 		while (it.hasNext()) {
 			SchemaInfo table = (SchemaInfo) it.next();
-			ERTable existTable = erSchema.getTable(table.getClassname());
+			ERTable existTable = erSchema.getTable(table.getTableName());
 			if (existTable != null) {
-				existTables.add(table.getClassname());
+				existTables.add(table.getTableName());
 				it.remove();
 				continue;
 			}
@@ -235,22 +236,25 @@ public class ERDNDController {
 					.isInstalledMetaTable(dbSpec, conn);
 			database.getDatabaseInfo().setSupportTableComment(
 					isSupportTableComment);
+			if (CompatibleUtil.isAfter112(database.getDatabaseInfo())) {
+				database.getDatabaseInfo().setSupportUserSchema(true);
+			}
 
 			if (isSupportTableComment && newSchemaInfo != null) {
 				Map<String, SchemaComment> map = SchemaCommentHandler
-						.loadDescription(dbSpec, conn,
+						.loadDescription(dbSpec, conn, database.getDatabaseInfo().isSupportUserSchema(),
 								newSchemaInfo.getClassname());
 
 				for (DBAttribute attr : newSchemaInfo.getAttributes()) {
 					SchemaComment schemaComment = SchemaCommentHandler.find(
-							map, newSchemaInfo.getClassname(), attr.getName());
+							map, newSchemaInfo.getTableName(), attr.getName());
 					if (schemaComment != null) {
 						attr.setDescription(schemaComment.getDescription());
 					}
 				}
 
 				SchemaComment schemaComment = SchemaCommentHandler.find(map,
-						newSchemaInfo.getClassname(), null);
+						newSchemaInfo.getTableName(), null);
 				if (schemaComment != null) {
 					newSchemaInfo
 							.setDescription(schemaComment.getDescription());

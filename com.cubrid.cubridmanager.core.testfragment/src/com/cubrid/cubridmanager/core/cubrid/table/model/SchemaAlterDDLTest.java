@@ -157,7 +157,7 @@ public class SchemaAlterDDLTest extends
 		Constraint constraint = null;
 		String indexType = null;
 		String indexName = "";
-		String tableName = newSchema.getClassname();
+		String tableName = newSchema.getTableName();
 
 		//add unique
 		constraint = new Constraint(false);
@@ -177,7 +177,7 @@ public class SchemaAlterDDLTest extends
 
 		newSchema.addConstraint(constraint);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(null,
-				constraint.getDefaultName(newSchema.getClassname())
+				constraint.getDefaultName(newSchema.getTableName())
 						+ "$" + constraint.getName(), //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -200,7 +200,7 @@ public class SchemaAlterDDLTest extends
 
 		newSchema.addConstraint(constraint);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(null,
-				constraint.getDefaultName(newSchema.getClassname())
+				constraint.getDefaultName(newSchema.getTableName())
 						+ "$" + constraint.getName(), //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -223,7 +223,7 @@ public class SchemaAlterDDLTest extends
 
 		newSchema.addConstraint(constraint);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(null,
-				constraint.getDefaultName(newSchema.getClassname())
+				constraint.getDefaultName(newSchema.getTableName())
 						+ "$" + constraint.getName(), //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -243,7 +243,7 @@ public class SchemaAlterDDLTest extends
 
 		newSchema.addConstraint(constraint);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(null,
-				constraint.getDefaultName(newSchema.getClassname())
+				constraint.getDefaultName(newSchema.getTableName())
 						+ "$" + constraint.getName(), //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -274,7 +274,7 @@ public class SchemaAlterDDLTest extends
 		Constraint index = newSchema.getConstraintByName(indexName, indexType);
 		newSchema.removeConstraintByName(indexName, indexType);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(
-				index.getDefaultName(newSchema.getClassname())
+				index.getDefaultName(newSchema.getTableName())
 						+ "$" + index.getName(), null, //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -283,7 +283,7 @@ public class SchemaAlterDDLTest extends
 		index = newSchema.getConstraintByName(indexName, indexType);
 		newSchema.removeConstraintByName(indexName, indexType);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(
-				index.getDefaultName(newSchema.getClassname())
+				index.getDefaultName(newSchema.getTableName())
 						+ "$" + index.getName(), null, //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -292,7 +292,7 @@ public class SchemaAlterDDLTest extends
 		index = newSchema.getConstraintByName(indexName, indexType);
 		newSchema.removeConstraintByName(indexName, indexType);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(
-				index.getDefaultName(newSchema.getClassname())
+				index.getDefaultName(newSchema.getTableName())
 						+ "$" + index.getName(), null, //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -301,7 +301,7 @@ public class SchemaAlterDDLTest extends
 		index = newSchema.getConstraintByName(indexName, indexType);
 		newSchema.removeConstraintByName(indexName, indexType);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(
-				index.getDefaultName(newSchema.getClassname())
+				index.getDefaultName(newSchema.getTableName())
 						+ "$" + index.getName(), null, //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -336,7 +336,7 @@ public class SchemaAlterDDLTest extends
 
 		String fkName = "";
 		if (fkName.equals("")) { //$NON-NLS-1$
-			fkName = ConstraintNamingUtil.getFKName(newSchema.getClassname(),
+			fkName = ConstraintNamingUtil.getFKName(newSchema.getTableName(),
 					fk.getAttributes());
 		}
 		fk.setName(fkName);
@@ -413,7 +413,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 		DBAttribute attr = new DBAttribute();
 		attr.setName(testColumn);
 		attr.setType("smallint");
-		attr.setInherit(newSchema.getClassname());
+		attr.setInherit(newSchema.getTableName());
 		addColumn(newSchema, isClassAttribute, attr);
 
 		Constraint oldPK = newSchema.getPK(superList);
@@ -507,7 +507,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 		attr.setType("smallint");
 
 		attr.setUnique(false);
-		attr.setInherit(newSchema.getClassname());
+		attr.setInherit(newSchema.getTableName());
 
 		addColumn(newSchema, isClassAttribute, attr);
 
@@ -593,7 +593,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 		attr = new DBAttribute();
 		attr.setName(testColumn);
 		attr.setType("smallint");
-		attr.setInherit(newSchema.getClassname());
+		attr.setInherit(newSchema.getTableName());
 
 		addColumn(newSchema, isClassAttribute, attr);
 
@@ -675,7 +675,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 	private void editColumn(SchemaInfo newSchema, DBAttribute editAttribute,
 			DBAttribute oldAttribute, boolean isEditAll) {
 		if (editAttribute != null) {
-			editAttribute.setInherit(newSchema.getClassname());
+			editAttribute.setInherit(newSchema.getTableName());
 		} else {
 			return;
 		}
@@ -683,7 +683,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 		boolean isNewAttrClass = editAttribute.isClassAttribute();
 		boolean isOldAttrClass = oldAttribute.isClassAttribute();
 		String attrName = oldAttribute.getName();
-		String tableName = newSchema.getClassname();
+		String tableName = newSchema.getTableName();
 		if (isEditAll) {
 
 			if (isOldAttrClass != isNewAttrClass) { // attribute
@@ -733,7 +733,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 	private void addColumn(SchemaInfo newSchema, boolean isClassAttribute,
 			DBAttribute addAttribute) {
 		String newAttrName = addAttribute.getName();
-		String tableName = newSchema.getClassname();
+		String tableName = newSchema.getTableName();
 		if (addAttribute != null) {
 			addAttribute.setInherit(tableName);
 		} else {
@@ -916,7 +916,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 			String superTable, String alias, boolean isClassType) {
 		DBResolution newResolution = new DBResolution(column, superTable, alias);
 		newResolution.setClassResolution(isClassType);
-		String tbl = newResolution.getClassName();
+		String tbl = newResolution.getTableName();
 		if (newResolution != null) {
 			List<DBResolution> resolutions = null;
 			if (isClassType) {
@@ -939,7 +939,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 					DBResolution r = resolutions.get(i);
 					// remove resolution
 					if (r.getName().equals(column)
-							&& r.getClassName().equals(tbl)) {
+							&& r.getTableName().equals(tbl)) {
 						resolutions.remove(i);
 					}
 				}
@@ -977,7 +977,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 		for (int i = 0; i < resolutions.size(); i++) {
 			DBResolution r = resolutions.get(i);
 			if (r.getName().equals(column)
-					&& r.getClassName().equals(superTable)) {
+					&& r.getTableName().equals(superTable)) {
 				removedResolution = resolutions.remove(i);
 			}
 		}

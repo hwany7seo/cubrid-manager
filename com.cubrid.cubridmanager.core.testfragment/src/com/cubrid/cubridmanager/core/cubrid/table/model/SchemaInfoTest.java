@@ -260,7 +260,7 @@ public class SchemaInfoTest extends
 		 */
 		Constraint pk = schema.getPK(supers);
 		assertNotNull(pk);
-		String pkName = ConstraintNamingUtil.getPKName(schema.getClassname(),
+		String pkName = ConstraintNamingUtil.getPKName(schema.getTableName(),
 				pk.getAttributes());
 		assertEquals(pkName, pk.getName());
 
@@ -347,6 +347,7 @@ public class SchemaInfoTest extends
 		schemaInfo.setType("system");
 		schemaInfo.isSystemClass();
 		schemaInfo.setClassname("classname");
+		schemaInfo.setTableName("classname");
 		schemaInfo.compareTo(schemaInfo);
 		schemaInfo.hashCode();
 		//+test the equal()
@@ -448,12 +449,12 @@ public class SchemaInfoTest extends
 		boolean isClassResolution = true;
 		DBResolution dbResolution = new DBResolution(rname, rclassName, alias);
 		dbResolution.setName(rname);
-		dbResolution.setClassName(rclassName);
+		dbResolution.setTableName(rclassName);
 		dbResolution.setAlias(alias);
 		dbResolution.setClassResolution(isClassResolution);
 		DBResolution dbResolution3 = new DBResolution(rname, rclassName, alias);
 		dbResolution3.setName("notsame");
-		dbResolution3.setClassName(rclassName);
+		dbResolution3.setTableName(rclassName);
 		dbResolution3.setAlias(alias);
 		dbResolution3.setClassResolution(isClassResolution);
 		schemaInfo1.addClassResolution(dbResolution);
@@ -465,18 +466,27 @@ public class SchemaInfoTest extends
 		schemaInfo2.addClassResolution(dbResolution);
 
 		schemaInfo1.setClassname("classname");
+		schemaInfo1.setTableName("classname");
 		schemaInfo2.setClassname("notsame");
+		schemaInfo2.setTableName("notsame");
 		schemaInfoOld.equals(schemaInfo1);
 		schemaInfo2.equals(schemaInfo1);
 		schemaInfoOld.setClassname("classname");
+		schemaInfoOld.setTableName("classname");
 		schemaInfo2.setClassname("classname");
-
+		schemaInfo2.setTableName("classname");
+		
 		schemaInfo1.setClassname("classname");
+		schemaInfo1.setTableName("classname");
 		schemaInfo2.setClassname("notsame");
+		schemaInfo2.setTableName("notsame");
+		
 		schemaInfoOld.equals(schemaInfo1);
 		schemaInfo2.equals(schemaInfo1);
 		schemaInfoOld.setClassname("classname");
+		schemaInfoOld.setTableName("classname");
 		schemaInfo2.setClassname("classname");
+		schemaInfo2.setTableName("classname");
 
 		schemaInfo2.addConstraint(new Constraint(false));
 		schemaInfoOld.equals(schemaInfo1);
@@ -545,6 +555,7 @@ public class SchemaInfoTest extends
 		schemaInfo.replaceDBAttributeByName(dbAttribute1, dbAttribute2, false,
 				supers);
 		schemaInfo.setClassname("inherit");
+		schemaInfo.setTableName("inherit");
 		schemaInfo.getLocalClassAttributes();
 		constraintYes.setType("UNIQUE");
 		List<String> a = new ArrayList<String>();

@@ -304,7 +304,7 @@ public class SchemaDDLTest extends
 				SchemeInnerType.TYPE_FK));
 		Constraint index = testTableName.getConstraintByName("index", "UNIQUE");
 		changeList.addSchemeChangeLog(new SchemaChangeLog(
-				index.getDefaultName(testTableName.getClassname())
+				index.getDefaultName(testTableName.getTableName())
 						+ "$" + index.getName(), null, //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 		changeList.addSchemeChangeLog(new SchemaChangeLog("a", "a",
@@ -352,12 +352,12 @@ public class SchemaDDLTest extends
 		boolean isClassResolution = true;
 		DBResolution oldResolutions = new DBResolution(name, className, alias);
 		oldResolutions.setName(name);
-		oldResolutions.setClassName(className);
+		oldResolutions.setTableName(className);
 		oldResolutions.setAlias(alias);
 		oldResolutions.setClassResolution(isClassResolution);
 		DBResolution newResolutions = new DBResolution(name, className, alias);
 		newResolutions.setName(name);
-		newResolutions.setClassName(className);
+		newResolutions.setTableName(className);
 		newResolutions.setAlias(alias);
 		newResolutions.setClassResolution(isClassResolution);
 		List<DBResolution> oldResolution = new ArrayList<DBResolution>();
@@ -463,14 +463,15 @@ public class SchemaDDLTest extends
 
 		SchemaInfo alteredschema = schema.clone();
 		alteredschema.setClassname("alteredName");
+		alteredschema.setTableName("alteredName");
 		changeLogMgr.addSchemeChangeLog(new SchemaChangeLog(
-				schema.getClassname(), alteredschema.getClassname(),
+				schema.getTableName(), alteredschema.getTableName(),
 				SchemeInnerType.TYPE_SCHEMA));
 		/*Change supper*/
 		schema.setSuperClasses(new ArrayList<String>());
 		alteredschema.setSuperClasses(new ArrayList<String>());
 		changeLogMgr.addSchemeChangeLog(new SchemaChangeLog(
-				schema.getClassname(), alteredschema.getClassname(),
+				schema.getTableName(), alteredschema.getTableName(),
 				SchemeInnerType.TYPE_SUPER_TABLE));
 		/*Remove attr*/
 		alteredschema.removeDBAttributeByName("gender", false);
@@ -503,16 +504,16 @@ public class SchemaDDLTest extends
 		newAttr.setNotNull(false);
 		newAttr.setType("String");
 		newAttr.setUnique(false);
-		newAttr.setInherit(alteredschema.getClassname());
+		newAttr.setInherit(alteredschema.getTableName());
 		/*Add pk attr*/
 		DBAttribute pkAttr = new DBAttribute();
 		pkAttr.setName("pkAttr");
 		pkAttr.setNotNull(true);
 		pkAttr.setType("Integer");
 		pkAttr.setUnique(true);
-		pkAttr.setInherit(alteredschema.getClassname());
+		pkAttr.setInherit(alteredschema.getTableName());
 		pkAttr.setAutoIncrement(new SerialInfo("pk", "dba", "0", "1", "999999",
-				"0", true, "0", "0", alteredschema.getClassname(),
+				"0", true, "0", "0", alteredschema.getTableName(),
 				pkAttr.getName()));
 		alteredschema.addAttribute(newAttr);
 		changeLogMgr.addSchemeChangeLog(new SchemaChangeLog(null,
@@ -523,27 +524,27 @@ public class SchemaDDLTest extends
 		index.addAttribute("newAttr");
 		index.addRule("newAttr_index DESC");
 		index.setName(ConstraintNamingUtil.getIndexName(
-				alteredschema.getClassname(), index.getRules()));
+				alteredschema.getTableName(), index.getRules()));
 		alteredschema.addConstraint(index);
 		changeLogMgr.addSchemeChangeLog(new SchemaChangeLog(null,
-				index.getDefaultName(alteredschema.getClassname()) + "$"
+				index.getDefaultName(alteredschema.getTableName()) + "$"
 						+ index.getName(), SchemeInnerType.TYPE_INDEX));
 		/*Remove index*/
 		Constraint removeConstraint = alteredschema.getConstraints().get(0);
 		changeLogMgr.addSchemeChangeLog(new SchemaChangeLog(
-				removeConstraint.getDefaultName(alteredschema.getClassname())
+				removeConstraint.getDefaultName(alteredschema.getTableName())
 						+ "$" + removeConstraint.getName(), null,
 				SchemeInnerType.TYPE_INDEX));
 		/*Add pk*/
 		Constraint pk = new Constraint(false);
 		pk.addAttribute(pkAttr.getName());
-		pk.setName(ConstraintNamingUtil.getPKName(alteredschema.getClassname(),
+		pk.setName(ConstraintNamingUtil.getPKName(alteredschema.getTableName(),
 				pk.getAttributes()));
 		pk.setType(Constraint.ConstraintType.PRIMARYKEY.getText());
 		pk.addRule("pkAttr_pk ASC");
 		alteredschema.addConstraint(pk);
 		changeLogMgr.addSchemeChangeLog(new SchemaChangeLog(null,
-				pk.getDefaultName(alteredschema.getClassname()) + "$"
+				pk.getDefaultName(alteredschema.getTableName()) + "$"
 						+ pk.getName(), SchemeInnerType.TYPE_INDEX));
 		/*Remove fk*/
 		Constraint fk2 = new Constraint(false);
@@ -551,7 +552,7 @@ public class SchemaDDLTest extends
 		fk2.addAttribute(pkAttr.getName());
 		fk2.addRule("REFERENCES " + testTableName);
 		fk2.addRule("ON DELETE RESTRICT ON UPDATE RESTRICT");
-		String fkName2 = ConstraintNamingUtil.getFKName(schema.getClassname(),
+		String fkName2 = ConstraintNamingUtil.getFKName(schema.getTableName(),
 				fk2.getAttributes());
 		fk2.setName(fkName2);
 		schema.addConstraint(fk2);
@@ -560,7 +561,7 @@ public class SchemaDDLTest extends
 		/*Alter fk*/
 		Constraint alterFK = alteredschema.getFKConstraints().get(0);
 		String oldFKName = alterFK.getName();
-		alterFK.setName(ConstraintNamingUtil.getFKName(schema.getClassname(),
+		alterFK.setName(ConstraintNamingUtil.getFKName(schema.getTableName(),
 				fk2.getAttributes())
 				+ "temp");
 		changeLogMgr.addSchemeChangeLog(new SchemaChangeLog(oldFKName,

@@ -59,6 +59,7 @@ public class DefaultCubridNode implements
 	private String editorId = null;
 	private String viewId = null;
 	private String label = "";
+	private String schemaName = "";
 	private ICubridNode parent = null;
 	private boolean isRoot = false;
 	private String iconPath = "";
@@ -83,8 +84,19 @@ public class DefaultCubridNode implements
 		isRoot = false;
 		childList = new ArrayList<ICubridNode>();
 		objMap = new HashMap<String, Object>();
+		this.schemaName = label;
 	}
 
+	public DefaultCubridNode(String id, String label, String schemaName, String iconPath) {
+		this.id = id;
+		this.label = label;
+		this.iconPath = iconPath;
+		isRoot = false;
+		childList = new ArrayList<ICubridNode>();
+		objMap = new HashMap<String, Object>();
+		this.schemaName = schemaName;
+	}
+	
 	/**
 	 * Get whether it is container node
 	 * 
@@ -345,7 +357,7 @@ public class DefaultCubridNode implements
 	 * 
 	 * @return String the label
 	 */
-	public String getLabel() {
+	public String getLabelbb() {
 		return label;
 	}
 
@@ -518,7 +530,7 @@ public class DefaultCubridNode implements
 	 * @return the name string; never <code>null</code>;
 	 */
 	public String getName() {
-		return getLabel();
+		return schemaName;
 	}
 
 	/**
@@ -533,7 +545,7 @@ public class DefaultCubridNode implements
 		String tipText = getLabel();
 		ICubridNode parent = getParent();
 		while (parent != null) {
-			tipText = parent.getLabel() + "/" + tipText;
+			tipText = parent.getName() + "/" + tipText;
 			parent = parent.getParent();
 		}
 		return tipText;

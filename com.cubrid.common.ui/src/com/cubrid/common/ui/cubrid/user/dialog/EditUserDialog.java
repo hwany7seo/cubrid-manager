@@ -555,13 +555,13 @@ public class EditUserDialog extends CMTrayDialog {
 				for (int id : idx) {
 					String tableName = authTable.getItem(id).getText(0);
 					for (ClassInfo bean : allClassInfoList) {
-						if (tableName.equals(bean.getClassName())) {
+						if (tableName.equals(bean.getTableName())) {
 							if (bean.isSystemClass()) {
 								CommonUITool.openErrorBox(parentComp.getShell(), Messages.errRemoveSysClass);
 								return;
 							} else {
 								Map<String, String> map = new HashMap<String, String>();
-								map.put("0", bean.getClassName());
+								map.put("0", bean.getTableName());
 								map.put("1", bean.isSystemClass() ? Messages.msgSystemSchema : Messages.msgUserSchema);
 								map.put("2", bean.getOwnerName());
 								map.put("3", bean.getClassType() == ClassType.VIEW ? Messages.msgVirtualClass : Messages.msgClass);
@@ -624,7 +624,7 @@ public class EditUserDialog extends CMTrayDialog {
 				}
 				String name = (String) map.get("0");
 				for (ClassInfo bean : allClassInfoList) {
-					if (name.equals(bean.getClassName())) {
+					if (name.equals(bean.getTableName())) {
 						if (bean.isSystemClass()) {
 							return false;
 						} else if (currentUserInfo.getName().equalsIgnoreCase(bean.getOwnerName())) {
@@ -949,13 +949,13 @@ public class EditUserDialog extends CMTrayDialog {
 		if (!DB_DBA_USERNAME.equalsIgnoreCase(userName) && !isDBAGroup()) {
 			authTableViewer.refresh();
 			for (ClassInfo bean : allClassInfoList) {
-				if (classGrantMap.containsKey(bean.getClassName())
+				if (classGrantMap.containsKey(bean.getTableName())
 						|| bean.isSystemClass()
 						|| bean.getOwnerName().equalsIgnoreCase(DB_DEFAULT_USERNAME)) {
 					continue;
 				}
 				Map<String, String> map = new HashMap<String, String>();
-				map.put("0", bean.getClassName());
+				map.put("0", bean.getTableName());
 				map.put("1", Messages.msgUserSchema);
 				map.put("2", bean.getOwnerName());
 				map.put("3", bean.getClassType() == ClassType.VIEW ? Messages.msgVirtualClass : Messages.msgClass);
@@ -1062,7 +1062,7 @@ public class EditUserDialog extends CMTrayDialog {
 					ClassAuthorizations authorizations = currentUserAuthorizations.get(item.getText());
 					boolean ownertag = false;
 					for (ClassInfo bean : allClassInfoList) {
-						if (item.getText().equals(bean.getClassName())) {
+						if (item.getText().equals(bean.getTableName())) {
 							if (currentUserInfo.getName().equalsIgnoreCase(bean.getOwnerName())) {
 								ownertag = true;
 							}
@@ -1083,7 +1083,7 @@ public class EditUserDialog extends CMTrayDialog {
 					ClassAuthorizations authorizations = currentUserAuthorizations.get(item.getText());
 					boolean ownertag = false;
 					for (ClassInfo bean : allClassInfoList) {
-						if (item.getText().equals(bean.getClassName())) {
+						if (item.getText().equals(bean.getTableName())) {
 							if (currentUserInfo.getName().equalsIgnoreCase(bean.getOwnerName())) {
 								ownertag = true;
 							}
@@ -1480,7 +1480,7 @@ public class EditUserDialog extends CMTrayDialog {
 			return false;
 		}
 		for (ClassInfo bean : allClassInfoList) {
-			if (bean.getClassName().equals(name) && bean.isSystemClass()) {
+			if (bean.getTableName().equals(name) && bean.isSystemClass()) {
 				return false;
 			}
 		}
