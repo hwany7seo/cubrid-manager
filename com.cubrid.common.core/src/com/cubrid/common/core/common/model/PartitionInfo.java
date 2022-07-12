@@ -60,8 +60,8 @@ public class PartitionInfo implements Cloneable {
 	@Override
 	public String toString() { // FIXME ToStringBuilder
 		StringBuilder sb = new StringBuilder();
-		sb.append("PartitionInfo[className=").append(tableName);
 		sb.append(",partitionName=").append(partitionName);
+		sb.append("PartitionInfo[className=").append(tableName);
 		sb.append(",partitionClassName=").append(partitionClassName);
 		sb.append(",partitionType=").append(partitionType);
 		sb.append(",partitionExpr=").append(partitionExpr);
@@ -79,7 +79,7 @@ public class PartitionInfo implements Cloneable {
 		this.partitionType = partitionType;
 	}
 
-	public PartitionInfo(String className, String partitionName,
+	public PartitionInfo(String tableName, String partitionName,
 			PartitionType partitionType, String partitionExpr,
 			List<String> partitionValues, int rows) {
 		this.tableName = tableName;
@@ -90,7 +90,7 @@ public class PartitionInfo implements Cloneable {
 		this.rows = rows;
 	}
 
-	public PartitionInfo(String className, String partitionName,
+	public PartitionInfo(String tableName, String partitionName,
 			String partitionClassName, PartitionType partitionType,
 			String partitionExpr, List<String> partitionValues, int rows) {
 		this.tableName = tableName;

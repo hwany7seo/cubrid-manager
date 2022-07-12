@@ -853,7 +853,7 @@ public class DatabaseInfo implements IDatabaseSpec {
 		if (null == schemaInfo) {
 			SchemaProvider schemaProvider = new SchemaProvider(this, tableName);
 			schemaInfo = schemaProvider.getSchema();
-			if (schemaInfo == null && StringUtil.isNotEmpty(schemaProvider.getErrorMessage())) {
+			if (schemaInfo == null || StringUtil.isNotEmpty(schemaProvider.getErrorMessage())) {
 				errorMessage = schemaProvider.getErrorMessage();
 				return null;
 			} else {

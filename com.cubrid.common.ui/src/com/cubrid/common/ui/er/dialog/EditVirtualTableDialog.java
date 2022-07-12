@@ -1057,7 +1057,7 @@ public class EditVirtualTableDialog extends
 	public boolean isHasSubClass() {
 		if (isHasSubClass == null) {
 			CheckSubClassTask task = new CheckSubClassTask(database.getDatabaseInfo());
-			isHasSubClass = task.checkSubClass(oldSchemaInfo.getClassname());
+			isHasSubClass = task.checkSubClass(oldSchemaInfo.getOwner(), oldSchemaInfo.getClassname());
 		}
 
 		return isHasSubClass;
@@ -1337,7 +1337,7 @@ public class EditVirtualTableDialog extends
 		}
 
 		DBAttribute addAttribute = new DBAttribute("", DataType.DATATYPE_CHAR,
-				newSchemaInfo.getClassname(), false, false, false, false, null, collation);
+				newSchemaInfo.getTableName(), false, false, false, false, null, collation);
 		ERTableColumn column = new ERTableColumn(newERTable, addAttribute, false);
 		column.setIsNew(true);
 		tempERColumnList.add(column);

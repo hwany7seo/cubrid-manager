@@ -171,10 +171,18 @@ public class SchemaCommentHandler {
 		return true;
 	}
 	
-	private static SchemaComment resultToMetaDesc(ResultSet rs) 
+	private static SchemaComment resultToMetaDesc(ResultSet rs, boolean isSupportUserSchema) 
 			throws SQLException {
 		SchemaComment meta = new SchemaComment();
-		meta.setTable(rs.getString("table_name"));
+		String className = rs.getString("table_name");
+		String tableName;
+		if (isSupportUserSchema) {
+			String ownerName = rs.getString("owner");
+			tableName = ownerName + "." + className;
+		} else {
+			tableName = className;
+		}
+		meta.setTable(tableName);
 		String columnName = rs.getString("column_name");
 		if (StringUtil.isEqual(columnName, "*")) {
 			columnName = null;
@@ -189,7 +197,7 @@ public class SchemaCommentHandler {
 		return loadDescription(dbSpec, conn, isSupportUserSchema, null);
 	}
 
-	public static Map<String, SchemaComment> loadTableDescriptions(IDatabaseSpec dbSpec, Connection conn) 
+	public static Map<String, SchemaComment> loadTableDescriptions(IDatabaseSpec dbSpec, Connection conn, boolean isSupportUserSchema) 
 			throws SQLException {
 		boolean isSupportInEngine = CompatibleUtil.isCommentSupports(dbSpec);
 		String sql = null;
@@ -222,7 +230,7 @@ public class SchemaCommentHandler {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
-				SchemaComment meta = resultToMetaDesc(rs);
+				SchemaComment meta = resultToMetaDesc(rs, isSupportUserSchema);
 				results.put(meta.getId(), meta);
 			}
 		} catch (SQLException e) {
@@ -244,12 +252,21 @@ public class SchemaCommentHandler {
 		String columnCondition = null;
 
 		if (isSupportInEngine) {
-			sql = "SELECT class_name as table_name, null as column_name, comment as description "
-					+ "FROM db_class "
-					+ "WHERE is_system_class='NO' %s"
-					+ "UNION ALL "
-					+ "SELECT class_name as table_name, attr_name as column_name, comment as description "
-					+ "FROM db_attribute %s";
+			if (isSupportUserSchema) {
+				sql = "SELECT owner_name as owner, class_name as table_name, null as column_name, comment as description "
+						+ "FROM db_class "
+						+ "WHERE is_system_class='NO' %s"
+						+ "UNION ALL "
+						+ "SELECT owner_name as owner, class_name as table_name, attr_name as column_name, comment as description "
+						+ "FROM db_attribute %s";
+			} else {
+				sql = "SELECT class_name as table_name, null as column_name, comment as description "
+						+ "FROM db_class "
+						+ "WHERE is_system_class='NO' %s"
+						+ "UNION ALL "
+						+ "SELECT class_name as table_name, attr_name as column_name, comment as description "
+						+ "FROM db_attribute %s";
+			}
 			if (StringUtil.isNotEmpty(tableName)) {
 				if (isSupportUserSchema) {
 					tableCondition = "AND CONCAT(owner_name, '.' ,class_name)='" + tableName + "' ";
@@ -285,7 +302,7 @@ public class SchemaCommentHandler {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
-				SchemaComment meta = resultToMetaDesc(rs);
+				SchemaComment meta = resultToMetaDesc(rs, isSupportUserSchema);
 				results.put(meta.getId(), meta);
 			}
 		} catch (SQLException e) {
@@ -308,27 +325,27 @@ public class SchemaCommentHandler {
 			case INDEX:
 				sql = "SELECT index_name, comment " +
 						"FROM db_index " +
-						"WHERE LOWER(CONCAT(owner_name, '.', index_name)) = ?";
+						"WHERE CONCAT(owner_name, '.', index_name) = ?";
 				break;
 			case VIEW:
 				sql = "SELECT vclass_name, comment " +
 						"FROM db_vclass " +
-						"WHERE LOWER(CONCAT(owner_name, '.', vclass_name)) = ?";
+						"WHERE CONCAT(owner_name, '.', vclass_name) = ?";
 				break;
 			case SP:
 				sql = "SELECT sp_name, comment " +
 						"FROM db_stored_procedure " +
-						"WHERE LOWER(CONCAT(owner, '.' , sp_name)) = ?";
+						"WHERE CONCAT(owner, '.' , sp_name) = ?";
 				break;
 			case TRIGGER:
 				sql = "SELECT name, comment " +
 						"FROM db_trigger " +
-						"WHERE LOWER(CONCAT(owner, '.' , name)) = ?";
+						"WHERE CONCAT(owner, '.' , name) = ?";
 				break;
 			case SERIAL:
 				sql = "SELECT name, comment " +
 						"FROM db_serial " +
-						"WHERE LOWER(CONCAT(owner, '.' , name)) = ?";
+						"WHERE CONCAT(owner, '.' , name) = ?";
 				break;
 			case USER:
 				sql = "SELECT name, comment " +
@@ -338,7 +355,7 @@ public class SchemaCommentHandler {
 			case PARTITION:
 				sql = "SELECT partition_name, comment " +
 						"FROM db_partition " +
-						"WHERE LOWER(CONCAT(owner_name, '.', partition_name)) = ?";
+						"WHERE CONCAT(owner_name, '.', partition_name) = ?";
 				break;
 			}
 		} else {

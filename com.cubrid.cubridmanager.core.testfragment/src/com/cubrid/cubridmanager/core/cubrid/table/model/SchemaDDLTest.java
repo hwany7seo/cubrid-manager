@@ -136,11 +136,11 @@ public class SchemaDDLTest extends
 		 * Check CheckSubClassTask
 		 */
 		CheckSubClassTask task = new CheckSubClassTask(databaseInfo);
-		assertTrue(task.checkSubClass("sup1"));
+		assertTrue(task.checkSubClass("owner", "sup1"));
 		
 //		assertFalse(task.checkSubClass("sup1"));
 		task.setErrorMsg("Error");
-		assertFalse(task.checkSubClass("sup1"));
+		assertFalse(task.checkSubClass("owner", "sup1"));
 		
 		return success;
 	}

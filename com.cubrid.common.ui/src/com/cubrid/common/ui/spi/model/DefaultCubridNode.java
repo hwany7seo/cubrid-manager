@@ -357,7 +357,7 @@ public class DefaultCubridNode implements
 	 * 
 	 * @return String the label
 	 */
-	public String getLabelbb() {
+	public String getLabel() {
 		return label;
 	}
 
@@ -650,5 +650,9 @@ public class DefaultCubridNode implements
 	public DefaultCubridNode clone() throws CloneNotSupportedException {
 		DefaultCubridNode obj = (DefaultCubridNode) super.clone();;
 		return obj;
+	}
+	
+	public void setTableName(String tableName) {
+		this.schemaName = tableName;
 	}
 }

@@ -728,7 +728,8 @@ public final class QueryUtil {
 			sql.append("ALTER TABLE " + tableName + " MODIFY ");
 
 			if (rs.next()) {
-				sql.append(parseColumnDefinition(rs.getString(2), columnName));
+				String temp = rs.getString(2);
+				sql.append(parseColumnDefinition(temp, columnName));
 			}
 		} catch (SQLException e) {
 			LOGGER.error(e.getLocalizedMessage());

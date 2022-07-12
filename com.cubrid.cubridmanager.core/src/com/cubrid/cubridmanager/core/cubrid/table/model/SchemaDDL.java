@@ -119,11 +119,12 @@ public class SchemaDDL {
 	public String getSchemaDDL(SchemaInfo schemaInfo, boolean isContainIndex, boolean isVirtual) {
 		StringBuffer ddlBuffer = new StringBuffer();
 		ddlBuffer.append("CREATE TABLE ");
-		final String tableName = schemaInfo.getTableName().toLowerCase();
+		final String tableName = schemaInfo.getTableName();
 		if (null == tableName || tableName.equals("")) {
 			ddlBuffer.append("<class_name>");
 		} else {
-			ddlBuffer.append(QuerySyntax.escapeKeyword(tableName));
+			//ddlBuffer.append(QuerySyntax.escapeKeyword(tableName));
+			ddlBuffer.append(tableName);
 		}
 
 		List<String> slist = schemaInfo.getSuperClasses();
@@ -461,8 +462,10 @@ public class SchemaDDL {
 		//Generate the DDL for rename table
 		String oldTableName = oldSchemaInfo.getTableName().toLowerCase();
 		String newTableName = newSchemaInfo.getTableName().toLowerCase();
+		String oldclassName = oldSchemaInfo.getClassname().toLowerCase();
+		String newClassName = newSchemaInfo.getClassname().toLowerCase();
 		String tableName = oldTableName;
-		if (!oldTableName.equals(newTableName)) {
+		if (!oldclassName.equals(newClassName)) {
 			String renameDDL = getRenameTableDDL(oldTableName, newTableName);
 			generator.addSchemaDDLMode(DDLGenerator.TYPE_REBANE_TABLE, newSchemaInfo, renameDDL);
 			tableName = newTableName;

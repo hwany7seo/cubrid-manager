@@ -64,9 +64,10 @@ public class RenameTableDialog extends
 	private boolean isPhysical;
 
 	private Text newTableText = null;
-	private Text OwnerText = null;
 	private String newName;
 	private String tableOrView;
+	
+	private String ownerName;
 
 	public RenameTableDialog(Shell parentShell, String name, boolean isTable,
 			List<String> nameList, boolean isPhysical) {
@@ -152,6 +153,11 @@ public class RenameTableDialog extends
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 
+		if (oldName.indexOf(".") > 0) {
+			ownerName = oldName.substring(0, oldName.indexOf("."));
+			oldName = oldName.substring(oldName.indexOf(".")+1);
+		}
+		
 		newTableText.setLayoutData(data);
 		newTableText.setText(oldName);
 		newTableText.selectAll();
@@ -199,6 +205,11 @@ public class RenameTableDialog extends
 
 	public String getNewName() {
 		return newName;
+
+	}
+	
+	public String getOwnerName() {
+		return ownerName;
 
 	}
 }

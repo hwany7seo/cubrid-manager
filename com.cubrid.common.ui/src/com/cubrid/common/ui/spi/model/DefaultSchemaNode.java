@@ -143,7 +143,10 @@ public class DefaultSchemaNode extends
 	
 	@Override
 	public String getName() {
-		return tableName;
+		return this.tableName;
 	}
 	
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
 }

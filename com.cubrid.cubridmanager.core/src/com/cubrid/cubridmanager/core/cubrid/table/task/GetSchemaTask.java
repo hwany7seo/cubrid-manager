@@ -209,7 +209,7 @@ public class GetSchemaTask extends JDBCTask {
 		//get table information
 		String sql = "";
 		if (databaseInfo.isSupportUserSchema()) {
-			sql = "SELECT * FROM db_class WHERE LOWER(CONCAT(owner_name, '.', class_name))=?";
+			sql = "SELECT * FROM db_class WHERE CONCAT(owner_name, '.', class_name)=?";
 		} else {
 			sql = "SELECT * FROM db_class WHERE class_name=?";
 		}
@@ -449,7 +449,18 @@ public class GetSchemaTask extends JDBCTask {
 				Map<String, String> fkInfo = new HashMap<String, String>();
 				fkInfo.put("PKTABLE_CAT", rs.getString("PKTABLE_CAT"));
 				fkInfo.put("PKTABLE_SCHEM", rs.getString("PKTABLE_SCHEM"));
-				fkInfo.put("PKTABLE_NAME", rs.getString("PKTABLE_NAME"));
+				String pkTableName;
+				if (databaseInfo.isSupportUserSchema()) {
+					pkTableName = rs.getString("PKTABLE_NAME");
+					int idx = pkTableName.indexOf(".");
+					if (idx > 0) {
+						pkTableName = pkTableName.substring(0, idx).toUpperCase(Locale.getDefault())
+								+ pkTableName.substring(idx);
+					}
+				} else {
+					pkTableName = rs.getString("PKTABLE_NAME");
+				}
+				fkInfo.put("PKTABLE_NAME", pkTableName);
 				fkInfo.put("PKCOLUMN_NAME", rs.getString("PKCOLUMN_NAME"));
 				fkInfo.put("FKTABLE_CAT", rs.getString("FKTABLE_CAT"));
 				fkInfo.put("FKTABLE_SCHEM", rs.getString("FKTABLE_SCHEM"));
@@ -490,7 +501,7 @@ public class GetSchemaTask extends JDBCTask {
 		String sql = "";
 		if (isSupportUserSchema) {
 			sql = "SELECT owner_name, index_name, is_unique, is_reverse, is_primary_key, is_foreign_key, key_count"
-				+ " FROM db_index WHERE LOWER(CONCAT(owner_name, ',', class_name))=? ORDER BY index_name";
+				+ " FROM db_index WHERE CONCAT(owner_name, '.', class_name)=? ORDER BY index_name";
 		} else {
 			sql = "SELECT index_name, is_unique, is_reverse, is_primary_key, is_foreign_key, key_count"
 					+ " FROM db_index WHERE class_name=? ORDER BY index_name";
@@ -506,20 +517,14 @@ public class GetSchemaTask extends JDBCTask {
 			rs = ((PreparedStatement) stmt).executeQuery();
 			while (rs.next()) {
 				String constraintName = rs.getString("index_name");
-				String realConstraintName = "";
-				if(isSupportUserSchema) {
-					realConstraintName = rs.getString("owner_name") + '.' + constraintName;
-				} else {
-					realConstraintName = constraintName;
-				}
 				String pk = rs.getString("is_primary_key");
 				String fk = rs.getString("is_foreign_key");
 				String unique = rs.getString("is_unique");
 				String reverse = rs.getString("is_reverse");
 				int keyCount = rs.getInt("key_count");
 				Constraint c = new Constraint(false);
-				c.setName(realConstraintName);
-				constraint2Unique.put(realConstraintName, unique);
+				c.setName(constraintName);
+				constraint2Unique.put(constraintName, unique);
 				if (StringUtil.booleanValueWithYN(pk)) {
 					c.setType(Constraint.ConstraintType.PRIMARYKEY.getText());
 				} else if (StringUtil.booleanValueWithYN(fk)) {
@@ -554,7 +559,7 @@ public class GetSchemaTask extends JDBCTask {
 		String funcIndex = isSupportFuncIndex ? ", func" : "";
 		if (isSupportUserSchema) {
 			sql = "SELECT key_attr_name, asc_desc, key_order" + prefixIndexLength + funcIndex
-					+ " FROM db_index_key WHERE LOWER(CONCAT(owner_name, '.', index_name)=? AND CONCAT(owner_name, '.', class_name))=? ORDER BY key_order";
+					+ " FROM db_index_key WHERE index_name=? AND CONCAT(owner_name, '.', class_name)=? ORDER BY key_order";
 		} else {
 			sql = "SELECT key_attr_name, asc_desc, key_order" + prefixIndexLength + funcIndex
 					+ " FROM db_index_key WHERE index_name=? AND class_name=? ORDER BY key_order";
@@ -715,21 +720,13 @@ public class GetSchemaTask extends JDBCTask {
 			//databaseInfo.getServerInfo().compareVersionKey("8.2.2") >= 0;
 			boolean isSupportCache = CompatibleUtil.isSupportCache(databaseInfo);
 			
-			String sql = "";
-			if (databaseInfo.isSupportUserSchema()) {
-				sql = "SELECT db_serial.* FROM db_serial WHERE class_name=? AND owner=?";
-			} else {
-				sql = "SELECT db_serial.* FROM db_serial WHERE class_name=?";
-			}
+			String sql = "SELECT db_serial.* FROM db_serial WHERE class_name=?";
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
 			try {
 				stmt = connection.prepareStatement(sql);
-				((PreparedStatement) stmt).setString(1, schemaInfo.getOwner());
-				if (databaseInfo.isSupportUserSchema()) {
-					((PreparedStatement) stmt).setString(1, schemaInfo.getClassname());
-				}
+				((PreparedStatement) stmt).setString(1, schemaInfo.getClassname());
 				rs = ((PreparedStatement) stmt).executeQuery();
 				while (rs.next()) {
 					String name = rs.getString("name");

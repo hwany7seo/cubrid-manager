@@ -188,7 +188,7 @@ public interface ICubridNode extends
 	 * 
 	 * @return String the label
 	 */
-	public String getLabelbb();
+	public String getLabel();
 
 	/**
 	 * Set displayed label of this node
@@ -310,4 +310,6 @@ public interface ICubridNode extends
 	 * @return Object
 	 */
 	public Object getData(String key);
+	
+	public void setTableName(String tableName);
 }

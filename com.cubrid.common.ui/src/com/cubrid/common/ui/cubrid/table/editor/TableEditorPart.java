@@ -680,19 +680,18 @@ public class TableEditorPart extends
 		}
 
 		String className = classNameText.getText();
-		
-		String tableName;
+		String TableName;
 		if (database.getDatabaseInfo().isSupportUserSchema()) {
-			tableName = newOwner + "." + className;
+			TableName = oldOwner + "." + className;
 		} else {
-			tableName = className;
+			TableName = className;
 		}
-
+		
 		ServerInfo serverInfo = database.getServer().getServerInfo();
 		if (CompatibleUtil.isSupportChangeOwnerWithAlterStatement(serverInfo)) {
-			return schemaDDL.getChangeOwnerDDLWithAlterStatement(tableName, newOwner);
+			return schemaDDL.getChangeOwnerDDLWithAlterStatement(TableName, newOwner);
 		} else {
-			return schemaDDL.getChangeOwnerDDL(tableName, newOwner);
+			return schemaDDL.getChangeOwnerDDL(className, newOwner);
 		}
 	}
 
@@ -743,14 +742,14 @@ public class TableEditorPart extends
 					} else if (verifyTableName()) {
 						String className = classNameText.getText();
 						newSchemaInfo.setClassname(className);
-						if (ownerCombo != null && ownerCombo.getText().isEmpty()) {
-							if (isSupportUserSchema()) {
+						if (isSupportUserSchema()) {
+							if (ownerCombo != null && !ownerCombo.getText().isEmpty()) {
 								newSchemaInfo.setTableName(ownerCombo.getText() + "." + className);
 							} else {
 								newSchemaInfo.setTableName(className);
 							}
 						} else {
-							CommonUITool.openErrorBox(getSite().getShell(), Messages.msgNoTableName);
+							newSchemaInfo.setTableName(className);
 						}
 					}
 				}
@@ -1189,7 +1188,7 @@ public class TableEditorPart extends
 	public boolean isHasSubClass() {
 		if (isHasSubClass == null) {
 			CheckSubClassTask task = new CheckSubClassTask(database.getDatabaseInfo());
-			isHasSubClass = task.checkSubClass(oldSchemaInfo.getTableName());
+			isHasSubClass = task.checkSubClass(oldSchemaInfo.getOwner(), oldSchemaInfo.getClassname());
 		}
 
 		return isHasSubClass;
@@ -2811,6 +2810,7 @@ public class TableEditorPart extends
 							CubridNodeChangedEventType.NODE_REFRESH));
 			/* Broadcast the view changed */
 			QueryEditorUtil.fireSchemaNodeChanged(editedTableNode);
+			treeViewer.refresh(true);
 		}
 
 		getSite().getWorkbenchWindow().getActivePage().closeEditor(editor, false);

@@ -84,21 +84,20 @@ public class GetUserClassIndexesTask extends
 
 			stmt = connection.prepareStatement(sql);
 			((PreparedStatement) stmt).setString(1,
-					tableName.toLowerCase(Locale.getDefault()));
+					tableName);
 			rs = ((PreparedStatement) stmt).executeQuery();
 			while (rs.next()) {
-				String indexName;
-				if (databaseInfo.isSupportUserSchema()) {
-					indexName = rs.getString("owner_name") + "." + rs.getString("index_name");
-				} else {
-					indexName = rs.getString("index_name");
-				}
+				String indexName = rs.getString("index_name");
 				String pk = rs.getString("is_primary_key");
 				String fk = rs.getString("is_foreign_key");
 				String unique = rs.getString("is_unique");
 				String reverse = rs.getString("is_reverse");
 				TableIndex dbIndex = new TableIndex();
 				dbIndex.setIndexName(indexName);
+				if (databaseInfo.isSupportUserSchema()) {
+					String ownerName = rs.getString("owner_name");
+					dbIndex.setOwnerName(ownerName);
+				}				
 				dbIndex.setPrimaryKey(pk);
 				dbIndex.setForeignKey(fk);
 				dbIndex.setUnique(unique);
@@ -110,8 +109,13 @@ public class GetUserClassIndexesTask extends
 			boolean isSupportFunIndex = CompatibleUtil.isSupportFuncIndex(databaseInfo);
 			String funcIndex = isSupportFunIndex ? ", func" : "";
 
-			sql = "SELECT key_attr_name" + funcIndex
-					+ " FROM db_index_key WHERE index_name=? AND class_name=?";
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT key_attr_name" + funcIndex
+						+ " FROM db_index_key WHERE index_name=? AND CONCAT(owner_name, '.' , class_name)=?";
+			} else {
+				sql = "SELECT key_attr_name" + funcIndex
+						+ " FROM db_index_key WHERE index_name=? AND class_name=?";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
@@ -122,7 +126,7 @@ public class GetUserClassIndexesTask extends
 				((PreparedStatement) stmt).setString(1,
 						indexName.toLowerCase(Locale.getDefault()));
 				((PreparedStatement) stmt).setString(2,
-						tableName.toLowerCase(Locale.getDefault()));
+						tableName);
 				rs = ((PreparedStatement) stmt).executeQuery();
 				List<String> columns = new ArrayList<String>();
 				while (rs.next()) {

@@ -1218,8 +1218,7 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 	}
 	
 	public String getClassname() {
-		return getTableName();
-		//return classname;
+		return classname;
 	}
 
 	/**

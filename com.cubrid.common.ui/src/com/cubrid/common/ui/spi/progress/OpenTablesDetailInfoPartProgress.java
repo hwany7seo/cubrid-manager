@@ -330,7 +330,7 @@ public class OpenTablesDetailInfoPartProgress implements IRunnableWithProgress {
 				Map<String, SchemaComment> comments = null;
 				if (SchemaCommentHandler.isInstalledMetaTable(databaseInfo, conn)) {
 					try {
-						comments = SchemaCommentHandler.loadTableDescriptions(databaseInfo, conn);
+						comments = SchemaCommentHandler.loadTableDescriptions(databaseInfo, conn, databaseInfo.isSupportUserSchema());
 					} catch (SQLException e) {
 						LOGGER.error(e.getMessage(), e);
 					}

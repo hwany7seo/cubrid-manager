@@ -231,7 +231,7 @@ public class LoadTableDetailInfoTask extends
 			}
 		}
 		try{
-			Map<String, SchemaComment>  commentMap = SchemaCommentHandler.loadTableDescriptions(database.getDatabaseInfo(), connection);
+			Map<String, SchemaComment>  commentMap = SchemaCommentHandler.loadTableDescriptions(database.getDatabaseInfo(), connection, database.getDatabaseInfo().isSupportUserSchema());
 			SchemaComment schemaComment = SchemaCommentHandler.find(commentMap, tableInfo.getTableName(), null);
 			if(schemaComment != null) {
 				tableInfo.setTableDesc(schemaComment.getDescription());
