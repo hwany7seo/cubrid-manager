@@ -652,7 +652,7 @@ public class DefaultCubridNode implements
 		return obj;
 	}
 	
-	public void setTableName(String tableName) {
+	public void setUniqueName(String tableName) {
 		this.schemaName = tableName;
 	}
 }

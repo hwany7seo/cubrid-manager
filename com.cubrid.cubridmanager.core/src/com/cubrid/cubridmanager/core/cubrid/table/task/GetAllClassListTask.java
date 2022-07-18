@@ -256,7 +256,7 @@ public class GetAllClassListTask extends JDBCTask {
 			boolean isSupportUserSchema = databaseInfo.isSupportUserSchema();
 			if (isSupportUserSchema) {
 				sql = "SELECT class_name, owner_name, class_type, is_system_class,"
-					+ " partitioned FROM db_class WHERE LOWER(CONCAT(owner_name, '.', class_name))=?";
+					+ " partitioned FROM db_class WHERE CONCAT(owner_name, '.', class_name)=?";
 			} else {
 				sql = "SELECT class_name, owner_name, class_type, is_system_class,"
 					+ " partitioned FROM db_class WHERE class_name=?";
@@ -302,7 +302,7 @@ public class GetAllClassListTask extends JDBCTask {
 	}
 
 	public void setTableName(String tableName) {
-		this.tableName = tableName.toLowerCase(Locale.getDefault());
+		this.tableName = tableName;
 	}
 
 	/**

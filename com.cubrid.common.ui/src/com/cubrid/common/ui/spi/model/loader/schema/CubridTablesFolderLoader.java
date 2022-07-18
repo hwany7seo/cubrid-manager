@@ -171,10 +171,10 @@ public class CubridTablesFolderLoader extends
 		for (int i = 0; i < TABLE_COUNT; i++) {
 			ClassInfo classInfo = allClassInfoList.get(i);
 			String id = parent.getId() + NODE_SEPARATOR
-					+ classInfo.getTableName();
+					+ classInfo.getUniqueName();
 			ICubridNode classNode = createClassNode(id, classInfo, level);
 			parent.addChild(classNode);
-			tables.add(classInfo.getTableName());
+			tables.add(classInfo.getUniqueName());
 		}
 		if (allClassInfoList.size() > TABLE_COUNT) {
 			parent.addChild(createMoreNode(parent, TABLE_COUNT));
@@ -207,10 +207,10 @@ public class CubridTablesFolderLoader extends
 			}
 			for (ClassInfo classInfo : allClassInfoList) {
 				String tableId = parent.getId() + NODE_SEPARATOR
-						+ classInfo.getTableName();
+						+ classInfo.getUniqueName();
 				ICubridNode node = parent.getChild(tableId);
 				CubridUserTableLoader tableLoader = (CubridUserTableLoader) node.getLoader();
-				tableLoader.setColumns(columnsOfTable.get(classInfo.getTableName()));
+				tableLoader.setColumns(columnsOfTable.get(classInfo.getUniqueName()));
 				node.getChildren(monitor);
 				tableLoader.setLoaded(true);
 			}
@@ -219,7 +219,7 @@ public class CubridTablesFolderLoader extends
 	}
 
 	public static ICubridNode createClassNode(String id, ClassInfo classInfo, int level) {
-		String tableName = classInfo.getTableName();
+		String tableName = classInfo.getUniqueName();
 		ICubridNode classNode = new DefaultSchemaNode(id,
 				"[" + classInfo.getOwnerName() + "] " + classInfo.getClassName(), tableName,
 				"icons/navigator/schema_table_item.png");

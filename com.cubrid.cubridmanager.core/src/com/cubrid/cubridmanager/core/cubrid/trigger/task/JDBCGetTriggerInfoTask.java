@@ -74,9 +74,18 @@ public class JDBCGetTriggerInfoTask extends JDBCTask {
 				return null;
 			}
 
-			String sql = "SELECT t.*, c.target_class_name"
+			String sql;
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT t.*, c.target_class_name"
+					+ " FROM db_trigger t, db_trig c"
+					+ " WHERE t.name=c.trigger_name"
+					+ " AND t.owner.name=c.owner_name" 
+				    + " AND CONCAT(t.owner.name, '.', t.name)=?";
+			} else {
+				sql = "SELECT t.*, c.target_class_name"
 					+ " FROM db_trigger t, db_trig c"
 					+ " WHERE t.name=c.trigger_name AND t.name=?";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = DatabaseInfo.wrapShardQuery(databaseInfo, sql);
@@ -87,6 +96,7 @@ public class JDBCGetTriggerInfoTask extends JDBCTask {
 			while (rs.next()) {
 				trigger = new Trigger();
 				trigger.setName(rs.getString("name"));
+				trigger.setName(rs.getString("owner"));
 				trigger.setConditionTime(JDBCGetTriggerListTask.getConditionTime(rs.getInt("condition_time")));
 				trigger.setEventType(JDBCGetTriggerListTask.getEventType(rs.getInt("event")));
 				trigger.setTarget_class(rs.getString("target_class_name"));

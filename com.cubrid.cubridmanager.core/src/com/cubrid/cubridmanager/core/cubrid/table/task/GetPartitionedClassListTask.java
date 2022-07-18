@@ -87,15 +87,14 @@ public class GetPartitionedClassListTask extends JDBCTask {
 			
 			String sql;
 			if (isSupportUserSchema) {
-				sql = "SELECT b.* FROM db_partition a, db_class b WHERE LOWER(CONCAT(a.owner_name, '.' , a.class_name))=?"
+				sql = "SELECT b.* FROM db_partition a, db_class b WHERE CONCAT(a.owner_name, '.' , a.class_name)=?"
 					+ " AND LOWER(b.class_name)=LOWER(a.partition_class_name)";
 			} else {
 				sql = "SELECT b.* FROM db_partition a, db_class b WHERE a.class_name=?"
 						+ " AND LOWER(b.class_name)=LOWER(a.partition_class_name)";
 			}
 			stmt = connection.prepareStatement(sql);
-			((PreparedStatement) stmt).setString(1,
-					tableName.toLowerCase(Locale.getDefault()));
+			((PreparedStatement) stmt).setString(1, tableName);
 			rs = ((PreparedStatement) stmt).executeQuery();
 			while (rs.next()) {
 				String className = rs.getString("class_name");
@@ -146,7 +145,7 @@ public class GetPartitionedClassListTask extends JDBCTask {
 
 			String sql = "";
 			if (databaseInfo.isSupportUserSchema()) {
-				sql = "SELECT * FROM db_partition WHERE LOWER(CONCAT(owner_name, '.' , class_name))='"
+				sql = "SELECT * FROM db_partition WHERE CONCAT(owner_name, '.' , class_name)='"
 						+ tableName + "'";
 			} else {
 				sql = "SELECT * FROM db_partition WHERE class_name='"

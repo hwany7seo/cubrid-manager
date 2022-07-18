@@ -38,7 +38,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.poi.hssf.record.formula.functions.Vlookup;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -287,9 +286,9 @@ public class TableEditorPart extends
 				newSchemaInfo.setOwner(owner);
 
 				if (isSupportUserSchema()) {
-					newSchemaInfo.setTableName(owner + "." + className);
+					newSchemaInfo.setUniqueName(owner + "." + className);
 				} else {
-					newSchemaInfo.setTableName(className);
+					newSchemaInfo.setUniqueName(className);
 				}
 				
 				if (reuseOIDBtn != null) {
@@ -398,11 +397,11 @@ public class TableEditorPart extends
 		}
 
 		className = classNameText.getText();
-		owner = ownerCombo.getText();
 		String tableDesc = classDescText.getText();
-		newSchemaInfo.setClassname(className);
+		owner = ownerCombo.getText();
 		newSchemaInfo.setOwner(owner);
-		newSchemaInfo.setTableName(getTableName());
+		newSchemaInfo.setClassname(className);
+		newSchemaInfo.setUniqueName(getTableName());
 		newSchemaInfo.setDescription(tableDesc);
 		
 		if (reuseOIDBtn != null) {
@@ -416,10 +415,11 @@ public class TableEditorPart extends
 		String ddlStr = null;
 		if (isNewTableFlag) {
 			ddlStr = schemaDDL.getSchemaDDL(newSchemaInfo);
+			
 		} else {
 			ddlStr = schemaDDL.getSchemaDDL(oldSchemaInfo, newSchemaInfo);
 		}
-
+		
 		boolean isExecuteCommonSqlTask = false;
 		String[] sqlStr = ddlStr.split("\\$\\$\\$\\$");
 		for (String sql : sqlStr) {
@@ -433,16 +433,21 @@ public class TableEditorPart extends
 			}
 		}
 
-		// do with table user change
-		String changeOwnerDDL = getChangeOwnerDDL();
-		if (StringUtil.isNotEmpty(changeOwnerDDL)) {
-			changeOwnerDDL = dbInfo.wrapShardQuery(changeOwnerDDL);
-			if (CompatibleUtil.isSupportChangeOwnerWithAlterStatement(dbInfo)) {
-				commonSqlTask.addSqls(changeOwnerDDL);
-			} else {
-				commonSqlTask.addCallSqls(changeOwnerDDL);
+		// When create table on 11.2 or higher, execute only create table
+		// When create table on less than 11.2, execute create table and alter table owner to.
+		boolean isNotExcuteChangeOwner = isNewTableFlag && dbInfo.isSupportUserSchema();
+		if (!isNotExcuteChangeOwner) {
+			// do with table user change
+			String changeOwnerDDL = getChangeOwnerDDL();
+			if (StringUtil.isNotEmpty(changeOwnerDDL)) {
+				changeOwnerDDL = dbInfo.wrapShardQuery(changeOwnerDDL);
+				if (CompatibleUtil.isSupportChangeOwnerWithAlterStatement(dbInfo)) {
+					commonSqlTask.addSqls(changeOwnerDDL);
+				} else {
+					commonSqlTask.addCallSqls(changeOwnerDDL);
+				}
+				isExecuteCommonSqlTask = true;
 			}
-			isExecuteCommonSqlTask = true;
 		}
 
 		schemaDDL.setEndLineChar(";");
@@ -744,12 +749,12 @@ public class TableEditorPart extends
 						newSchemaInfo.setClassname(className);
 						if (isSupportUserSchema()) {
 							if (ownerCombo != null && !ownerCombo.getText().isEmpty()) {
-								newSchemaInfo.setTableName(ownerCombo.getText() + "." + className);
+								newSchemaInfo.setUniqueName(ownerCombo.getText() + "." + className);
 							} else {
-								newSchemaInfo.setTableName(className);
+								newSchemaInfo.setUniqueName(className);
 							}
 						} else {
-							newSchemaInfo.setTableName(className);
+							newSchemaInfo.setUniqueName(className);
 						}
 					}
 				}
@@ -1278,7 +1283,7 @@ public class TableEditorPart extends
 				String attrName = attrList.get(0);
 				Constraint index = newSchema.removeUniqueByAttrName(attrName);
 				if (index != null) {
-					String key = index.getDefaultName(newSchema.getTableName()) + "$"
+					String key = index.getDefaultName(newSchema.getUniqueName()) + "$"
 							+ index.getName();
 					SchemaChangeLog changeLog = new SchemaChangeLog(key, null,
 							SchemeInnerType.TYPE_INDEX);
@@ -1333,7 +1338,7 @@ public class TableEditorPart extends
 				String attrName = attrList.get(0);
 				Constraint index = newSchema.removeUniqueByAttrName(attrName);
 				if (index != null) {
-					String key = index.getDefaultName(newSchema.getTableName()) + "$"
+					String key = index.getDefaultName(newSchema.getUniqueName()) + "$"
 							+ index.getName();
 					SchemaChangeLog changeLog = new SchemaChangeLog(key, null,
 							SchemeInnerType.TYPE_INDEX);
@@ -1493,7 +1498,7 @@ public class TableEditorPart extends
 
 		String newAttrName = "";
 		DBAttribute addAttribute = new DBAttribute(newAttrName, DataType.DATATYPE_CHAR,
-				newSchemaInfo.getTableName(), false, false, false, false, null, collation);
+				newSchemaInfo.getUniqueName(), false, false, false, false, null, collation);
 		addAttribute.setNew(true);
 		tempDBAttributeList.add(addAttribute);
 		loadColumnData();
@@ -1518,7 +1523,7 @@ public class TableEditorPart extends
 			return false;
 		}
 
-		String tableName = newSchemaInfo.getTableName();
+		String tableName = newSchemaInfo.getUniqueName();
 		editAttr.setInherit(tableName);
 		String newAttrName = editAttr.getName();
 
@@ -1620,7 +1625,7 @@ public class TableEditorPart extends
 				}
 				addedConstrainList.add(newCons);
 
-				String key = cons.getDefaultName(newSchemaInfo.getTableName()) + "$"
+				String key = cons.getDefaultName(newSchemaInfo.getUniqueName()) + "$"
 						+ cons.getName();
 				SchemaChangeLog changeLog = new SchemaChangeLog(key, key,
 						SchemeInnerType.TYPE_INDEX);
@@ -1704,7 +1709,7 @@ public class TableEditorPart extends
 				if (oldAttribute == null) {
 					continue;
 				}
-				if (!oldAttribute.getInherit().equals(newSchemaInfo.getTableName())) {
+				if (!oldAttribute.getInherit().equals(newSchemaInfo.getUniqueName())) {
 					CommonUITool.openErrorBox(Messages.errColumnNotDrop);
 					return;
 				}
@@ -2062,7 +2067,7 @@ public class TableEditorPart extends
 					loadColumnData();
 				}
 
-				String key = constraint.getDefaultName(newSchemaInfo.getClassname()) + "$"
+				String key = constraint.getDefaultName(newSchemaInfo.getUniqueName()) + "$"
 						+ constraint.getName();
 				schemaChangeMgr.addSchemeChangeLog(new SchemaChangeLog(null, key,
 						SchemeInnerType.TYPE_INDEX));
@@ -2138,9 +2143,9 @@ public class TableEditorPart extends
 				}
 			}
 
-			String key1 = editedIndex.getDefaultName(newSchemaInfo.getTableName()) + "$"
+			String key1 = editedIndex.getDefaultName(newSchemaInfo.getUniqueName()) + "$"
 					+ editedIndex.getName();
-			String key2 = newIndex.getDefaultName(newSchemaInfo.getTableName()) + "$"
+			String key2 = newIndex.getDefaultName(newSchemaInfo.getUniqueName()) + "$"
 					+ newIndex.getName();
 			SchemaChangeLog changeLog = new SchemaChangeLog(key1, key2, SchemeInnerType.TYPE_INDEX);
 			schemaChangeMgr.addSchemeChangeLog(changeLog);
@@ -2196,7 +2201,7 @@ public class TableEditorPart extends
 					}
 					newSchemaInfo.removeConstraintByName(indexName, indexType);
 
-					String key = index.getDefaultName(newSchemaInfo.getClassname()) + "$"
+					String key = index.getDefaultName(newSchemaInfo.getUniqueName()) + "$"
 							+ index.getName();
 					SchemaChangeLog changeLog = new SchemaChangeLog(key, null,
 							SchemeInnerType.TYPE_INDEX);
@@ -2214,26 +2219,11 @@ public class TableEditorPart extends
 		String title = null;
 
 		if (oldSchemaInfo == null) {
-			title = Messages.newTableShellTitle;
-
-			classNameText.setText("");
 			owner = database.getUserName();
-			if (reuseOIDBtn != null) {
-				reuseOIDBtn.setSelection(true);
-			}
 		} else {
-			String className = oldSchemaInfo.getClassname();
-			title = Messages.bind(Messages.editTableShellTitle, className);
-
-			classNameText.setText(className);
-			classNameText.setEnabled(false);
 			owner = oldSchemaInfo.getOwner();
-			if (reuseOIDBtn != null) {
-				reuseOIDBtn.setSelection(oldSchemaInfo.isReuseOid());
-			}
 		}
-		getSite().getShell().setText(title);
-
+		
 		for (int i = 0, length = ownerCombo.getItemCount(); i < length; i++) {
 			String item = ownerCombo.getItem(i);
 			if (item != null && item.equalsIgnoreCase(owner)) {
@@ -2241,6 +2231,25 @@ public class TableEditorPart extends
 				break;
 			}
 		}
+		if (oldSchemaInfo == null) {
+			title = Messages.newTableShellTitle;
+
+			classNameText.setText("");
+			if (reuseOIDBtn != null) {
+				reuseOIDBtn.setSelection(true);
+			}
+		} else {
+			String className = oldSchemaInfo.getClassname();
+			String tableName = oldSchemaInfo.getUniqueName();
+			title = Messages.bind(Messages.editTableShellTitle, tableName);
+
+			classNameText.setText(className);
+			classNameText.setEnabled(false);
+			if (reuseOIDBtn != null) {
+				reuseOIDBtn.setSelection(oldSchemaInfo.isReuseOid());
+			}
+		}
+		getSite().getShell().setText(title);
 
 		loadColumnData();
 	}
@@ -2382,7 +2391,7 @@ public class TableEditorPart extends
 	 * @param unique
 	 */
 	private void addNewUniqueLog(Constraint unique) {
-		String key = newSchemaInfo.getTableName() + "$" + unique.getName();
+		String key = newSchemaInfo.getUniqueName() + "$" + unique.getName();
 		SchemaChangeLog changeLog = new SchemaChangeLog(null, key, SchemeInnerType.TYPE_INDEX);
 		schemaChangeMgr.addSchemeChangeLog(changeLog);
 	}
@@ -2397,7 +2406,7 @@ public class TableEditorPart extends
 			return;
 		}
 
-		String key = newSchemaInfo.getTableName() + "$" + unique.getName();
+		String key = newSchemaInfo.getUniqueName() + "$" + unique.getName();
 		SchemaChangeLog changeLog = new SchemaChangeLog(key, null, SchemeInnerType.TYPE_INDEX);
 		schemaChangeMgr.addSchemeChangeLog(changeLog);
 	}
@@ -2441,7 +2450,7 @@ public class TableEditorPart extends
 		if (isPartitionTable) {
 			GetPartitionedClassListTask task = new GetPartitionedClassListTask(
 					database.getDatabaseInfo());
-			List<PartitionInfo> list = task.getPartitionItemList(newSchemaInfo.getClassname());
+			List<PartitionInfo> list = task.getPartitionItemList(newSchemaInfo.getUniqueName());
 
 			partitionInfoList.clear();
 			if (!ArrayUtil.isEmpty(list)) {
@@ -2511,9 +2520,9 @@ public class TableEditorPart extends
 				newSchemaInfo.setOwner(ownerName);
 				newSchemaInfo.setClassname(className);
 				if (isSupportUserSchema()) {
-					newSchemaInfo.setTableName(ownerName + "." + className);
+					newSchemaInfo.setUniqueName(ownerName + "." + className);
 				} else {
-					newSchemaInfo.setTableName(className);
+					newSchemaInfo.setUniqueName(className);
 				}
 
 				Wizard wizard = new CreatePartitionWizard(database.getDatabaseInfo(),
@@ -2624,7 +2633,11 @@ public class TableEditorPart extends
 		
 		newSchemaInfo.setOwner(ownerName);
 		newSchemaInfo.setClassname(className);
-		newSchemaInfo.setTableName(ownerName + "." + className);
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			newSchemaInfo.setUniqueName(ownerName + "." + className);
+		} else {
+			newSchemaInfo.setUniqueName(className);
+		}
 		
 		CreatePartitionWizard wizard = new CreatePartitionWizard(database.getDatabaseInfo(),
 				newSchemaInfo, partitionInfoList, isNewTableFlag, partitionInfo);
@@ -2787,7 +2800,7 @@ public class TableEditorPart extends
 				return;
 			}
 
-			database.getDatabaseInfo().removeSchema(tableName);
+			database.getDatabaseInfo().removeSchema(oldSchemaInfo.getUniqueName());
 			if (oldPartitionInfoList.isEmpty() && !partitionInfoList.isEmpty()) {
 				editedTableNode.setIconPath("icons/navigator/schema_table_partition.png");
 				editedTableNode.setType(NodeType.USER_PARTITIONED_TABLE_FOLDER);
@@ -2803,14 +2816,16 @@ public class TableEditorPart extends
 				getSite().getWorkbenchWindow().getActivePage().closeEditor(editor, false);
 				return;
 			}
-
+			
+			editedTableNode.setLabel("[" + owner + "] " + className);
+			editedTableNode.setUniqueName(tableName);
 			CommonUITool.refreshNavigatorTree(treeViewer, editedTableNode);
+			CommonUITool.updateFolderNodeLabelIncludingChildrenCount(treeViewer, editedTableNode);
 			CubridNodeManager.getInstance().fireCubridNodeChanged(
 					new CubridNodeChangedEvent(editedTableNode,
 							CubridNodeChangedEventType.NODE_REFRESH));
 			/* Broadcast the view changed */
 			QueryEditorUtil.fireSchemaNodeChanged(editedTableNode);
-			treeViewer.refresh(true);
 		}
 
 		getSite().getWorkbenchWindow().getActivePage().closeEditor(editor, false);
@@ -2838,7 +2853,7 @@ public class TableEditorPart extends
 			newSchemaInfo = new SchemaInfo();
 			newSchemaInfo.setOwner(database.getUserName());
 			newSchemaInfo.setClassname(""); //$NON-NLS-1$
-			newSchemaInfo.setTableName(""); //$NON-NLS-1$
+			newSchemaInfo.setUniqueName(""); //$NON-NLS-1$
 			newSchemaInfo.setDbname(database.getName());
 			newSchemaInfo.setType(Messages.userSchema);
 			newSchemaInfo.setVirtual(Messages.schemaTypeClass);
@@ -2882,11 +2897,11 @@ public class TableEditorPart extends
 
 			if (isSupportTableComment && !isNewTableFlag && newSchemaInfo != null) {
 				Map<String, SchemaComment> map = SchemaCommentHandler.loadDescription(dbSpec, conn,
-						database.getDatabaseInfo().isSupportUserSchema(), newSchemaInfo.getTableName());
+						database.getDatabaseInfo().isSupportUserSchema(), newSchemaInfo.getUniqueName());
 
 				for (DBAttribute attr : newSchemaInfo.getAttributes()) {
 					SchemaComment schemaComment = SchemaCommentHandler.find(map,
-							newSchemaInfo.getClassname(), attr.getName());
+							newSchemaInfo.getUniqueName(), attr.getName());
 					if (schemaComment != null) {
 						attr.setDescription(schemaComment.getDescription());
 					}
@@ -2905,7 +2920,7 @@ public class TableEditorPart extends
 				}
 
 				SchemaComment schemaComment = SchemaCommentHandler.find(map,
-						newSchemaInfo.getClassname(), null);
+						newSchemaInfo.getUniqueName(), null);
 				if (schemaComment != null) {
 					newSchemaInfo.setDescription(schemaComment.getDescription());
 				}

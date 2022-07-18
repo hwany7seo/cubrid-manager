@@ -155,9 +155,9 @@ public class ERDNDController {
 		Iterator<SchemaInfo> it = schemaInfoList.iterator();
 		while (it.hasNext()) {
 			SchemaInfo table = (SchemaInfo) it.next();
-			ERTable existTable = erSchema.getTable(table.getTableName());
+			ERTable existTable = erSchema.getTable(table.getUniqueName());
 			if (existTable != null) {
-				existTables.add(table.getTableName());
+				existTables.add(table.getUniqueName());
 				it.remove();
 				continue;
 			}
@@ -247,14 +247,14 @@ public class ERDNDController {
 
 				for (DBAttribute attr : newSchemaInfo.getAttributes()) {
 					SchemaComment schemaComment = SchemaCommentHandler.find(
-							map, newSchemaInfo.getTableName(), attr.getName());
+							map, newSchemaInfo.getUniqueName(), attr.getName());
 					if (schemaComment != null) {
 						attr.setDescription(schemaComment.getDescription());
 					}
 				}
 
 				SchemaComment schemaComment = SchemaCommentHandler.find(map,
-						newSchemaInfo.getTableName(), null);
+						newSchemaInfo.getUniqueName(), null);
 				if (schemaComment != null) {
 					newSchemaInfo
 							.setDescription(schemaComment.getDescription());

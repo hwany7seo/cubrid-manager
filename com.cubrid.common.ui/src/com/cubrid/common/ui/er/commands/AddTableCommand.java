@@ -55,7 +55,7 @@ public class AddTableCommand extends
 		this.erTable.modifyNameAndFire(name);
 		this.erTable.setERSchema(erSchema);
 		schemaInfo.setClassname(name);
-		schemaInfo.setTableName(name);
+		schemaInfo.setUniqueName(name);
 		erSchema.addTableAndFire(erTable);
 	}
 

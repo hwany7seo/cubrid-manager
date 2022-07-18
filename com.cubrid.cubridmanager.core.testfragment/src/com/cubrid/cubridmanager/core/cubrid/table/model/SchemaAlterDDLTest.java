@@ -157,7 +157,7 @@ public class SchemaAlterDDLTest extends
 		Constraint constraint = null;
 		String indexType = null;
 		String indexName = "";
-		String tableName = newSchema.getTableName();
+		String tableName = newSchema.getUniqueName();
 
 		//add unique
 		constraint = new Constraint(false);
@@ -177,7 +177,7 @@ public class SchemaAlterDDLTest extends
 
 		newSchema.addConstraint(constraint);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(null,
-				constraint.getDefaultName(newSchema.getTableName())
+				constraint.getDefaultName(newSchema.getUniqueName())
 						+ "$" + constraint.getName(), //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -200,7 +200,7 @@ public class SchemaAlterDDLTest extends
 
 		newSchema.addConstraint(constraint);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(null,
-				constraint.getDefaultName(newSchema.getTableName())
+				constraint.getDefaultName(newSchema.getUniqueName())
 						+ "$" + constraint.getName(), //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -223,7 +223,7 @@ public class SchemaAlterDDLTest extends
 
 		newSchema.addConstraint(constraint);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(null,
-				constraint.getDefaultName(newSchema.getTableName())
+				constraint.getDefaultName(newSchema.getUniqueName())
 						+ "$" + constraint.getName(), //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -243,7 +243,7 @@ public class SchemaAlterDDLTest extends
 
 		newSchema.addConstraint(constraint);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(null,
-				constraint.getDefaultName(newSchema.getTableName())
+				constraint.getDefaultName(newSchema.getUniqueName())
 						+ "$" + constraint.getName(), //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -274,7 +274,7 @@ public class SchemaAlterDDLTest extends
 		Constraint index = newSchema.getConstraintByName(indexName, indexType);
 		newSchema.removeConstraintByName(indexName, indexType);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(
-				index.getDefaultName(newSchema.getTableName())
+				index.getDefaultName(newSchema.getUniqueName())
 						+ "$" + index.getName(), null, //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -283,7 +283,7 @@ public class SchemaAlterDDLTest extends
 		index = newSchema.getConstraintByName(indexName, indexType);
 		newSchema.removeConstraintByName(indexName, indexType);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(
-				index.getDefaultName(newSchema.getTableName())
+				index.getDefaultName(newSchema.getUniqueName())
 						+ "$" + index.getName(), null, //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -292,7 +292,7 @@ public class SchemaAlterDDLTest extends
 		index = newSchema.getConstraintByName(indexName, indexType);
 		newSchema.removeConstraintByName(indexName, indexType);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(
-				index.getDefaultName(newSchema.getTableName())
+				index.getDefaultName(newSchema.getUniqueName())
 						+ "$" + index.getName(), null, //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -301,7 +301,7 @@ public class SchemaAlterDDLTest extends
 		index = newSchema.getConstraintByName(indexName, indexType);
 		newSchema.removeConstraintByName(indexName, indexType);
 		changeList.addSchemeChangeLog(new SchemaChangeLog(
-				index.getDefaultName(newSchema.getTableName())
+				index.getDefaultName(newSchema.getUniqueName())
 						+ "$" + index.getName(), null, //$NON-NLS-1$
 				SchemeInnerType.TYPE_INDEX));
 
@@ -336,7 +336,7 @@ public class SchemaAlterDDLTest extends
 
 		String fkName = "";
 		if (fkName.equals("")) { //$NON-NLS-1$
-			fkName = ConstraintNamingUtil.getFKName(newSchema.getTableName(),
+			fkName = ConstraintNamingUtil.getFKName(newSchema.getUniqueName(),
 					fk.getAttributes());
 		}
 		fk.setName(fkName);
@@ -413,7 +413,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 		DBAttribute attr = new DBAttribute();
 		attr.setName(testColumn);
 		attr.setType("smallint");
-		attr.setInherit(newSchema.getTableName());
+		attr.setInherit(newSchema.getUniqueName());
 		addColumn(newSchema, isClassAttribute, attr);
 
 		Constraint oldPK = newSchema.getPK(superList);
@@ -507,7 +507,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 		attr.setType("smallint");
 
 		attr.setUnique(false);
-		attr.setInherit(newSchema.getTableName());
+		attr.setInherit(newSchema.getUniqueName());
 
 		addColumn(newSchema, isClassAttribute, attr);
 
@@ -593,7 +593,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 		attr = new DBAttribute();
 		attr.setName(testColumn);
 		attr.setType("smallint");
-		attr.setInherit(newSchema.getTableName());
+		attr.setInherit(newSchema.getUniqueName());
 
 		addColumn(newSchema, isClassAttribute, attr);
 
@@ -675,7 +675,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 	private void editColumn(SchemaInfo newSchema, DBAttribute editAttribute,
 			DBAttribute oldAttribute, boolean isEditAll) {
 		if (editAttribute != null) {
-			editAttribute.setInherit(newSchema.getTableName());
+			editAttribute.setInherit(newSchema.getUniqueName());
 		} else {
 			return;
 		}
@@ -683,7 +683,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 		boolean isNewAttrClass = editAttribute.isClassAttribute();
 		boolean isOldAttrClass = oldAttribute.isClassAttribute();
 		String attrName = oldAttribute.getName();
-		String tableName = newSchema.getTableName();
+		String tableName = newSchema.getUniqueName();
 		if (isEditAll) {
 
 			if (isOldAttrClass != isNewAttrClass) { // attribute
@@ -733,7 +733,7 @@ ALTER TABLE sup3 ADD PRIMARY KEY([smallint],[integer]);
 	private void addColumn(SchemaInfo newSchema, boolean isClassAttribute,
 			DBAttribute addAttribute) {
 		String newAttrName = addAttribute.getName();
-		String tableName = newSchema.getTableName();
+		String tableName = newSchema.getUniqueName();
 		if (addAttribute != null) {
 			addAttribute.setInherit(tableName);
 		} else {

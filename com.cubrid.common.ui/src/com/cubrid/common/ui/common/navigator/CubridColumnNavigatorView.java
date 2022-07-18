@@ -213,7 +213,7 @@ public class CubridColumnNavigatorView extends ViewPart {
 			cleanView();
 		}
 		if (schemaInfo != null) {
-			this.schemaName = schemaInfo.getTableName();
+			this.schemaName = schemaInfo.getUniqueName();
 		}
 		redrawView(databaseInfo, schemaInfo);
 	}
@@ -228,9 +228,9 @@ public class CubridColumnNavigatorView extends ViewPart {
 	}
 
 	private void redrawView(DatabaseInfo databaseInfo, SchemaInfo schemaInfo) {
-		if (schemaInfo != null && schemaInfo.getTableName() != null) {
+		if (schemaInfo != null && schemaInfo.getUniqueName() != null) {
 			String msg = com.cubrid.common.ui.common.Messages.lblQuickViewColInfo + " "
-					+ schemaInfo.getTableName();
+					+ schemaInfo.getUniqueName();
 			lblSchemaName.setText(msg);
 		}
 

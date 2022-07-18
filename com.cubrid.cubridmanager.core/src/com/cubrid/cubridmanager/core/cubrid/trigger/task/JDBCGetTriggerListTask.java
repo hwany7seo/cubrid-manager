@@ -31,6 +31,7 @@ package com.cubrid.cubridmanager.core.cubrid.trigger.task;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 
@@ -78,10 +79,10 @@ public class JDBCGetTriggerListTask extends JDBCTask {
 			//			and d.name=CURRENT_USER
 			String sql;
 			if (databaseInfo.isSupportUserSchema()) {
-				sql = "SELECT t.*, c.target_class_name"
+				sql = "SELECT t.*, c.target_class_name, c.target_owner_name, c.owner_name"
 					+ " FROM db_trigger t, db_trig c"
 					+ " WHERE t.name=c.trigger_name"
-					+ " AND t.owner=c.owner_name";
+					+ " AND t.owner.name=c.owner_name";
 			} else {
 				sql = "SELECT t.*, c.target_class_name"
 					+ " FROM db_trigger t, db_trig c"
@@ -96,11 +97,17 @@ public class JDBCGetTriggerListTask extends JDBCTask {
 				Trigger trigger = new Trigger();
 				trigger.setName(rs.getString("name"));
 				if (databaseInfo.isSupportUserSchema()) {
-					trigger.setOwnerName(rs.getString("owner"));
+					//Data is LowerCase from CMS
+					trigger.setOwner(rs.getString("owner_name").toLowerCase(Locale.getDefault()));
 				}
 				trigger.setConditionTime(getConditionTime(rs.getInt("condition_time")));
 				trigger.setEventType(getEventType(rs.getInt("event")));
-				trigger.setTarget_class(rs.getString("target_class_name"));
+				if (databaseInfo.isSupportUserSchema()) {
+					String target_class = rs.getString("target_owner_name") + "." + rs.getString("target_class_name");
+					trigger.setTarget_class(target_class);
+				} else {
+					trigger.setTarget_class(rs.getString("target_class_name"));
+				}
 				trigger.setTarget_att(rs.getString("target_attribute"));
 				trigger.setCondition(rs.getString("condition"));
 				trigger.setActionTime(getActionTime(rs.getInt("action_time")));

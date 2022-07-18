@@ -171,7 +171,7 @@ public class AlterTriggerAction extends
 						}
 					} else if (task instanceof JDBCGetTriggerInfoTask) {
 						JDBCGetTriggerInfoTask getTriggerInfoTask = (JDBCGetTriggerInfoTask) task;
-						trigger = getTriggerInfoTask.getTriggerInfo(node.getLabel());
+						trigger = getTriggerInfoTask.getTriggerInfo(node.getName());
 					}
 					if (trigger == null) {
 						openErrorBox(shell, Messages.errNameNoExist, monitor);

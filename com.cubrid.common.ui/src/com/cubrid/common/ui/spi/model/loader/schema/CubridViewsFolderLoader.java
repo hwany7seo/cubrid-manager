@@ -133,7 +133,7 @@ public class CubridViewsFolderLoader extends
 			if (allClassInfoList != null) {
 				for (ClassInfo classInfo : allClassInfoList) {
 					String id = parent.getId() + NODE_SEPARATOR
-							+ classInfo.getTableName();
+							+ classInfo.getUniqueName();
 					ICubridNode classNode = createUserViewNode(id, classInfo);
 					parent.addChild(classNode);
 				}
@@ -156,9 +156,10 @@ public class CubridViewsFolderLoader extends
 	 * @return ICubridNode
 	 */
 	public static ICubridNode createUserViewNode(String id, ClassInfo classInfo) {
-		String viewName = classInfo.getTableName();
+		String viewName = classInfo.getUniqueName();
+		String viewClassName = classInfo.getClassName();
 		ICubridNode classNode = new DefaultSchemaNode(id,
-				"[" + classInfo.getOwnerName() + "] " + viewName, viewName,
+				"[" + classInfo.getOwnerName() + "] " + viewClassName, viewName,
 				"icons/navigator/schema_view_item.png");
 		classNode.setType(NodeType.USER_VIEW);
 		classNode.setEditorId(SchemaInfoEditorPart.ID);

@@ -174,7 +174,7 @@ public class NewTriggerAction extends
 					+ ownerName + "." + triggerName;
 			Trigger trigger = new Trigger();
 			trigger.setName(triggerName);
-			trigger.setOwnerName(ownerName);
+			trigger.setOwner(ownerName);
 			ICubridNode newNode = CubridTriggerFolderLoader.createTriggerNode(
 					database.getDatabaseInfo(), id, trigger);
 			CommonUITool.addNodeToTree(treeViewer, folderNode, newNode);

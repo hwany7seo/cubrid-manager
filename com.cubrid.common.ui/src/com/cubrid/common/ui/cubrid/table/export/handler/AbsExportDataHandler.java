@@ -207,12 +207,12 @@ public abstract class AbsExportDataHandler {
 		}
 	}
 
-	protected String getSelectSQL(Connection conn, String name) {
+	protected String getSelectSQL(Connection conn, String name, boolean isSupportUserSchema) {
 		String sql = null;
 		if (exportConfig.getSQL(name) != null) {
 			sql = exportConfig.getSQL(name);
 		} else {
-			sql = QueryUtil.getSelectSQL(conn, name);
+			sql = QueryUtil.getSelectSQL(conn, name, isSupportUserSchema);
 		}
 		return sql;
 	}
@@ -480,7 +480,7 @@ public abstract class AbsExportDataHandler {
 				if (schemaWriter == null) {
 					continue;
 				}
-				String ddl = schemaDDL.getSchemaDDL(schemaInfo, false);
+				String ddl = schemaDDL.getSchemaDDLForExport(schemaInfo, false);
 				if (ddl != null && ddl.trim().length() > 0) {
 					schemaWriter.write(ddl);
 					schemaWriter.write(StringUtil.NEWLINE);
@@ -525,7 +525,7 @@ public abstract class AbsExportDataHandler {
 				String ddl = null;
 				// write pk
 				for (SchemaInfo schemaInfo : schemaInfoList) {
-					ddl = schemaDDL.getPKsDDL(schemaInfo);
+					ddl = schemaDDL.getPKsDDLForExport(schemaInfo);
 					if (ddl != null && ddl.trim().length() > 0) {
 						indexWriter.write(ddl.trim());
 						indexWriter.newLine();
@@ -538,7 +538,7 @@ public abstract class AbsExportDataHandler {
 
 				// write index
 				for (SchemaInfo schemaInfo : schemaInfoList) {
-					ddl = schemaDDL.getIndexsDDL(schemaInfo);
+					ddl = schemaDDL.getIndexsDDLForExport(schemaInfo);
 					if (ddl != null && ddl.trim().length() > 0) {
 						indexWriter.write(ddl.trim());
 						indexWriter.newLine();
@@ -552,7 +552,7 @@ public abstract class AbsExportDataHandler {
 
 				//write fk
 				for (SchemaInfo schemaInfo : schemaInfoList) {
-					ddl = schemaDDL.getFKsDDL(schemaInfo);
+					ddl = schemaDDL.getFKsDDLForExport(schemaInfo);
 					if (ddl != null && ddl.trim().length() > 0) {
 						indexWriter.write(ddl.trim());
 						indexWriter.newLine();

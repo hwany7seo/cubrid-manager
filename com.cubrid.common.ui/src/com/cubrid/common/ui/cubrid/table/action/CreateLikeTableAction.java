@@ -60,6 +60,8 @@ import com.cubrid.cubridmanager.core.utils.ModelUtil.ClassType;
 public class CreateLikeTableAction extends
 		SelectionAction {
 
+	private boolean isSupportUserSchema = false;
+	
 	public static final String ID = CreateLikeTableAction.class.getName();
 
 	/**
@@ -146,7 +148,7 @@ public class CreateLikeTableAction extends
 
 		CreateLikeTableDialog dialog = new CreateLikeTableDialog(getShell());
 		dialog.setDatabase(node.getDatabase());
-		boolean isSupportUserSchema = node.getDatabase().getDatabaseInfo().isSupportUserSchema();
+		isSupportUserSchema = node.getDatabase().getDatabaseInfo().isSupportUserSchema();
 		if (NodeType.USER_TABLE.equals(node.getType())) {
 			String tableName = node.getName();
 			dialog.setLikeTableName(tableName);
@@ -199,7 +201,7 @@ public class CreateLikeTableAction extends
 	}
 	
 	private String getClassName(String tableName) {
-		if (tableName.indexOf(".") > 0) {
+		if (isSupportUserSchema) {
 			return tableName.substring(tableName.indexOf(".")+1);
 		} else {
 			return tableName;
@@ -207,7 +209,7 @@ public class CreateLikeTableAction extends
 	}
 	
 	private String getOwnerName(String tableName) {
-		if (tableName.indexOf(".") > 0) {
+		if (isSupportUserSchema) {
 			return tableName.substring(0, tableName.indexOf("."));
 		} else {
 			return tableName;

@@ -267,7 +267,7 @@ public class AttributeCellModifier implements
 					attr.setName(newName);
 					if (!StringUtil.isEmpty(newName)) {
 						if (!lastAttrs.contains(newAttribute)) {
-							newAttribute.setInherit(editor.getNewSchemaInfo().getTableName());
+							newAttribute.setInherit(editor.getNewSchemaInfo().getUniqueName());
 							schemaInfo.addAttribute(newAttribute);
 							editor.removeElementByName(newName);
 						}

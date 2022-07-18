@@ -183,7 +183,7 @@ public class GetSchemaTask extends JDBCTask {
 				partitionedClassListTask = new GetPartitionedClassListTask(
 						databaseInfo);
 			}
-			List<PartitionInfo> partitionInfoList = partitionedClassListTask.getPartitionItemList(schemaInfo.getTableName());
+			List<PartitionInfo> partitionInfoList = partitionedClassListTask.getPartitionItemList(schemaInfo.getUniqueName());
 			schemaInfo.setPartitionList(partitionInfoList);
 		}
 	}
@@ -253,9 +253,9 @@ public class GetSchemaTask extends JDBCTask {
 				schemaInfo.setOwner(owner);
 				schemaInfo.setClassname(className);
 				if (databaseInfo.isSupportUserSchema()) {
-					schemaInfo.setTableName(owner + "." + className);
+					schemaInfo.setUniqueName(owner + "." + className);
 				} else {
-					schemaInfo.setTableName(className);
+					schemaInfo.setUniqueName(className);
 				}
 				schemaInfo.setDbname(databaseInfo.getDbName());
 				schemaInfo.setPartitionGroup(rs.getString("partitioned"));
@@ -286,7 +286,7 @@ public class GetSchemaTask extends JDBCTask {
 			key = SchemaInfo.VIRTUAL_VIEW.toUpperCase();
 		}
 		String sql = "SHOW CREATE " + key + " "
-				+ QuerySyntax.escapeKeyword(schemaInfo.getTableName());
+				+ QuerySyntax.escapeKeyword(schemaInfo.getUniqueName());
 
 		return sql;
 	}
@@ -452,10 +452,10 @@ public class GetSchemaTask extends JDBCTask {
 				String pkTableName;
 				if (databaseInfo.isSupportUserSchema()) {
 					pkTableName = rs.getString("PKTABLE_NAME");
-					int idx = pkTableName.indexOf(".");
-					if (idx > 0) {
-						pkTableName = pkTableName.substring(0, idx).toUpperCase(Locale.getDefault())
-								+ pkTableName.substring(idx);
+					int dotIdx = pkTableName.indexOf(".");
+					if (dotIdx > 0) {
+						pkTableName = pkTableName.substring(0, dotIdx).toUpperCase(Locale.getDefault())
+								+ pkTableName.substring(dotIdx);
 					}
 				} else {
 					pkTableName = rs.getString("PKTABLE_NAME");
@@ -644,7 +644,7 @@ public class GetSchemaTask extends JDBCTask {
 			if (databaseInfo.isSupportUserSchema()) {
 				sql = "SELECT a.attr_name, a.attr_type,"
 					+ " a.data_type, a.prec, a.scale"
-					+ " FROM db_attr_setdomain_elm a" + " WHERE LOWER(CONCAT(a.owner_name, '.', a.class_name))=?";
+					+ " FROM db_attr_setdomain_elm a" + " WHERE CONCAT(a.owner_name, '.', a.class_name)=?";
 			} else {
 				sql = "SELECT a.attr_name, a.attr_type,"
 						+ " a.data_type, a.prec, a.scale"
@@ -881,7 +881,7 @@ public class GetSchemaTask extends JDBCTask {
 			
 			// Get enumeration
 			if (CompatibleUtil.isSupportEnumVersion(databaseInfo) && enumColumnList.size() > 0) {
-				String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getTableName());
+				String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getUniqueName());
 				StringBuilder sb = new StringBuilder();
 				sb.append("SHOW COLUMNS FROM ").append(escapedTableName).append(" WHERE FIELD IN (");
 				try{

@@ -318,7 +318,12 @@ public class CreateTriggerDialog extends
 		taskExecutor.addTask(jdbcTask);
 		new ExecTaskWithProgress(taskExecutor).busyCursorWhile();
 		if (taskExecutor.isSuccess()) {
-			triggerName = triggerNameText.getText();
+			if(database.getDatabaseInfo().isSupportUserSchema()) {
+				triggerName = trigger.getOwner() + "." + triggerNameText.getText();	
+			} else {
+				triggerName = triggerNameText.getText();
+			}
+			
 			setReturnCode(buttonId);
 			close();
 			CommonUITool.openInformationBox(Messages.msgInformation, message);
@@ -390,7 +395,11 @@ public class CreateTriggerDialog extends
 			AlterTriggerTask task = new AlterTriggerTask(
 					database.getServer().getServerInfo());
 			task.setDbName(database.getName());
-			task.setTriggerName(trigger.getName());
+			if (database.getDatabaseInfo().isSupportUserSchema()) {
+				task.setTriggerName(trigger.getOwner() + "." + trigger.getName());
+			} else {
+				task.setTriggerName(trigger.getName());	
+			}
 
 			String triggerStatus = this.getStatus();
 			task.setStatus(TriggerStatus.eval(triggerStatus));
@@ -399,7 +408,7 @@ public class CreateTriggerDialog extends
 			task.setPriority(strPriority);
 
 			taskName = Messages.bind(Messages.alterTriggerTaskName,
-					trigger.getName());
+					task.getTaskname());
 			message = Messages.alterTriggerSuccess;
 			executedTask = task;
 		}
@@ -472,6 +481,13 @@ public class CreateTriggerDialog extends
 		setMessage(Messages.triggerAlterMSG);
 		setTitle(Messages.triggerAlterMSGTitle);
 
+		if(database.getDatabaseInfo().isSupportUserSchema()) {
+			int idx = trigger.getName().indexOf(".");
+			if (idx > 0) {
+				trigger.setOwner(trigger.getName().substring(0, idx));
+				trigger.setName(trigger.getName().substring(idx +1));
+			}
+		}
 		triggerNameText.setText(trigger.getName());
 		String table = trigger.getTarget_class();
 

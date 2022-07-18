@@ -204,6 +204,11 @@ public class CreateViewDialog extends
 						ownerOld = classInfo.getOwnerName();
 					}
 					boolean isSameUser = StringUtil.isEqualIgnoreCase(ownerOld, ownerNew);
+					// on 11.2,  not need Alter User After Create view.
+					if (database.getDatabaseInfo().isSupportUserSchema() && isNewTableFlag) {
+						isSameUser = true;
+					}
+
 					if (!isSameUser) {
 						sb.append(";");
 						sb.append(StringUtil.NEWLINE);
@@ -546,9 +551,19 @@ public class CreateViewDialog extends
 			task.addSqls(sql);
 
 			DatabaseInfo dbInfo = database.getDatabaseInfo();
-			String ownerOld = dbInfo.getAuthLoginedDbUserInfo().getName();
+			String ownerOld = "";
+			if (isNewTableFlag) {
+				ownerOld = ownerCombo.getText();
+			} else {
+				ownerOld = classInfo.getOwnerName();
+			}
 			String ownerNew = ownerCombo.getText();
 			boolean isSameOwner = StringUtil.isEqualIgnoreCase(ownerOld, ownerNew);
+			// on 11.2,  not need Alter User After Create view.
+			if (dbInfo.isSupportUserSchema() && isNewTableFlag) {
+				isSameOwner = true;
+			}
+			
 			if (!isSameOwner) {
 				sql = makeChangeOwnerSQLScript();
 
@@ -602,9 +617,11 @@ public class CreateViewDialog extends
 			viewNameText.setEditable(false);
 			viewNameText.setText(classInfo.getClassName());
 
+			ownerOld = classInfo.getOwnerName();
+			
 			if (isCommentSupport) {
 				if (!classInfo.isSystemClass()) {
-					String comment = getViewComment();
+					String comment = getViewComment(ownerOld);
 					if (comment != null) {
 						viewDescriptionText.setText(comment);
 					}
@@ -613,12 +630,11 @@ public class CreateViewDialog extends
 				}
 			}
 
-			ownerOld = classInfo.getOwnerName();
-			String[] strs = new String[] { classInfo.getTableName(),
+			String[] strs = new String[] { classInfo.getUniqueName(),
 					isPropertyQuery ? Messages.msgPropertyInfo : Messages.msgEditInfo };
 			setTitle(Messages.bind(Messages.editViewMsgTitle, strs));
 			setMessage(Messages.editViewMsg);
-			strs = new String[] { classInfo.getTableName(),
+			strs = new String[] { classInfo.getUniqueName(),
 					isPropertyQuery ? Messages.msgPropertyInfo : Messages.msgEditInfo };
 			String title = Messages.bind(Messages.editViewShellTitle, strs);
 			getShell().setText(title);
@@ -716,7 +732,7 @@ public class CreateViewDialog extends
 	 *
 	 * @return
 	 */
-	private String getViewComment() {
+	private String getViewComment(String owner) {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -725,9 +741,12 @@ public class CreateViewDialog extends
 
 		try {
 			DatabaseInfo dbInfo = database.getDatabaseInfo();
+			if (dbInfo.isSupportUserSchema()) {
+				viewName = owner + "." + viewName;
+			}
 			conn = JDBCConnectionManager.getConnection(dbInfo, true);
 			schemaComment = SchemaCommentHandler.loadObjectDescription(
-					dbInfo, conn, database.getDatabaseInfo().isSupportUserSchema(), viewName, CommentType.VIEW);
+					dbInfo, conn, dbInfo.isSupportUserSchema(), viewName, CommentType.VIEW);
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage());
 			CommonUITool.openErrorBox(e.getMessage());
@@ -813,19 +832,21 @@ public class CreateViewDialog extends
 		if (classInfo == null || "".equals(viewNameText.getText())) {
 			return "";
 		}
-		String classNameOld = classInfo.getTableName();
+		String classNameOld = classInfo.getClassName();
 		String classNameNew;
-		if (database.getDatabaseInfo().isSupportUserSchema()) {
-			classNameNew = ownerCombo.getText() + "." + viewNameText.getText();
-		} else {
-			classNameNew = viewNameText.getText();
-		}
+		classNameNew = viewNameText.getText();
+		
 		boolean isSameClass = StringUtil.isEqualIgnoreCase(classNameOld, classNameNew);
 		if (isNewTableFlag || isSameClass) {
 			return "";
 		}
 
-		String ddl = "DROP VIEW " + QuerySyntax.escapeKeyword(classInfo.getTableName()) + ";";
+		String ddl;
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			ddl = "DROP VIEW " + classInfo.getOwnerName() + "." + QuerySyntax.escapeKeyword(classInfo.getClassName()) + ";";
+		} else {
+			ddl = "DROP VIEW " + QuerySyntax.escapeKeyword(classInfo.getClassName()) + ";";
+		}
 		return ddl;
 	}
 
@@ -858,13 +879,9 @@ public class CreateViewDialog extends
 			ddl.append("CREATE VIEW ");
 		} else {
 			boolean isSameClass;
-			if (database.getDatabaseInfo().isSupportUserSchema()) {
-				isSameClass = StringUtil.isEqualIgnoreCase(classInfo.getTableName(),
-					ownerCombo.getText() + "." + viewNameText.getText());
-			} else {
-				isSameClass = StringUtil.isEqualIgnoreCase(classInfo.getTableName(),
-					viewNameText.getText());
-			}
+			isSameClass = StringUtil.isEqualIgnoreCase(classInfo.getClassName(),
+				viewNameText.getText());
+
 			boolean canSupport = CompatibleUtil.isSupportReplaceView(database.getDatabaseInfo());
 			if (canSupport && isSameClass) {
 				ddl.append("CREATE OR REPLACE VIEW ");
@@ -878,13 +895,21 @@ public class CreateViewDialog extends
 			ddl.append("[VIEWNAME]");
 		} else {
 			if (database.getDatabaseInfo().isSupportUserSchema()) {
-				viewName = ownerCombo.getText() + "." + viewNameText.getText();
+				String ownerName;
+				if (isNewTableFlag) {
+					ownerName = ownerCombo.getText();
+				} else {
+					ownerName = classInfo.getOwnerName();
+				}
+				viewName = QuerySyntax.escapeKeyword(ownerName)
+						+ "." + QuerySyntax.escapeKeyword(viewNameText.getText());
+				ddl.append(viewName);
 			} else {
 				viewName = viewNameText.getText();
+				if (viewName != null) {
+					ddl.append(QuerySyntax.escapeKeyword(viewName));
+				}
 			}
-		}
-		if (viewName != null) {
-			ddl.append(QuerySyntax.escapeKeyword(viewName));
 		}
 		ddl.append("(");
 
@@ -1091,7 +1116,8 @@ public class CreateViewDialog extends
 
 		String viewName = viewNameText.getText();
 		String ownerNew = ownerCombo.getText();
-		String ownerOld = dbInfo.getAuthLoginedDbUserInfo().getName();
+		//String ownerOld = dbInfo.getAuthLoginedDbUserInfo().getName();
+		String ownerOld = classInfo.getOwnerName();
 
 		if (ownerOld.equalsIgnoreCase(ownerNew)) {
 			return null;
@@ -1102,6 +1128,11 @@ public class CreateViewDialog extends
 		StringBuffer bf = new StringBuffer();
 
 		if (CompatibleUtil.isSupportChangeOwnerWithAlterStatement(dbInfo)) {
+			if (database.getDatabaseInfo().isSupportUserSchema()) {
+				viewName = QuerySyntax.escapeKeyword(ownerOld) + "." + QuerySyntax.escapeKeyword(viewName);
+			} else {
+				viewName = QuerySyntax.escapeKeyword(viewName);
+			}
 			createAlterStatementForChangingOwner(bf, viewName, ownerNew);
 		} else {
 			createMethodCallForChangingOwner(bf, viewName, ownerNew);

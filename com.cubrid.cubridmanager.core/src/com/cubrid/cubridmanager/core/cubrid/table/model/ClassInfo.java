@@ -42,11 +42,11 @@ public class ClassInfo {
 
 	private String className;
 	private String ownerName;
-	private String tableName;
 	private ClassType classType;
 	private boolean isSystemClass;
 	private boolean isPartitionedClass;
 	private boolean isSupportUserSchema;
+	private boolean debugInputUserSchema = false;
 
 	public ClassInfo(String className) {
 		this.className = className;
@@ -60,14 +60,17 @@ public class ClassInfo {
 		this.isSystemClass = isSystemClass;
 		this.isPartitionedClass = isPartitionedClass;
 		this.isSupportUserSchema = isSupportUserSchema;
-		if (isSupportUserSchema) {
-			tableName = ownerName + "." + className;
-		} else {
-			tableName = className;
-		}
+		this.debugInputUserSchema = true;
 	}
 
 	public String getClassName() {
+		if (!debugInputUserSchema) {
+			try {
+				throw new Exception(); 
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 		return className;
 	}
 
@@ -83,14 +86,22 @@ public class ClassInfo {
 		this.ownerName = ownerName;
 	}
 
-	public String getTableName() {
-		return tableName;
+	public String getUniqueName() {
+		if (!debugInputUserSchema) {
+			try {
+				throw new Exception(); 
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if (isSupportUserSchema) {
+			return ownerName + "." + className;
+		} else {
+			return className;
+		}
 	}
 
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-	
 	public ClassType getClassType() {
 		return classType;
 	}
@@ -120,6 +131,7 @@ public class ClassInfo {
 	}
 
 	public void setSupportUserSchema(boolean isSupportUserSchema) {
+		this.debugInputUserSchema = true;
 		this.isSupportUserSchema = isSupportUserSchema;
 	}
 

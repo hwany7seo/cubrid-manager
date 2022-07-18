@@ -158,7 +158,7 @@ public class ExportLoadDBHandler extends
 				boolean hasNextPage = true;
 				int exportedCount = 0;
 				long beginIndex = 1;
-				String sql = getSelectSQL(conn, tableName);
+				String sql = getSelectSQL(conn, tableName, dbInfo.isSupportUserSchema());
 				isPaginating = isPagination(tableName, sql, whereCondition);
 				boolean isExportedColumnTitles = false;
 				while (hasNextPage) {

@@ -203,7 +203,7 @@ public class SchemaCommentHandler {
 		String sql = null;
 
 		if(isSupportInEngine) {
-			sql = "SELECT class_name as table_name, null as column_name, comment as description "
+			sql = "SELECT owner_name as owner, class_name as table_name, null as column_name, comment as description "
 					+ "FROM db_class "
 					+ "WHERE is_system_class='NO'";
 		} else {
@@ -340,7 +340,7 @@ public class SchemaCommentHandler {
 			case TRIGGER:
 				sql = "SELECT name, comment " +
 						"FROM db_trigger " +
-						"WHERE CONCAT(owner, '.' , name) = ?";
+						"WHERE unique_name = ?";
 				break;
 			case SERIAL:
 				sql = "SELECT name, comment " +

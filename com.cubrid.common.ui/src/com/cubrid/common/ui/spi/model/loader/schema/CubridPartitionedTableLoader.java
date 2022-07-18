@@ -112,13 +112,13 @@ public class CubridPartitionedTableLoader extends
 			if (classInfoList != null && !classInfoList.isEmpty()) {
 				for (ClassInfo classInfo : classInfoList) {
 					String id = parent.getId() + NODE_SEPARATOR
-							+ classInfo.getTableName();
+							+ classInfo.getUniqueName();
 					
 					ICubridNode partitionedClassNode;
 					if (databaseInfo.isSupportUserSchema()) {
 						partitionedClassNode = new DefaultSchemaNode(
 							id, classInfo.getClassName() + " (" + classInfo.getOwnerName() + ")", 
-							classInfo.getTableName(),
+							classInfo.getUniqueName(),
 							"icons/navigator/schema_table_item.png");
 					} else {
 						partitionedClassNode = new DefaultSchemaNode(

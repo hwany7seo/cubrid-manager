@@ -102,9 +102,9 @@ public class CubridSystemTableFolderLoader extends
 			if (allClassInfoList != null) {
 				for (ClassInfo classInfo : allClassInfoList) {
 					String id = parent.getId() + NODE_SEPARATOR
-							+ classInfo.getTableName();
+							+ classInfo.getUniqueName();
 					ICubridNode classNode = new DefaultSchemaNode(id,
-							classInfo.getTableName(), classInfo.getTableName(), 
+							classInfo.getUniqueName(), classInfo.getUniqueName(), 
 							"icons/navigator/schema_table_item.png");
 					classNode.setType(NodeType.SYSTEM_TABLE);
 					classNode.setEditorId(SchemaInfoEditorPart.ID);

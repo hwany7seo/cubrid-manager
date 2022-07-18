@@ -92,13 +92,14 @@ public class ModifyTableNameAction extends
 	public void run() {
 		PropertyChangeProvider node = getSelectedNode();
 		boolean isPhysicModel = getERSchema().isPhysicModel();
+		boolean isSupportUserSchema = getERSchema().getCubridDatabase().getDatabaseInfo().isSupportUserSchema();
 		String oldName = ((ERTable) node).getShownName();
 		Set<String> names = getERSchema().getAllShownTableNames();
 		names.remove(oldName);
 
 		RenameTableDialog dlg = new RenameTableDialog(
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), oldName, true,
-				new ArrayList<String>(names), isPhysicModel);
+				new ArrayList<String>(names), isPhysicModel, isSupportUserSchema);
 		int ret = dlg.open();
 		if (ret == IDialogConstants.OK_ID) {
 			String newName = dlg.getNewName();

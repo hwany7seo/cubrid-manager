@@ -321,7 +321,7 @@ public class GetAllSchemaTask extends
 			+ " FROM db_attribute a, db_class c";
 		if (isSupportUserSchema()) {
 			sql = sql + " WHERE c.class_name=a.class_name" 
-					+ " AND c.ownername=a.owner_name"
+					+ " AND c.owner_name=a.owner_name"
 					+ " ORDER BY a.owner_name, a.class_name, a.def_order";
 		} else {
 			sql = sql + " WHERE c.class_name=a.class_name" 
@@ -385,7 +385,7 @@ public class GetAllSchemaTask extends
 
 				schemaInfo.setOwner(owner);
 				schemaInfo.setClassname(className);
-				schemaInfo.setTableName(tableName);
+				schemaInfo.setUniqueName(tableName);
 				schemaInfo.setDbname(dbName);
 				schemaInfo.setPartitionGroup(partitioned);
 				getColumnInfo(rs, schemaInfo, isSupportCharset, descriptions);
@@ -450,7 +450,7 @@ public class GetAllSchemaTask extends
 		attr.setName(attrName);
 
 		if (inherit == null) {
-			attr.setInherit(schemaInfo.getTableName());
+			attr.setInherit(schemaInfo.getUniqueName());
 		} else {
 			attr.setInherit(inherit);
 		}
@@ -477,7 +477,7 @@ public class GetAllSchemaTask extends
 		}
 
 		SchemaComment columnSchema = descriptions != null ?
-				descriptions.get(schemaInfo.getTableName() + "*" + attrName) : null;
+				descriptions.get(schemaInfo.getUniqueName() + "*" + attrName) : null;
 		if (columnSchema != null) {
 			attr.setDescription(columnSchema.getDescription());
 		}
@@ -1047,7 +1047,7 @@ public class GetAllSchemaTask extends
 					return -1;
 				}
 
-				return o1.getTableName().compareToIgnoreCase(o2.getTableName());
+				return o1.getUniqueName().compareToIgnoreCase(o2.getUniqueName());
 			}
 		});
 

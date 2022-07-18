@@ -910,7 +910,7 @@ public class DatabaseInfo implements IDatabaseSpec {
 		if (null == schemaMap) {
 			schemaMap = new HashMap<String, SchemaInfo>();
 		}
-		String key = schema.getTableName();
+		String key = schema.getUniqueName();
 		schemaMap.put(key, schema);
 	}
 

@@ -639,9 +639,9 @@ public final class QueryUtil {
 		return m.group(2);
 	}
 	
-	public static String getSelectSQL(Connection conn, String name) {
+	public static String getSelectSQL(Connection conn, String name, boolean isSupportUserSchema) {
 		String sql = null;
-		List<String> columnList = getColumnList(conn, name);
+		List<String> columnList = getColumnList(conn, name, isSupportUserSchema);
 		StringBuilder columns = new StringBuilder();
 		int size = columnList.size();
 		for (int i = 0; i < columnList.size(); i++) {
@@ -654,11 +654,17 @@ public final class QueryUtil {
 		return sql;
 	}
 
-	private static List<String> getColumnList(Connection conn, String tableName) {
+	private static List<String> getColumnList(Connection conn, String tableName, boolean isSupportUserSchema) {
 		List<String> columnList = new ArrayList<String>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT attr_name FROM db_attribute WHERE class_name = ? ORDER BY def_order";
+		
+		String sql;
+		if (isSupportUserSchema) {
+			sql = "SELECT attr_name FROM db_attribute WHERE CONCAT(owner_name, '.' + class_name) = ? ORDER BY def_order";
+		} else {
+			sql = "SELECT attr_name FROM db_attribute WHERE class_name = ? ORDER BY def_order";
+		}
 
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -676,10 +682,17 @@ public final class QueryUtil {
 		return columnList;
 	}
 	
-	public static List<String> getPrimaryKeys(Connection conn, String tableName) {
-		String sql = "SELECT key_attr_name " +
+	public static List<String> getPrimaryKeys(Connection conn, String tableName, boolean isSupportUserSchema) {
+		String sql;
+		if (isSupportUserSchema) {
+			sql = "SELECT key_attr_name " +
 				"FROM db_index_key " +
-				"WHERE class_name= ? AND index_name = 'pk'";
+				"WHERE CONCAT(owner_name, '.' , class_name)= ? AND index_name = 'pk'";
+		} else {
+			sql = "SELECT key_attr_name " +
+					"FROM db_index_key " +
+					"WHERE class_name= ? AND index_name = 'pk'";
+		}
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		List<String> pkColumns = new ArrayList<String>();
@@ -716,7 +729,7 @@ public final class QueryUtil {
 	public static String getColumnDescSql(Connection con, String tableName,
 			String columnName) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SHOW CREATE TABLE " + tableName);
+		sql.append("SHOW CREATE TABLE " + QuerySyntax.escapeKeyword(tableName));
 
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -725,7 +738,7 @@ public final class QueryUtil {
 			rs = pstmt.executeQuery();
 
 			sql.setLength(0);
-			sql.append("ALTER TABLE " + tableName + " MODIFY ");
+			sql.append("ALTER TABLE " + QuerySyntax.escapeKeyword(tableName) + " MODIFY ");
 
 			if (rs.next()) {
 				String temp = rs.getString(2);

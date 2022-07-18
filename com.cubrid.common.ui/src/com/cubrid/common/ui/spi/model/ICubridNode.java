@@ -311,5 +311,5 @@ public interface ICubridNode extends
 	 */
 	public Object getData(String key);
 	
-	public void setTableName(String tableName);
+	public void setUniqueName(String tableName);
 }

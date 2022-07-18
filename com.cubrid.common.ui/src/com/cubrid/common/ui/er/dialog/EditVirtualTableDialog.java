@@ -210,7 +210,7 @@ public class EditVirtualTableDialog extends
 		if (isNewTable) {
 			SchemaInfo newSchemaInfo = new SchemaInfo();
 			newSchemaInfo.setClassname(""); //$NON-NLS-1$
-			newSchemaInfo.setTableName(""); //$NON-NLS-1$
+			newSchemaInfo.setUniqueName(""); //$NON-NLS-1$
 			newSchemaInfo.setOwner(database.getUserName());
 			newSchemaInfo.setDbname(database.getName());
 			newSchemaInfo.setType(Messages.userSchema);
@@ -846,9 +846,9 @@ public class EditVirtualTableDialog extends
 						newSchemaInfo.setClassname(tableName);
 						newSchemaInfo.setOwner(database.getUserName());
 						if (isSupportUserSchema()) {
-							newSchemaInfo.setTableName(database.getUserName() + "." + tableName);
+							newSchemaInfo.setUniqueName(database.getUserName() + "." + tableName);
 						} else {
-							newSchemaInfo.setTableName(tableName);
+							newSchemaInfo.setUniqueName(tableName);
 						}
 					}
 				}
@@ -1337,7 +1337,7 @@ public class EditVirtualTableDialog extends
 		}
 
 		DBAttribute addAttribute = new DBAttribute("", DataType.DATATYPE_CHAR,
-				newSchemaInfo.getTableName(), false, false, false, false, null, collation);
+				newSchemaInfo.getUniqueName(), false, false, false, false, null, collation);
 		ERTableColumn column = new ERTableColumn(newERTable, addAttribute, false);
 		column.setIsNew(true);
 		tempERColumnList.add(column);

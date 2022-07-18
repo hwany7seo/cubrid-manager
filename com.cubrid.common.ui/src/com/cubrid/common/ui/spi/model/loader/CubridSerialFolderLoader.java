@@ -108,7 +108,7 @@ public class CubridSerialFolderLoader extends
 				for (SerialInfo serialInfo : serialInfoList) {
 					authSerialInfoList.add(serialInfo);
 					String id = parent.getId() + NODE_SEPARATOR
-							+ serialInfo.getName();
+							+ serialInfo.getOwner() + "." + serialInfo.getName();
 					ICubridNode serialNode = createSerialNode(databaseInfo, id, serialInfo);
 					parent.addChild(serialNode);
 				}
@@ -134,10 +134,13 @@ public class CubridSerialFolderLoader extends
 		ICubridNode serialNode;
 		if (databaseInfo.isSupportUserSchema()) {
 			serialNode= new DefaultSchemaNode(id,
-					serialInfo.getName(), serialInfo.getOwner() + "." + serialInfo.getClassName(), "icons/navigator/serial_item.png");
+					"[" + serialInfo.getOwner() + "] " + serialInfo.getName(),
+					serialInfo.getOwner() + "." + serialInfo.getName(),
+					"icons/navigator/serial_item.png");
 		} else {
 			serialNode= new DefaultSchemaNode(id,
-					serialInfo.getName(), serialInfo.getClassName(), "icons/navigator/serial_item.png");
+					"[" + serialInfo.getOwner() + "] " + serialInfo.getName(),
+					serialInfo.getName(), "icons/navigator/serial_item.png");
 		}
 		serialNode.setId(id);
 		serialNode.setType(NodeType.SERIAL);

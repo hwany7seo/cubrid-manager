@@ -97,6 +97,10 @@ public class SchemaDDL {
 		return getSchemaDDL(schemaInfo, true);
 	}
 
+	public String getSchemaDDLForExport(SchemaInfo schemaInfo, boolean isContainIndex) {
+		return getSchemaDDL(schemaInfo, isContainIndex, false, true);
+	}
+	
 	/**
 	 * Return DDL of a schema
 	 *
@@ -108,6 +112,10 @@ public class SchemaDDL {
 		return getSchemaDDL(schemaInfo, isContainIndex, false);
 	}
 
+	public String getSchemaDDL(SchemaInfo schemaInfo, boolean isContainIndex, boolean isVirtual) {
+		return getSchemaDDL(schemaInfo, isContainIndex, isVirtual, false);
+	}
+	
 	/**
 	 * Return DDL of a schema
 	 *
@@ -116,15 +124,28 @@ public class SchemaDDL {
 	 * @param isVirtual boolean whether be a virtual table
 	 * @return String a string indicates a instance of SchemaInfo
 	 */
-	public String getSchemaDDL(SchemaInfo schemaInfo, boolean isContainIndex, boolean isVirtual) {
+	public String getSchemaDDL(SchemaInfo schemaInfo, boolean isContainIndex, boolean isVirtual, boolean isExport) {
 		StringBuffer ddlBuffer = new StringBuffer();
 		ddlBuffer.append("CREATE TABLE ");
-		final String tableName = schemaInfo.getTableName();
-		if (null == tableName || tableName.equals("")) {
-			ddlBuffer.append("<class_name>");
+		if (databaseInfo.isSupportUserSchema()) {
+			final String ownerName = schemaInfo.getOwner();
+			final String className = schemaInfo.getUniqueName();
+			if (ownerName == null || className == null || ownerName.isEmpty() || className.isEmpty()) {
+				ddlBuffer.append("<class_name>");
+			} else {
+				if (isExport) {
+					ddlBuffer.append(QuerySyntax.escapeKeyword(schemaInfo.getClassname()));
+				} else {
+					ddlBuffer.append(QuerySyntax.escapeKeyword(schemaInfo.getOwner()) + "." + QuerySyntax.escapeKeyword(schemaInfo.getClassname()));
+				}
+			}
 		} else {
-			//ddlBuffer.append(QuerySyntax.escapeKeyword(tableName));
-			ddlBuffer.append(tableName);
+			final String className = schemaInfo.getClassname();
+			if (null == className || className.equals("")) {
+				ddlBuffer.append("<class_name>");
+			} else {
+				ddlBuffer.append(QuerySyntax.escapeKeyword(className));
+			}
 		}
 
 		List<String> slist = schemaInfo.getSuperClasses();
@@ -145,7 +166,7 @@ public class SchemaDDL {
 			for (int i = 0; i < clist.size(); i++) {
 				DBAttribute classAttr = clist.get(i);
 				String inherit = classAttr.getInherit();
-				if (inherit.equalsIgnoreCase(schemaInfo.getTableName())) {
+				if (inherit.equalsIgnoreCase(schemaInfo.getUniqueName())) {
 					if (count == 0) {
 						ddlBuffer.append(StringUtil.NEWLINE);
 						attrBegin = true;
@@ -172,7 +193,7 @@ public class SchemaDDL {
 			for (int i = 0; i < nlist.size(); i++) {
 				DBAttribute instanceAttr = nlist.get(i);
 				String inherit = instanceAttr.getInherit();
-				String tableName2 = schemaInfo.getTableName();
+				String tableName2 = schemaInfo.getUniqueName();
 				if (StringUtil.isEqualIgnoreCase(inherit, tableName2)) {
 					if (count == 0) {
 						if (!attrBegin) {
@@ -194,7 +215,7 @@ public class SchemaDDL {
 			constraintList = schemaInfo.getConstraints();
 		}
 		/*Sort the constaints first*/
-		Collections.sort(constraintList, new ConstraintComparator(tableName));
+		Collections.sort(constraintList, new ConstraintComparator(schemaInfo.getUniqueName()));
 
 		if (!constraintList.isEmpty()) {
 			for (int i = 0; i < constraintList.size(); i++) {
@@ -202,7 +223,7 @@ public class SchemaDDL {
 				List<SchemaInfo> superList = SuperClassUtil.getSuperClasses(databaseInfo,
 						schemaInfo);
 				if (!schemaInfo.isInSuperClasses(superList, constraint.getName())) {
-					String contraintDDL = getContraintDDL(tableName, constraint);
+					String contraintDDL = getContraintDDL(schemaInfo.getUniqueName(), constraint);
 					if (StringUtil.isNotEmpty(contraintDDL)) {
 						ddlBuffer.append(",").append(StringUtil.NEWLINE).append(contraintDDL);
 					}
@@ -238,7 +259,7 @@ public class SchemaDDL {
 					String type = constraint.getType();
 					if ("UNIQUE".equals(type) || "INDEX".equals(type)
 							|| "REVERSE INDEX".equals(type) || "REVERSE UNIQUE".equals(type)) {
-						String indexDDL = getCreateIndexDDL(tableName, constraint);
+						String indexDDL = getCreateIndexDDL(schemaInfo.getUniqueName(), constraint);
 						if (StringUtil.isNotEmpty(indexDDL)) {
 							ddlBuffer.append(indexDDL);
 							ddlBuffer.append(endLineChar).append(StringUtil.NEWLINE);
@@ -292,14 +313,27 @@ public class SchemaDDL {
 				+ startValue + endLineChar;
 	}
 
+	
+	public String getPKsDDL(SchemaInfo schemaInfo) {
+		return getPKsDDL(schemaInfo, false);
+	}
+	
+	public String getPKsDDLForExport(SchemaInfo schemaInfo) {
+		return getPKsDDL(schemaInfo, true);
+	}
+	
 	/**
 	 * get the pk DDL
 	 *
 	 * @param schemaInfo SchemaInfo
 	 * @return pk DDL
 	 */
-	public String getPKsDDL(SchemaInfo schemaInfo) {
-		String tableName = schemaInfo.getTableName();
+	public String getPKsDDL(SchemaInfo schemaInfo, boolean isExport) {
+		String tableName = schemaInfo.getUniqueName();
+		// when 11.2 Or higher AND Export, using className.
+		if (databaseInfo.isSupportUserSchema() && isExport) {
+			tableName = schemaInfo.getClassname();
+		}
 		StringBuffer ddlBuffer = new StringBuffer();
 
 		//Get the PK
@@ -316,14 +350,22 @@ public class SchemaDDL {
 		return ddlBuffer.toString();
 	}
 
+	public String getFKsDDL(SchemaInfo schemaInfo) {
+		return getFKsDDL(schemaInfo, false);
+	}
+	
+	public String getFKsDDLForExport(SchemaInfo schemaInfo) {
+		return getFKsDDL(schemaInfo, true);
+	}
+	
 	/**
 	 * get the pk DDL
 	 *
 	 * @param schemaInfo SchemaInfo
 	 * @return pk DDL
 	 */
-	public String getFKsDDL(SchemaInfo schemaInfo) {
-		String tableName = schemaInfo.getTableName();
+	public String getFKsDDL(SchemaInfo schemaInfo, boolean isExport) {
+		String tableName = schemaInfo.getUniqueName();
 		StringBuffer ddlBuffer = new StringBuffer();
 
 		//Get the FK
@@ -337,14 +379,26 @@ public class SchemaDDL {
 		return ddlBuffer.toString();
 	}
 
+	
+	public String getIndexsDDL(SchemaInfo schemaInfo) {
+		return getIndexsDDL(schemaInfo, false);
+	}
+	
+	public String getIndexsDDLForExport(SchemaInfo schemaInfo) {
+		return getIndexsDDL(schemaInfo, true);
+	}
+	
 	/**
 	 * get the pk DDL
 	 *
 	 * @param schemaInfo SchemaInfo
 	 * @return pk DDL
 	 */
-	public String getIndexsDDL(SchemaInfo schemaInfo) {
-		String tableName = schemaInfo.getTableName();
+	public String getIndexsDDL(SchemaInfo schemaInfo, boolean isExport) {
+		String tableName = schemaInfo.getUniqueName();
+		if (databaseInfo.isSupportUserSchema() && isExport) {
+			tableName = schemaInfo.getClassname();
+		}
 		StringBuffer ddlBuffer = new StringBuffer();
 
 		//Get the index
@@ -379,7 +433,7 @@ public class SchemaDDL {
 	 * @return The index related DDL
 	 */
 	public String getIndexDDL(SchemaInfo schemaInfo) {
-		String tableName = schemaInfo.getTableName();
+		String tableName = schemaInfo.getUniqueName();
 		StringBuffer ddlBuffer = new StringBuffer();
 
 		//Get the PK
@@ -460,8 +514,8 @@ public class SchemaDDL {
 		Map<String, String> attrMap = new HashMap<String, String>();
 
 		//Generate the DDL for rename table
-		String oldTableName = oldSchemaInfo.getTableName().toLowerCase();
-		String newTableName = newSchemaInfo.getTableName().toLowerCase();
+		String oldTableName = oldSchemaInfo.getUniqueName();
+		String newTableName = newSchemaInfo.getUniqueName();
 		String oldclassName = oldSchemaInfo.getClassname().toLowerCase();
 		String newClassName = newSchemaInfo.getClassname().toLowerCase();
 		String tableName = oldTableName;
@@ -1367,7 +1421,7 @@ public class SchemaDDL {
 		for (DBAttribute attr : newSchemaInfo.getAttributes()) {
 			if (attr.getName().equals(newAttr.getName())) {
 				break;
-			} else if (newSchemaInfo.getTableName().equals(attr.getInherit())) {
+			} else if (newSchemaInfo.getUniqueName().equals(attr.getInherit())) {
 				lastName = attr.getName();
 			}
 		}
@@ -1914,7 +1968,7 @@ public class SchemaDDL {
 	 */
 	private String getAlterTableCollationDDL(SchemaInfo oldSchemaInfo, SchemaInfo newSchemaInfo) {
 		StringBuffer bf = new StringBuffer();
-		bf.append("ALTER CLASS ").append(QuerySyntax.escapeKeyword(newSchemaInfo.getTableName()));
+		bf.append("ALTER CLASS ").append(QuerySyntax.escapeKeyword(newSchemaInfo.getUniqueName()));
 		bf.append(" COLLATE ").append(
 				newSchemaInfo.getCollation() == null ? "" : newSchemaInfo.getCollation());
 		bf.append(endLineChar).append(StringUtil.NEWLINE);

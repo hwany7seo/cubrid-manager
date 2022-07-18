@@ -627,11 +627,11 @@ public class TableDashboardPart extends CubridEditorPart implements ITableButton
 			if (database.getDatabaseInfo().getUserTableInfoList().size() > 0) {
 				ClassInfo classInfo = database.getDatabaseInfo().getUserTableInfoList().get(0);
 				SchemaInfo schemaInfo = database.getDatabaseInfo().getSchemaInfo(connection,
-						classInfo.getTableName());
+						classInfo.getUniqueName());
 				IDatabaseSpec dbSpec = database.getDatabaseInfo();
 				if (schemaInfo != null && SchemaCommentHandler.isInstalledMetaTable(dbSpec, connection)) {
 					Map<String, SchemaComment> comments = SchemaCommentHandler.loadDescription(
-							dbSpec, connection, database.getDatabaseInfo().isSupportUserSchema(), classInfo.getTableName());
+							dbSpec, connection, database.getDatabaseInfo().isSupportUserSchema(), classInfo.getUniqueName());
 					if (comments != null) {
 						SchemaCommentHandler.bindSchemaInfo(comments, schemaInfo);
 					}
