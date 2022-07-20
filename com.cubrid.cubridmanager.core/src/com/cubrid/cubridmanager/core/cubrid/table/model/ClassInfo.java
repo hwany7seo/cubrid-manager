@@ -96,7 +96,11 @@ public class ClassInfo {
 		}
 		
 		if (isSupportUserSchema) {
-			return ownerName + "." + className;
+			if (isSystemClass) {
+				return className;
+			} else {
+				return ownerName + "." + className;
+			}
 		} else {
 			return className;
 		}

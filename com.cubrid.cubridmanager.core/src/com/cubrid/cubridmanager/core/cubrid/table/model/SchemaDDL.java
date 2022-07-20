@@ -1705,7 +1705,7 @@ public class SchemaDDL {
 		StringBuffer bf = new StringBuffer();
 		bf.append(StringUtil.NEWLINE);
 		bf.append("CALL CHANGE_OWNER (");
-		bf.append("'").append(tableName).append("',");
+		bf.append("'").append(QuerySyntax.escapeKeyword(tableName)).append("',");
 		bf.append("'").append(newOwner).append("'");
 		bf.append(") ON CLASS db_authorizations");
 		bf.append(StringUtil.NEWLINE);
@@ -1724,7 +1724,7 @@ public class SchemaDDL {
 		StringBuffer bf = new StringBuffer();
 		bf.append(StringUtil.NEWLINE);
 		bf.append("ALTER TABLE ");
-		bf.append(tableName);
+		bf.append(QuerySyntax.escapeKeyword(tableName));
 		bf.append(" OWNER TO ");
 		bf.append(newOwner);
 		bf.append(StringUtil.NEWLINE);

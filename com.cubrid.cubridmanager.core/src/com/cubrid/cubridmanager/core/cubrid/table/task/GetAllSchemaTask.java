@@ -156,7 +156,7 @@ public class GetAllSchemaTask extends
 			getPartitionInfo();
 
 			if (SchemaCommentHandler.isInstalledMetaTable(databaseInfo, connection)) {
-				comments = SchemaCommentHandler.loadDescriptions(databaseInfo, connection, databaseInfo.isSupportUserSchema());
+				comments = SchemaCommentHandler.loadDescriptions(databaseInfo, connection, isSupportUserSchema());
 			}
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -344,7 +344,11 @@ public class GetAllSchemaTask extends
 				String tableName = "";
 				if (isSupportUserSchema()) {
 					owner = rs.getString("owner_name");
-					tableName = owner + "." + className;
+					if (isUserClass) {
+						tableName = owner + "." + className;
+					} else {
+						tableName = className;	
+					}
 				} else {
 					tableName = className;
 				}
@@ -396,7 +400,11 @@ public class GetAllSchemaTask extends
 					DBResolution dbr = new DBResolution();
 					dbr.setAlias(attrName);
 					if (isSupportUserSchema()) {
-						dbr.setTableName(rs.getString("from_owner_name") + "." + rs.getString("from_class_name"));
+						if (rs.getString("from_class_name") != null) {
+							dbr.setTableName(rs.getString("from_owner_name") + "." + rs.getString("from_class_name"));
+						} else {
+							dbr.setTableName(null);
+						}
 					} else {
 						dbr.setTableName(rs.getString("from_class_name"));
 					}
@@ -434,9 +442,13 @@ public class GetAllSchemaTask extends
 		String attrName = rs.getString("attr_name");
 		String type = rs.getString("attr_type");
 		
-		String inherit = "";
+		String inherit;
 		if (isSupportUserSchema()) {
-			inherit = rs.getString("from_owner_name") + "." + rs.getString("from_class_name");
+			if (rs.getString("from_class_name") != null) {
+				inherit = rs.getString("from_owner_name") + "." + rs.getString("from_class_name");
+			} else {
+				inherit = null;
+			}
 		} else {
 			inherit = rs.getString("from_class_name");
 		}
@@ -503,7 +515,11 @@ public class GetAllSchemaTask extends
 		String sql = "";
 
 		if (isSupportUserSchema()) {
-			sql = "SELECT owner_name, vclass_name, vclass_def FROM db_vclass ORDER BY owner_name, vclass_name";
+			sql = "SELECT v.owner_name, v.vclass_name, v.vclass_def, c.is_system_class "
+					+ "FROM db_vclass v, db_class c "
+					+ "WHERE v.vclass_name=c.class_name "
+					+ "AND v.owner_name=c.owner_name "
+					+ "ORDER BY v.owner_name, v.vclass_name";
 		} else {
 			sql = "SELECT vclass_name, vclass_def FROM db_vclass ORDER BY vclass_name";	
 		}
@@ -518,8 +534,13 @@ public class GetAllSchemaTask extends
 				String ownerName = "";
 				String tableName = "";
 				if (isSupportUserSchema()) {
+					boolean isUserClass = "NO".equals(rs.getString("is_system_class"));
 					ownerName = rs.getString("owner_name");
-					tableName = ownerName + "." + vClassName;
+					if (isUserClass) {
+						tableName = ownerName + "." + vClassName;
+					}  else {
+						tableName = vClassName;
+					}
 				} else {
 					tableName = vClassName;
 				}
@@ -638,9 +659,10 @@ public class GetAllSchemaTask extends
 		if (isSupportUserSchema()) {
 			sql = "SELECT i.owner_name, i.class_name, i.index_name, i.is_unique, i.is_reverse,"
 				+ " i.is_primary_key, i.is_foreign_key, i.key_count,"
-				+ " k.key_attr_name, k.asc_desc, k.key_order" + extraColumns + funcDef
-				+ " FROM db_index i, db_index_key k"
+				+ " k.key_attr_name, k.asc_desc, k.key_order" + extraColumns + funcDef + ", c.is_system_class"
+				+ " FROM db_index i, db_index_key k, db_class c"
 				+ " WHERE i.class_name=k.class_name AND i.index_name=k.index_name AND i.owner_name=k.owner_name"
+				+ " AND c.class_name=i.class_name AND c.owner_name=i.owner_name"
 				+ " ORDER BY i.owner_name, i.class_name, i.index_name, k.key_order";
 		} else {
 			sql = "SELECT i.class_name, i.index_name, i.is_unique, i.is_reverse,"
@@ -659,9 +681,14 @@ public class GetAllSchemaTask extends
 			Map<String, String> constraint2Unique = new HashMap<String, String>();
 			while (rs.next()) {
 				String className = rs.getString("class_name");
+				boolean isUserClass = "NO".equals(rs.getString("is_system_class"));
 				String tableName = "";
 				if (isSupportUserSchema()) {
-					tableName = rs.getString("owner_name") + "." + className;
+					if (isUserClass) {
+						tableName = rs.getString("owner_name") + "." + className;
+					} else {
+						tableName = className;
+					}
 				} else {
 					tableName = className;
 				}
@@ -762,20 +789,12 @@ public class GetAllSchemaTask extends
 	 * @throws SQLException the exception
 	 */
 	private void getTypeInfo() throws SQLException {
-		String sql = "";
-		if (isSupportUserSchema()) {
-			sql = "SELECT a.owner_name, a.class_name, a.attr_name, a.attr_type,"
+		String sql = "SELECT a.class_name, a.attr_name, a.attr_type,"
 				+ " a.data_type, a.prec, a.scale"
 				+ " FROM db_attr_setdomain_elm a"
-				+ " ORDER BY a.owner_name, a.class_name, a.attr_name";
-		} else {
-			sql = "SELECT a.class_name, a.attr_name, a.attr_type,"
-					+ " a.data_type, a.prec, a.scale"
-					+ " FROM db_attr_setdomain_elm a"
-					+ " ORDER BY a.class_name, a.attr_name";
-		}
+				+ " ORDER BY a.class_name, a.attr_name";
 
-		// [TOOLS-2425]Support shard broker
+			// [TOOLS-2425]Support shard broker
 		sql = databaseInfo.wrapShardQuery(sql);
 
 		try {
@@ -784,12 +803,6 @@ public class GetAllSchemaTask extends
 			Map<String, Map<String, List<SubAttribute>>> schemaColumnMap = new HashMap<String, Map<String, List<SubAttribute>>>();
 			while (rs.next()) {
 				String className = rs.getString("class_name");
-				String tableName = "";
-				if (isSupportUserSchema()) {
-					tableName = rs.getString("owner_name") + "." + className;
-				} else {
-					tableName = className;
-				}
 				String attrName = rs.getString("attr_name");
 				String type = rs.getString("attr_type");
 				String dateType = rs.getString("data_type");
@@ -801,7 +814,7 @@ public class GetAllSchemaTask extends
 				Map<String, List<SubAttribute>> columnMap = schemaColumnMap.get("className");
 				if (columnMap == null) {
 					columnMap = new HashMap<String, List<SubAttribute>>();
-					schemaColumnMap.put(tableName, columnMap);
+					schemaColumnMap.put(className, columnMap);
 				}
 
 				List<SubAttribute> subList = columnMap.get(attrName);

@@ -105,7 +105,11 @@ public class GetAllClassListTask extends JDBCTask {
 				sql += " OR class_name='" + ConstantsUtil.CUNITOR_HA_TABLE + "'";
 			}
 			
-			sql += " ORDER BY owner_name, class_name";
+			if (databaseInfo.isSupportUserSchema()) {
+				sql += " ORDER BY owner_name, class_name";
+			} else {
+				sql += " ORDER BY class_name";
+			}
 			
 			sql = databaseInfo.wrapShardQuery(sql);
 			boolean existSchemaCommentTable = false;
