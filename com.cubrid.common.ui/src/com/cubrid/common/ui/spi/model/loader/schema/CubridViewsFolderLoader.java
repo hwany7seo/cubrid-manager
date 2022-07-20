@@ -158,9 +158,16 @@ public class CubridViewsFolderLoader extends
 	public static ICubridNode createUserViewNode(String id, ClassInfo classInfo) {
 		String viewName = classInfo.getUniqueName();
 		String viewClassName = classInfo.getClassName();
-		ICubridNode classNode = new DefaultSchemaNode(id,
+		ICubridNode classNode;
+		if (classInfo.isSupportUserSchema()) {
+			classNode = new DefaultSchemaNode(id,
 				"[" + classInfo.getOwnerName() + "] " + viewClassName, viewName,
 				"icons/navigator/schema_view_item.png");
+		} else {
+			classNode = new DefaultSchemaNode(id,
+				viewClassName, viewName,
+				"icons/navigator/schema_view_item.png");
+		}
 		classNode.setType(NodeType.USER_VIEW);
 		classNode.setEditorId(SchemaInfoEditorPart.ID);
 		classNode.setContainer(false);

@@ -1117,7 +1117,12 @@ public class CreateViewDialog extends
 		String viewName = viewNameText.getText();
 		String ownerNew = ownerCombo.getText();
 		//String ownerOld = dbInfo.getAuthLoginedDbUserInfo().getName();
-		String ownerOld = classInfo.getOwnerName();
+		String ownerOld;
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			ownerOld = classInfo.getOwnerName();
+		} else {
+			ownerOld = dbInfo.getAuthLoginedDbUserInfo().getName();
+		}
 
 		if (ownerOld.equalsIgnoreCase(ownerNew)) {
 			return null;

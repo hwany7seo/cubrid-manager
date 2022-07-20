@@ -243,7 +243,7 @@ public class ERDNDController {
 			if (isSupportTableComment && newSchemaInfo != null) {
 				Map<String, SchemaComment> map = SchemaCommentHandler
 						.loadDescription(dbSpec, conn, database.getDatabaseInfo().isSupportUserSchema(),
-								newSchemaInfo.getClassname());
+								newSchemaInfo.getUniqueName());
 
 				for (DBAttribute attr : newSchemaInfo.getAttributes()) {
 					SchemaComment schemaComment = SchemaCommentHandler.find(

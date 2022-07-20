@@ -573,9 +573,9 @@ public class ExportSettingForLoadDBPage extends
 
 					StringBuilder sql = new StringBuilder();
 					if (isSupportUserSchema()) {
-						sql.append("SELECT c.class_name, c.class_type, c.owner_name");
+						sql.append("SELECT c.class_name, c.class_type, c.owner_name ");
 						sql.append("FROM db_class c, db_attribute a ");
-						sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' AND c.owner_name=a.owner_name");
+						sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' AND c.owner_name=a.owner_name ");
 						sql.append("AND a.from_class_name IS NULL ");
 						sql.append("GROUP BY c.owner_name, c.class_name, c.class_type ");
 						sql.append("ORDER BY c.owner_name, c.class_type, c.class_name");
@@ -727,6 +727,12 @@ public class ExportSettingForLoadDBPage extends
 			} else if (triggerButton.getSelection()
 					&& indexPathText.getText().equals(triggerPathText.getText())) {
 				setErrorMessage(Messages.exportWizardLoadDBPageErrMsg7);
+				setPageComplete(false);
+				return;
+			}
+			
+			if (!schemaButton.getSelection()) {
+				setErrorMessage(Messages.exportWizardLoadDBPageErrMsg9);
 				setPageComplete(false);
 				return;
 			}

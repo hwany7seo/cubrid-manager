@@ -142,6 +142,14 @@ public class ExportLoadDBHandler extends
 		}
 		// Export data
 		try {
+			
+			if (!exportConfig.isExportData()) {
+				return;
+			}
+			
+			if (dataTablesName == null) {
+				return;
+			}
 			exportDataEventHandler.handleEvent(new ExportDataBeginOneTableEvent(dataTablesName));
 
 			fs = FileUtil.getBufferedWriter(
@@ -215,7 +223,7 @@ public class ExportLoadDBHandler extends
 							if (exportedCount >= COMMIT_LINES) {
 								fs.flush();
 								exportDataEventHandler.handleEvent(new ExportDataSuccessEvent(
-										tableName, exportedCount));
+										dataTablesName, exportedCount));
 								exportedCount = 0;
 							}
 
@@ -223,13 +231,13 @@ public class ExportLoadDBHandler extends
 								break;
 							}
 						}
-						exportDataEventHandler.handleEvent(new ExportDataSuccessEvent(tableName,
+						exportDataEventHandler.handleEvent(new ExportDataSuccessEvent(dataTablesName,
 								exportedCount));
 						exportedCount = 0;
 					} catch (SQLException e) {
 						LOGGER.error(e.getMessage(), e);
 						exportDataEventHandler.handleEvent(new ExportDataFailedOneTableEvent(
-								tableName));
+								dataTablesName));
 					} finally {
 						QueryUtil.freeQuery(rs);
 					}

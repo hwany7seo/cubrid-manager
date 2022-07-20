@@ -139,7 +139,7 @@ public class CubridSerialFolderLoader extends
 					"icons/navigator/serial_item.png");
 		} else {
 			serialNode= new DefaultSchemaNode(id,
-					"[" + serialInfo.getOwner() + "] " + serialInfo.getName(),
+					serialInfo.getName(),
 					serialInfo.getName(), "icons/navigator/serial_item.png");
 		}
 		serialNode.setId(id);

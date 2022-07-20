@@ -125,11 +125,7 @@ public class ExprotToSqlHandler extends
 					CUBRIDResultSetMetaDataProxy rsmt = (CUBRIDResultSetMetaDataProxy) rs.getMetaData();
 
 					StringBuffer insert = new StringBuffer("INSERT INTO ");
-					String className = tableName;
-					if (dbInfo.isSupportUserSchema()) {
-						className = className.substring(className.indexOf(".") + 1);
-					}
-					insert.append(QuerySyntax.escapeKeyword(className));
+					insert.append(QuerySyntax.escapeKeyword(tableName));
 					insert.append(" (");
 					for (int i = 1; i < rsmt.getColumnCount() + 1; i++) {
 						if (i > 1) {
@@ -207,11 +203,7 @@ public class ExprotToSqlHandler extends
 				List<ColumnInfo> columnInfos = resultSetDataCache.getColumnInfos();
 				int colCount = columnInfos.size();
 				StringBuffer insert = new StringBuffer("INSERT INTO ");
-				String className = tableName;
-				if (dbInfo.isSupportUserSchema()) {
-					className = className.substring(className.indexOf(".") + 1);
-				}
-				insert.append(QuerySyntax.escapeKeyword(className));
+				insert.append(QuerySyntax.escapeKeyword(tableName));
 				insert.append(" (");
 				for (int i = 0; i < colCount; i++) {
 					if (i > 0) {

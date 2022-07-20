@@ -129,14 +129,14 @@ public class SchemaDDL {
 		ddlBuffer.append("CREATE TABLE ");
 		if (databaseInfo.isSupportUserSchema()) {
 			final String ownerName = schemaInfo.getOwner();
-			final String className = schemaInfo.getUniqueName();
+			final String className = schemaInfo.getClassname();
 			if (ownerName == null || className == null || ownerName.isEmpty() || className.isEmpty()) {
 				ddlBuffer.append("<class_name>");
 			} else {
 				if (isExport) {
-					ddlBuffer.append(QuerySyntax.escapeKeyword(schemaInfo.getClassname()));
+					ddlBuffer.append(QuerySyntax.escapeKeyword(className));
 				} else {
-					ddlBuffer.append(QuerySyntax.escapeKeyword(schemaInfo.getOwner()) + "." + QuerySyntax.escapeKeyword(schemaInfo.getClassname()));
+					ddlBuffer.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(className));
 				}
 			}
 		} else {

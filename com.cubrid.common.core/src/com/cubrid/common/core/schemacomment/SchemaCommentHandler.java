@@ -33,6 +33,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -335,17 +336,17 @@ public class SchemaCommentHandler {
 			case SP:
 				sql = "SELECT sp_name, comment " +
 						"FROM db_stored_procedure " +
-						"WHERE CONCAT(owner, '.' , sp_name) = ?";
+						"WHERE sp_name = ?";
 				break;
 			case TRIGGER:
-				sql = "SELECT name, comment " +
-						"FROM db_trigger " +
-						"WHERE unique_name = ?";
+				sql = "SELECT trigger_name, comment " +
+					      "FROM db_trig " +
+						"WHERE LOWER(CONCAT(owner_name , '.' , trigger_name))=?";
 				break;
 			case SERIAL:
 				sql = "SELECT name, comment " +
 						"FROM db_serial " +
-						"WHERE CONCAT(owner, '.' , name) = ?";
+						"WHERE CONCAT(owner.name, '.' , name) = ?";
 				break;
 			case USER:
 				sql = "SELECT name, comment " +
@@ -410,7 +411,7 @@ public class SchemaCommentHandler {
 
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, objName);
+			pstmt.setString(1, objName.toLowerCase(Locale.getDefault()));
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				schemaComment = new SchemaComment();

@@ -94,6 +94,7 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 	private String taskName;
 	private CubridDatabase database;
 	private boolean isEditAble;
+	private String ownerName = null;
 	private String serialName;
 	private static final String SERIAL_MIN = "-1000000000000000000000000000000000000";
 	private static final String SERIAL_MAX = "10000000000000000000000000000000000000";
@@ -334,21 +335,30 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 	 */
 	private String getSQLScript() { // FIXME move this logic to core module
 		StringBuffer sb = new StringBuffer();
+		String serialName = serialNameText.getText();
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			if (ownerName != null && !ownerName.isEmpty()){
+				serialName = QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(serialName);
+			} else {
+				serialName = QuerySyntax.escapeKeyword(serialName);
+			}
+		} else {
+			serialName = QuerySyntax.escapeKeyword(serialName);
+		}
+		
 		if (editedNode == null) {
 			sb.append("CREATE").append(" SERIAL ");
-			String serialName = serialNameText.getText();
 			if (serialName.trim().length() == 0) {
 				sb.append("<serial_name>");
 			} else {
-				sb.append(QuerySyntax.escapeKeyword(serialName));
+				sb.append(serialName);
 			}
 		} else {
 			sb.append("ALTER").append(" SERIAL ");
-			String serialName = serialNameText.getText();
 			if (serialName.trim().length() == 0) {
 				sb.append("<serial_name>");
 			} else {
-				sb.append(QuerySyntax.escapeKeyword(serialName));
+				sb.append(serialName);
 			}
 		}
 		String startedValue = startValText.getText();
@@ -472,6 +482,7 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 			if (serialInfo != null) {
 				serialNameText.setEditable(false);
 				serialNameText.setText(serialInfo.getName());
+				ownerName = serialInfo.getOwner();
 				String description = serialInfo.getDescription();
 				if (isCommentSupport && StringUtil.isNotEmpty(description)) {
 					serialDescriptionText.setText(description);
@@ -565,11 +576,11 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 					if (task instanceof CreateOrEditSerialTask) {
 						CreateOrEditSerialTask createSerialTask = (CreateOrEditSerialTask) task;
 						if (editedNode == null) {
-							createSerialTask.createSerial(serialName, startVal,
+							createSerialTask.createSerial(ownerName, serialName, startVal,
 									incrementVal, maxVal, minVal, isCycle, isNoMinValue,
 									isNoMaxValue, cacheCount, isNoCache, description);
 						} else {
-							createSerialTask.editSerial(serialName, startVal,
+							createSerialTask.editSerial(ownerName, serialName, startVal,
 									incrementVal, maxVal, minVal, isCycle, isNoMinValue,
 									isNoMaxValue, cacheCount, isNoCache, description);
 						}

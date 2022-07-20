@@ -2817,7 +2817,11 @@ public class TableEditorPart extends
 				return;
 			}
 			
-			editedTableNode.setLabel("[" + owner + "] " + className);
+			if (database.getDatabaseInfo().isSupportUserSchema()) {
+				editedTableNode.setLabel("[" + owner + "] " + className);
+			} else {
+				editedTableNode.setLabel(className);
+			}
 			editedTableNode.setUniqueName(tableName);
 			CommonUITool.refreshNavigatorTree(treeViewer, editedTableNode);
 			CommonUITool.updateFolderNodeLabelIncludingChildrenCount(treeViewer, editedTableNode);

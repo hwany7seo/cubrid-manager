@@ -990,10 +990,6 @@ public final class CompatibleUtil {
             return false;
         }
 
-        if (isAfter1101(serverInfo)) {
-            return false;
-        }
-
         return isAfter840(serverInfo);
     }
 

@@ -254,7 +254,7 @@ public class ExportSchemaThread extends
 				task.execute();
 				boolean isSupportCache = CompatibleUtil.isSupportCache(dbInfo);
 				for (SerialInfo serial : task.getSerialInfoList()) {
-					fs.write(QueryUtil.createSerialSQLScript(serial, isSupportCache));
+					fs.write(QueryUtil.createSerialSQLScript(serial, isSupportCache, dbInfo.isSupportUserSchema()));
 					fs.write(StringUtil.NEWLINE);
 					hasSerial = true;
 				}

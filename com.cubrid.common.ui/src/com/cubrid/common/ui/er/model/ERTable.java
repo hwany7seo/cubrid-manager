@@ -84,7 +84,7 @@ public class ERTable extends
 
 	public ERTable(SchemaInfo schemaInfo, ERSchema erSchema) {
 		super();
-		this.name = schemaInfo.getClassname();
+		this.name = schemaInfo.getUniqueName();
 		this.schemaInfo = schemaInfo;
 		this.erSchema = erSchema;
 		initDefaultLogicalInfo(schemaInfo);
@@ -95,7 +95,7 @@ public class ERTable extends
 		if (StringUtil.isNotEmpty(desc)) {
 			logicalName = desc;
 		} else {
-			logicalName = schemaInfo.getClassname();
+			logicalName = schemaInfo.getUniqueName();
 		}
 	}
 

@@ -214,6 +214,7 @@ public class RenameTableAction extends
 					String label = "[" + dlg.getOwnerName() + "] " + newClassName;
 					table.setLabel(label);
 				} else {
+					String label = "[" + dlg.getOwnerName() + "] " + newClassName;
 					table.setLabel(newTableName);
 				}
 				table.setUniqueName(newTableName);

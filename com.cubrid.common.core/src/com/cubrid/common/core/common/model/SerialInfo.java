@@ -32,6 +32,7 @@ import static com.cubrid.common.core.util.NoOp.noOp;
 import org.slf4j.Logger;
 
 import com.cubrid.common.core.util.LogUtil;
+import com.cubrid.common.core.util.QuerySyntax;
 
 /**
  *
@@ -407,5 +408,29 @@ public class SerialInfo implements Cloneable {
 
 	public String getDescription() {
 		return description;
+	}
+	
+	public String getUniqueName(boolean isSupportUserSchema) {
+		if (isSupportUserSchema) {
+			if (owner == null || owner.isEmpty()) {
+				return name;
+			} else {
+				return owner + "." + name;
+			}
+		} else {
+			return name;
+		}
+	}
+	
+	public String getUniqueNameEscapeKeyword(boolean isSupportUserSchema) {
+		if (isSupportUserSchema) {
+			if (owner == null || owner.isEmpty()) {
+				return QuerySyntax.escapeKeyword(name);
+			} else {
+				return QuerySyntax.escapeKeyword(owner) + "." + QuerySyntax.escapeKeyword(name);
+			}
+		} else {
+			return QuerySyntax.escapeKeyword(name);
+		}
 	}
 }

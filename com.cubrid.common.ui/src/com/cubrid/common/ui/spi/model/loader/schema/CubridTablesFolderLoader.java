@@ -220,12 +220,16 @@ public class CubridTablesFolderLoader extends
 
 	public static ICubridNode createClassNode(String id, ClassInfo classInfo, int level) {
 		String tableName = classInfo.getUniqueName();
-		ICubridNode classNode = new DefaultSchemaNode(id,
-				"[" + classInfo.getOwnerName() + "] " + classInfo.getClassName(), tableName,
+		ICubridNode classNode;
+		if (classInfo.isSupportUserSchema()) {
+			classNode = new DefaultSchemaNode(id,
+				"[" + classInfo.getOwnerName() + "] " + classInfo.getClassName(), 
+				tableName, "icons/navigator/schema_table_item.png");
+		} else {
+			classNode = new DefaultSchemaNode(id,
+				tableName, tableName,
 				"icons/navigator/schema_table_item.png");
-//		ICubridNode classNode = new DefaultSchemaNode(id,
-//				tableName, tableName,
-//				"icons/navigator/schema_table_item.png");
+		}
 		classNode.setEditorId(SchemaInfoEditorPart.ID);
 		classNode.setContainer(true);
 		classNode.setModelObj(classInfo);

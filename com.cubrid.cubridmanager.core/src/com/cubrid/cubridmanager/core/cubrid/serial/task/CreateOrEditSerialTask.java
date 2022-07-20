@@ -62,6 +62,7 @@ public class CreateOrEditSerialTask extends JDBCTask {
 	/**
 	 * Create serial by JDBC
 	 * 
+	 * @param ownerName String The given owner name
 	 * @param serialName String The given serial name
 	 * @param startVal String The given start value
 	 * @param incrementVal String The given incremental vlaue
@@ -74,18 +75,29 @@ public class CreateOrEditSerialTask extends JDBCTask {
 	 * @param isNoCache boolean whether is NOCACHE
 	 * @param description string the Serial's comment
 	 */
-	public void createSerial(String serialName, String startVal,
+	public void createSerial(String OwnerName, String serialName, String startVal,
 			String incrementVal, String maxVal, String minVal, boolean isCycle,
 			boolean isNoMinVal, boolean isNoMaxVal, String cacheCount,
 			boolean isNoCache, String description) {
 		if (StringUtil.isNotEmpty(errorMsg)) {
 			return;
 		}
+		
+		String uniqueName;
+		if (databaseInfo.isSupportUserSchema()) {
+			if (OwnerName != null && !OwnerName.isEmpty()) {
+				uniqueName = QuerySyntax.escapeKeyword(OwnerName) + "." + QuerySyntax.escapeKeyword(serialName);
+			} else {
+				uniqueName = QuerySyntax.escapeKeyword(serialName);
+			}
+		} else {
+			uniqueName = QuerySyntax.escapeKeyword(serialName);
+		}
 
 		//databaseInfo.getServerInfo().compareVersionKey("8.2.2") >= 0;
 		boolean isSupportCache = CompatibleUtil.isSupportCache(databaseInfo);
 
-		String sql = "CREATE SERIAL " + QuerySyntax.escapeKeyword(serialName);
+		String sql = "CREATE SERIAL " + uniqueName;
 		if (StringUtil.isNotEmpty(startVal)) {
 			sql += " START WITH " + startVal;
 		}
@@ -148,6 +160,7 @@ public class CreateOrEditSerialTask extends JDBCTask {
 	/**
 	 * Edit serial by JDBC
 	 * 
+	 * @param OwnerName String The given owner name
 	 * @param serialName String The given serial name
 	 * @param startVal String The given start value
 	 * @param incrementVal String The given incremental value
@@ -160,7 +173,7 @@ public class CreateOrEditSerialTask extends JDBCTask {
 	 * @param isNoCache boolean whether is NOCACHE
 	 * @param description String Serial's comment
 	 */
-	public void editSerial(String serialName, String startVal,
+	public void editSerial(String OwnerName, String serialName, String startVal,
 			String incrementVal, String maxVal, String minVal, boolean isCycle,
 			boolean isNoMinVal, boolean isNoMaxVal, String cacheCount,
 			boolean isNoCache, String description) {
@@ -168,12 +181,23 @@ public class CreateOrEditSerialTask extends JDBCTask {
 			return;
 		}
 
+		String uniqueName;
+		if (databaseInfo.isSupportUserSchema()) {
+			if (OwnerName != null && !OwnerName.isEmpty()) {
+				uniqueName = "[" + OwnerName + "]." + QuerySyntax.escapeKeyword(serialName);
+			} else {
+				uniqueName = QuerySyntax.escapeKeyword(serialName);
+			}
+		} else {
+			uniqueName = QuerySyntax.escapeKeyword(serialName);
+		}
+
 		//databaseInfo.getServerInfo().compareVersionKey("8.2.2") >= 0;
 		boolean isSupportCache = CompatibleUtil.isSupportCache(databaseInfo);
 
-		String dropSerialSql = "DROP SERIAL " + QuerySyntax.escapeKeyword(serialName);
+		String dropSerialSql = "DROP SERIAL " + uniqueName;
 
-		String sql = "CREATE SERIAL " + QuerySyntax.escapeKeyword(serialName);
+		String sql = "CREATE SERIAL " + uniqueName;
 		if (StringUtil.isNotEmpty(startVal)) {
 			sql += " START WITH " + startVal;
 		}

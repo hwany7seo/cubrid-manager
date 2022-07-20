@@ -480,7 +480,7 @@ public abstract class AbsExportDataHandler {
 				if (schemaWriter == null) {
 					continue;
 				}
-				String ddl = schemaDDL.getSchemaDDLForExport(schemaInfo, false);
+				String ddl = schemaDDL.getSchemaDDL(schemaInfo, false);
 				if (ddl != null && ddl.trim().length() > 0) {
 					schemaWriter.write(ddl);
 					schemaWriter.write(StringUtil.NEWLINE);
@@ -514,7 +514,7 @@ public abstract class AbsExportDataHandler {
 				task.execute();
 				boolean isSupportCache = CompatibleUtil.isSupportCache(databaseInfo);
 				for (SerialInfo serial : task.getSerialInfoList()) {
-					schemaWriter.write(QueryUtil.createSerialSQLScript(serial, isSupportCache));
+					schemaWriter.write(QueryUtil.createSerialSQLScript(serial, isSupportCache, databaseInfo.isSupportUserSchema()));
 					schemaWriter.write(StringUtil.NEWLINE);
 				}
 				schemaWriter.flush();
@@ -525,7 +525,7 @@ public abstract class AbsExportDataHandler {
 				String ddl = null;
 				// write pk
 				for (SchemaInfo schemaInfo : schemaInfoList) {
-					ddl = schemaDDL.getPKsDDLForExport(schemaInfo);
+					ddl = schemaDDL.getPKsDDL(schemaInfo);
 					if (ddl != null && ddl.trim().length() > 0) {
 						indexWriter.write(ddl.trim());
 						indexWriter.newLine();
@@ -538,7 +538,7 @@ public abstract class AbsExportDataHandler {
 
 				// write index
 				for (SchemaInfo schemaInfo : schemaInfoList) {
-					ddl = schemaDDL.getIndexsDDLForExport(schemaInfo);
+					ddl = schemaDDL.getIndexsDDL(schemaInfo);
 					if (ddl != null && ddl.trim().length() > 0) {
 						indexWriter.write(ddl.trim());
 						indexWriter.newLine();
@@ -552,7 +552,7 @@ public abstract class AbsExportDataHandler {
 
 				//write fk
 				for (SchemaInfo schemaInfo : schemaInfoList) {
-					ddl = schemaDDL.getFKsDDLForExport(schemaInfo);
+					ddl = schemaDDL.getFKsDDL(schemaInfo);
 					if (ddl != null && ddl.trim().length() > 0) {
 						indexWriter.write(ddl.trim());
 						indexWriter.newLine();
@@ -571,7 +571,7 @@ public abstract class AbsExportDataHandler {
 				triggerNameTask.execute();
 				triggerList = triggerNameTask.getTriggerInfoList();
 				for (Trigger t: triggerList) {
-					triggerWriter.write(TriggerDDL.getDDL(t));
+					triggerWriter.write(TriggerDDL.getDDL(t, databaseInfo.isSupportUserSchema()));
 					triggerWriter.write(StringUtil.NEWLINE);
 				}
 				triggerWriter.flush();
