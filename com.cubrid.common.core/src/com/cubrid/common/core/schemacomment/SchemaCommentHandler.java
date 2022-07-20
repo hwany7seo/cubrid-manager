@@ -411,7 +411,11 @@ public class SchemaCommentHandler {
 
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, objName.toLowerCase(Locale.getDefault()));
+			if (type == CommentType.TRIGGER) {
+				pstmt.setString(1, objName.toLowerCase(Locale.getDefault()));
+			} else {
+				pstmt.setString(1, objName);
+			}
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				schemaComment = new SchemaComment();

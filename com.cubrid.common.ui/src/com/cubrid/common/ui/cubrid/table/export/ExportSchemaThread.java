@@ -327,8 +327,14 @@ public class ExportSchemaThread extends
 					ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
 
 			for (String viewName : viewNameList) {
-				String querySpecSql = "SELECT vclass_def FROM db_vclass WHERE vclass_name='"
+				String querySpecSql;
+				if (dbInfo.isSupportUserSchema()) {
+					querySpecSql = "SELECT vclass_def FROM db_vclass WHERE CONCAT(owner_name, '.' , vclass_name)='"
 						+ viewName + "'";
+				} else {
+					querySpecSql = "SELECT vclass_def FROM db_vclass WHERE vclass_name='"
+						+ viewName + "'";
+				}
 
 				// [TOOLS-2425]Support shard broker
 				querySpecSql = dbInfo.wrapShardQuery(querySpecSql);
