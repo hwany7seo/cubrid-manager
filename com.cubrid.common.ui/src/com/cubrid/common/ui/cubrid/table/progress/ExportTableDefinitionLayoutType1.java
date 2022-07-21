@@ -131,7 +131,7 @@ public class ExportTableDefinitionLayoutType1 extends ExportTableDefinitionLayou
 		int sheetIndex = 1;
 
 		for (SchemaInfo schemaInfo : exportSchemaInfoList) {
-			String tableName = schemaInfo.getClassname();
+			String tableName = schemaInfo.getUniqueName();
 			monitor.subTask(Messages.bind(Messages.exportTableDefinitionProgressTaskWriteTable, tableName));
 
 			List<SchemaInfo> supers = SuperClassUtil.getSuperClasses(getProgressObject().getDatabase().getDatabaseInfo(), schemaInfo);

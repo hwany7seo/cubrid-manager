@@ -987,7 +987,7 @@ public class DataCompareEditorPart extends
 			sql.append(extraColumns);
 		}
 
-		String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getClassname());
+		String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getUniqueName());
 		sql.append(" FROM ").append(escapedTableName);
 		sql.append(" ORDER BY ").append(pkColumns);
 		sql.append(" FOR ORDERBY_NUM() BETWEEN ").append(start + 1);
@@ -1091,7 +1091,7 @@ public class DataCompareEditorPart extends
 			sql.append(extraColumns);
 		}
 
-		String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getClassname());
+		String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getUniqueName());
 		sql.append(" FROM ").append(escapedTableName);
 		sql.append(" WHERE ");
 		{
@@ -1139,13 +1139,13 @@ public class DataCompareEditorPart extends
 
 			if (!exists) {
 				dataCompare.increaseNotExists();
-				addLog(schemaInfo.getClassname(), data, charset);
+				addLog(schemaInfo.getUniqueName(), data, charset);
 			} else {
 				if (data.getHash().equals(hash)) {
 					dataCompare.increaseMatches();
 				} else {
 					dataCompare.increaseNotMatches();
-					addLog(schemaInfo.getClassname(), data, charset);
+					addLog(schemaInfo.getUniqueName(), data, charset);
 				}
 			}
 
@@ -1176,7 +1176,7 @@ public class DataCompareEditorPart extends
 			}
 		}
 
-		String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getClassname());
+		String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getUniqueName());
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT * FROM ").append(escapedTableName);
 		sql.append(" ORDER BY ").append(pkColumns);
@@ -1249,7 +1249,7 @@ public class DataCompareEditorPart extends
 		ResultSet rs = null;
 
 		SchemaInfo schemaInfo = dataCompare.getSchemaInfo();
-		String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getClassname());
+		String escapedTableName = QuerySyntax.escapeKeyword(schemaInfo.getUniqueName());
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT * FROM ").append(escapedTableName);
@@ -1322,13 +1322,13 @@ public class DataCompareEditorPart extends
 
 			if (!exists) {
 				dataCompare.increaseNotExists();
-				addLog(schemaInfo.getClassname(), data, charset);
+				addLog(schemaInfo.getUniqueName(), data, charset);
 			} else {
 				if (data.getHash().equals(StringUtil.md5(hash.toString()))) {
 					dataCompare.increaseMatches();
 				} else {
 					dataCompare.increaseNotMatches();
-					addLog(schemaInfo.getClassname(), data, charset);
+					addLog(schemaInfo.getUniqueName(), data, charset);
 				}
 			}
 
@@ -1587,10 +1587,10 @@ public class DataCompareEditorPart extends
 					}
 				}
 				for (SchemaInfo schemaInfo : sourceList) {
-					DataCompare dataCompare = dataCompareMap.get(schemaInfo.getClassname());
+					DataCompare dataCompare = dataCompareMap.get(schemaInfo.getUniqueName());
 					if (dataCompare == null) {
 						dataCompare = new DataCompare();
-						dataCompare.setTableName(schemaInfo.getClassname());
+						dataCompare.setTableName(schemaInfo.getUniqueName());
 						dataCompare.setSchemaInfo(schemaInfo);
 						dataCompare.setRefreshed(false);
 					} else {
@@ -1600,9 +1600,9 @@ public class DataCompareEditorPart extends
 						dataCompare.setProgressPosition(0);
 					}
 
-					if (schemaInfo.hasPK() && !partitions.contains(schemaInfo.getClassname())) {
+					if (schemaInfo.hasPK() && !partitions.contains(schemaInfo.getUniqueName())) {
 						SchemaInfo targetSchemeInfo = getSchemeInfoByName(
-								schemaInfo.getClassname(), targetList);
+								schemaInfo.getUniqueName(), targetList);
 						boolean isSameSchema = canCompareData(schemaInfo, targetSchemeInfo);
 						dataCompare.setSameSchema(isSameSchema);
 						compareList.add(dataCompare);
@@ -1638,7 +1638,7 @@ public class DataCompareEditorPart extends
 
 	private SchemaInfo getSchemeInfoByName(String name, List<SchemaInfo> list) {
 		for (SchemaInfo s : list) {
-			if (StringUtil.isEqual(name, s.getClassname())) {
+			if (StringUtil.isEqual(name, s.getUniqueName())) {
 				return s;
 			}
 		}
@@ -1891,7 +1891,7 @@ public class DataCompareEditorPart extends
 
 	public void showDataCompareDetailEditor(SchemaInfo schemaInfo) {
 		try {
-			String hashedTableName = StringUtil.md5(schemaInfo.getClassname());
+			String hashedTableName = StringUtil.md5(schemaInfo.getUniqueName());
 			String path = logFileBasePath + File.separatorChar + logFileBaseName + "_"
 					+ hashedTableName + ".compared";
 			DataCompareDetailEditorInput input = new DataCompareDetailEditorInput(getSourceDB(),

@@ -70,4 +70,12 @@ public class ViewDetailInfo {
 	public void setViewOwnerName(String viewOwnerName) {
 		this.viewOwnerName = viewOwnerName;
 	}
+	
+	public String getViewUniqueName(boolean isSupportUserSchema) {
+		if (isSupportUserSchema) {
+			return viewOwnerName + "." + viewName; 
+		} 
+		
+		return viewName;
+	}
 }

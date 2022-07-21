@@ -107,7 +107,7 @@ public class DataCompareDetailEditorPart extends EditorPart {
 
 		String srcDb = compInput.getSourceDB().getDbName() + "@" + compInput.getSourceDB().getBrokerIP();
 		String tgtDb = compInput.getTargetDB().getDbName() + "@" + compInput.getTargetDB().getBrokerIP();
-		String statusText = Messages.bind(Messages.msgStatusText, new String[] {compInput.getSourceSchemaInfo().getClassname(), srcDb, tgtDb});
+		String statusText = Messages.bind(Messages.msgStatusText, new String[] {compInput.getSourceSchemaInfo().getUniqueName(), srcDb, tgtDb});
 		Label lblStatus = new Label(left, SWT.NONE);
 		lblStatus.setText(statusText);
 
@@ -300,7 +300,7 @@ public class DataCompareDetailEditorPart extends EditorPart {
 	private void fetchData(Connection conn, CompareViewData obj,
 			SchemaInfo schemaInfo, List<String> pkColumns, List<String> pkTypes, boolean isSource) { // FIXME logic code move to core module
 		StringBuilder sql = new StringBuilder();
-		sql.append(SQLGenerateUtils.getSelectSQLNoWhere(schemaInfo.getClassname(), schemaInfo.getAttributes(), false));
+		sql.append(SQLGenerateUtils.getSelectSQLNoWhere(schemaInfo.getUniqueName(), schemaInfo.getAttributes(), false));
 		sql.append(" WHERE ");
 		for (int i = 0; i < pkColumns.size(); i++) {
 			String columnName = pkColumns.get(i);

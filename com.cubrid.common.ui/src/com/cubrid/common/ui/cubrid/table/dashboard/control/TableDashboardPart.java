@@ -1262,7 +1262,7 @@ public class TableDashboardPart extends CubridEditorPart implements ITableButton
 				SchemaInfo schema = tabItem.getTableInfoComposite().getData();
 				if (schema != null
 						&& StringUtil.isEqualNotIgnoreNull(
-								schema.getClassname(), name)) {
+								schema.getUniqueName(), name)) {
 					item.dispose();
 				}
 			}
@@ -1333,7 +1333,7 @@ public class TableDashboardPart extends CubridEditorPart implements ITableButton
 			boolean isSchemaCommentInstalled = SchemaCommentHandler.isInstalledMetaTable(dbSpec, conn);
 			if (schemaInfo != null && isSchemaCommentInstalled) {
 				Map<String, SchemaComment> comments = SchemaCommentHandler.loadDescription(
-						dbSpec, conn, database.getDatabaseInfo().isSupportUserSchema(), schemaInfo.getClassname());
+						dbSpec, conn, database.getDatabaseInfo().isSupportUserSchema(), schemaInfo.getUniqueName());
 				SchemaCommentHandler.bindSchemaInfo(comments, schemaInfo);
 			}
 		} catch (SQLException e) {

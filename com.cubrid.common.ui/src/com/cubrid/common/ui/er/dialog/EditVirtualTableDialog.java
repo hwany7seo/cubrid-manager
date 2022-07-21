@@ -350,7 +350,7 @@ public class EditVirtualTableDialog extends
 		//check
 		ERSchema tmpErSchema = new ERSchema(erSchema.getName() + "_tmp", erSchema.getInput());
 		Map<String, SchemaInfo> schemaInfos = erSchema.getAllSchemaInfo();
-		schemaInfos.put(newSchemaInfo.getClassname(), newSchemaInfo);
+		schemaInfos.put(newSchemaInfo.getUniqueName(), newSchemaInfo);
 
 		CubridTableParser tableParser = new CubridTableParser(tmpErSchema);
 		tableParser.buildERTables(schemaInfos.values(), -1, -1, false);
@@ -535,7 +535,7 @@ public class EditVirtualTableDialog extends
 			String oldTableDesc = oldSchemaInfo.getDescription();
 			oldSchemaInfo.setDescription(newTableDesc);
 			if (StringUtil.isEmpty(newTableDesc)) {
-				oldERTable.setName(newSchemaInfo.getClassname(), false);
+				oldERTable.setName(newSchemaInfo.getUniqueName(), false);
 			}
 			if (StringUtil.isNotEmpty(newTableDesc)
 					&& !StringUtil.isEqual(newTableDesc, oldTableDesc)) {

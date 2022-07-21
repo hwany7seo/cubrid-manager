@@ -303,8 +303,14 @@ public class GetPartitionedClassListTask extends JDBCTask {
 			StringBuilder qry = new StringBuilder();
 			qry.append("SELECT ");
 
-			String sql = "SELECT attr_name, data_type FROM db_attribute WHERE class_name = '"
-					+ tableName.trim().toLowerCase() + "'";
+			String sql;
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT attr_name, data_type FROM db_attribute WHERE CONCAT(owner_name, '.' , class_name) = '"
+					+ QuerySyntax.escapeKeyword(tableName) + "'";
+			} else {
+				sql = "SELECT attr_name, data_type FROM db_attribute WHERE class_name = '"
+					+ QuerySyntax.escapeKeyword(tableName.trim().toLowerCase()) + "'";
+			}
 			connection.setAutoCommit(true);
 			stmt = connection.createStatement();
 			rs = stmt.executeQuery(sql);

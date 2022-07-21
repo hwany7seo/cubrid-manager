@@ -128,6 +128,7 @@ public class TableSchemaCompareUtil {
 			if (tableNameSet != null) {
 				List<String> tableNames = new ArrayList<String>();
 				for (String tableName : tableNameSet) {
+
 					tableNames.add(tableName);
 				}
 
@@ -135,7 +136,15 @@ public class TableSchemaCompareUtil {
 
 				for (String tableName : tableNames) {
 					TableDetailInfo info = map.get(tableName);
+					if (info == null) {
+						System.out.println(tableName + "aaaaaaa");
+					}
 					String classType = info.getClassType();
+					if (classType == null) {
+						System.out.println(tableName + "bbbbbbb");
+					} else {
+						System.out.println(tableName + "ccccccc");
+					}
 					if (classType.equals("CLASS") || classType.equals("VCLASS")) {
 						info.setRecordsCount(-1);
 						tableList.add(info);

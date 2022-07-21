@@ -352,6 +352,10 @@ public class GetAllSchemaTask extends
 				} else {
 					tableName = className;
 				}
+				
+				if (tableName.equals("event")) {
+					System.out.println(tableName + "afasfsasfa");
+				}
 				String partitioned = rs.getString("partitioned");
 
 				schemaInfo = schemas.get(tableName);

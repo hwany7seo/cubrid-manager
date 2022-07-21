@@ -155,7 +155,8 @@ public class TableSchemaComparator {
 
 		while (leftkeys.hasNext()) {
 			compareStatus = TableSchemaCompareModel.SCHEMA_EQUAL;
-			String key = (String) leftkeys.next().toLowerCase();
+			//String key = (String) leftkeys.next().toLowerCase();
+			String key = (String) leftkeys.next();
 
 			TableSchema lTableSchema = leftTableSchema.get(key);
 			TableDetailInfo lTableDetail = leftTableDetail.get(key);
@@ -181,8 +182,8 @@ public class TableSchemaComparator {
 				rTableSchema = new TableSchema(null, null);
 				compareStatus = TableSchemaCompareModel.SCHEMA_TMISS;
 			} else {
-				String left = lTableSchema.getName().toLowerCase();
-				String right = rTableSchema.getName().toLowerCase();
+				String left = lTableSchema.getName();
+				String right = rTableSchema.getName();
 				if (valueEqual(left, right)) { // TODO refactoring
 					boolean compScheInfo = compareSchemaInfo(sourceDBInfo, targetDBInfo,
 							sourceSchemaDDL, targetSchemaDDL, lTableSchema, rTableSchema);

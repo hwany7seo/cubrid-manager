@@ -594,7 +594,7 @@ public class SchemaCommentHandler {
 			return;
 		}
 		
-		String tableName = schema.getClassname();
+		String tableName = schema.getUniqueName();
 		SchemaComment cmt = find(comments, tableName, null);
 		if (cmt != null) {
 			schema.setDescription(cmt.getDescription());

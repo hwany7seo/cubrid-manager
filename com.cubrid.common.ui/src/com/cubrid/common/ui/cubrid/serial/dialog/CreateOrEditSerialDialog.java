@@ -96,8 +96,11 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 	private boolean isEditAble;
 	private String ownerName = null;
 	private String serialName;
-	private static final String SERIAL_MIN = "-1000000000000000000000000000000000000";
-	private static final String SERIAL_MAX = "10000000000000000000000000000000000000";
+	private static final String SERIAL_MIN =           "-1000000000000000000000000000000000000";
+	private static final String SERIAL_MIN_AFTER_120 = "-99999999999999999999999999999999999999";
+	private static final String SERIAL_MAX = 		   "10000000000000000000000000000000000000";
+	private static final String SERIAL_MAX_AFTER_120 = "99999999999999999999999999999999999999";
+	
 	private boolean isCommentSupport = false;
 
 	public CreateOrEditSerialDialog(Shell parentShell, boolean isEditAble) {
@@ -195,7 +198,7 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 		startValLabel.setLayoutData(CommonUITool.createGridData(1, 1, -1, -1));
 
 		startValText = new Text(composite, SWT.LEFT | SWT.BORDER);
-		startValText.setTextLimit(38);
+		startValText.setTextLimit(getTextLimit());
 
 		startValText.setLayoutData(CommonUITool.createGridData(
 				GridData.FILL_HORIZONTAL, 2, 1, -1, -1));
@@ -205,7 +208,7 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 		incrementValLabel.setLayoutData(CommonUITool.createGridData(1, 1, -1, -1));
 
 		incrementValText = new Text(composite, SWT.LEFT | SWT.BORDER);
-		incrementValText.setTextLimit(38);
+		incrementValText.setTextLimit(getTextLimit());
 		incrementValText.setLayoutData(CommonUITool.createGridData(
 				GridData.FILL_HORIZONTAL, 2, 1, -1, -1));
 
@@ -214,7 +217,7 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 		minValLabel.setLayoutData(CommonUITool.createGridData(1, 1, -1, -1));
 
 		minValText = new Text(composite, SWT.LEFT | SWT.BORDER);
-		minValText.setTextLimit(38);
+		minValText.setTextLimit(getTextLimit());
 		minValText.setLayoutData(CommonUITool.createGridData(
 				GridData.FILL_HORIZONTAL, 1, 1, -1, -1));
 
@@ -240,7 +243,7 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 		maxValLabel.setLayoutData(CommonUITool.createGridData(1, 1, -1, -1));
 
 		maxValText = new Text(composite, SWT.LEFT | SWT.BORDER);
-		maxValText.setTextLimit(38);
+		maxValText.setTextLimit(getTextLimit());
 		maxValText.setLayoutData(CommonUITool.createGridData(
 				GridData.FILL_HORIZONTAL, 1, 1, -1, -1));
 
@@ -491,19 +494,20 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 				String incrValue = serialInfo.getIncrementValue();
 				incrementValText.setText(incrValue);
 				String minValue = serialInfo.getMinValue();
-				if (incrValue.indexOf("-") >= 0 && SERIAL_MIN.equals(minValue)) {
+				if (incrValue.indexOf("-") >= 0 && serialMinValue().equals(minValue)) {
 					noMinValueBtn.setSelection(true);
 					minValText.setEnabled(false);
 				} else {
 					minValText.setText(minValue);
 				}
 				String maxValue = serialInfo.getMaxValue();
-				if (incrValue.indexOf("-") < 0 && SERIAL_MAX.equals(maxValue)) {
+				if (incrValue.indexOf("-") < 0 && serialMaxValue().equals(maxValue)) {
 					noMaxValueBtn.setSelection(true);
 					maxValText.setEnabled(false);
 				} else {
 					maxValText.setText(maxValue);
 				}
+					
 				if (isSupportCache) {
 					String cacheCount = serialInfo.getCacheCount();
 					if (cacheCount == null
@@ -650,11 +654,19 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 		boolean isValidStartVal = verifyBigValue(startVal);
 		if (!isValidStartVal) {
 			if (editedNode == null) {
-				setErrorMessage(Messages.bind(Messages.errStartValue, Messages.msgStartValue));
+				if (isChangeMaxMinValue()) {
+					setErrorMessage(Messages.bind(Messages.errStartValueAfter1020, Messages.msgStartValue));
+				} else {
+					setErrorMessage(Messages.bind(Messages.errStartValue, Messages.msgStartValue));
+				}
 				setEnabled(false);
 				return;
 			} else {
-				setErrorMessage(Messages.bind(Messages.errStartValue, Messages.msgCurrentValue));
+				if (isChangeMaxMinValue()) {
+					setErrorMessage(Messages.bind(Messages.errStartValueAfter1020, Messages.msgCurrentValue));
+				} else {
+					setErrorMessage(Messages.bind(Messages.errStartValue, Messages.msgCurrentValue));
+				}
 				setEnabled(false);
 				return;
 			}
@@ -662,7 +674,11 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 
 		boolean isValidIncrementVal = verifyBigValue(incrementVal);
 		if (!isValidIncrementVal) {
-			setErrorMessage(Messages.errIncrementValue);
+			if (isChangeMaxMinValue()) {
+				setErrorMessage(Messages.errIncrementValueAfter1020);
+			} else {
+				setErrorMessage(Messages.errIncrementValue);
+			}
 			setEnabled(false);
 			return;
 		}
@@ -671,7 +687,11 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 		if (!isNoMinValue) {
 			isValidMinVal = verifyBigValue(minVal);
 			if (!isValidMinVal) {
-				setErrorMessage(Messages.errMinValue);
+				if (isChangeMaxMinValue()) {
+					setErrorMessage(Messages.errMinValueAfter1020);
+				} else {
+					setErrorMessage(Messages.errMinValue);
+				}
 				setEnabled(false);
 				return;
 			}
@@ -681,7 +701,11 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 		if (!isNoMaxValue) {
 			isValidMaxVal = verifyBigValue(maxVal);
 			if (!isValidMaxVal) {
-				setErrorMessage(Messages.errMaxValue);
+				if (isChangeMaxMinValue()) {
+					setErrorMessage(Messages.errMaxValueAfter1020);
+				} else {
+					setErrorMessage(Messages.errMaxValue);
+				}
 				setEnabled(false);
 				return;
 			}
@@ -741,17 +765,30 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 	 * @return <code>true</code> if it is valid;<code>false</code> otherwise
 	 */
 	private boolean verifyBigValue(String bigValue) {
-		String bigValueTrim = bigValue.trim();
-		if (bigValueTrim.length() == 0) {
-			return false;
-		}
-
-		boolean notLimitValue = !bigValueTrim.equals(SERIAL_MAX) && !bigValueTrim.equals(SERIAL_MIN);
 		boolean isValidBigVal = ValidateUtil.isInteger(bigValue);
-		if (isValidBigVal && bigValueTrim.length() == 38 && notLimitValue) {
-			isValidBigVal = false;
+		
+		if (isChangeMaxMinValue()) {
+			if (!isValidBigVal) {
+				isValidBigVal = false;
+			}
+			String intbigValue = bigValue.replaceAll("[^\\d]",""); 
+			
+			if (isValidBigVal && intbigValue.length() > 38) {
+				isValidBigVal = false;
+			}
+			
+		} else {
+			String bigValueTrim = bigValue.trim();
+			if (bigValueTrim.length() == 0) {
+				return false;
+			}
+	
+			boolean notLimitValue = !bigValueTrim.equals(serialMaxValue()) && !bigValueTrim.equals(serialMinValue());
+			
+			if (isValidBigVal && bigValueTrim.length() == 38 && notLimitValue) {
+				isValidBigVal = false;
+			}
 		}
-
 		return isValidBigVal;
 	}
 
@@ -785,5 +822,33 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 
 	public void setDatabase(CubridDatabase database) {
 		this.database = database;
+	}
+	
+	private boolean isChangeMaxMinValue() {
+		if (CompatibleUtil.isAfter1020(database.getDatabaseInfo())){
+			return true;
+		}
+		return false;
+	}
+	
+	private String serialMinValue() {
+		if (isChangeMaxMinValue()){
+			return SERIAL_MIN_AFTER_120;
+		}
+		return SERIAL_MIN;
+	}
+	
+	private String serialMaxValue() {
+		if (isChangeMaxMinValue()){
+			return SERIAL_MAX_AFTER_120;
+		}
+		return SERIAL_MAX;
+	}
+	
+	private int getTextLimit() {
+		if (isChangeMaxMinValue()){
+			return 39;
+		}
+		return 38;
 	}
 }
