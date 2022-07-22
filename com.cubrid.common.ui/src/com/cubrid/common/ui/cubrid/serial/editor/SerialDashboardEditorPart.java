@@ -107,7 +107,7 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 	private static final String SERIAL_MIN_AFTER_120 = "-99999999999999999999999999999999999999";
 	private static final String SERIAL_MAX = 		   "10000000000000000000000000000000000000";
 	private static final String SERIAL_MAX_AFTER_120 = "99999999999999999999999999999999999999";
-	
+
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout(1, false));
 
@@ -169,7 +169,7 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 		final TableViewerColumn ownerColumn = new TableViewerColumn(serialsDetailInfoTable, SWT.LEFT);
 		ownerColumn.getColumn().setWidth(80);
 		ownerColumn.getColumn().setText(Messages.serialsDetailInfoPartTableOwnerCol);
-		
+
 		final TableViewerColumn nameColumn = new TableViewerColumn(serialsDetailInfoTable, SWT.LEFT);
 		nameColumn.getColumn().setWidth(150);
 		nameColumn.getColumn().setText(Messages.serialsDetailInfoPartTableNameCol);
@@ -457,7 +457,6 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 							} else {
 								return maxValue;
 							}
-							
 						case 6 :
 							String cacheCount = serialInfo.getCacheCount();
 							if (isSupportCache
@@ -532,21 +531,21 @@ public class SerialDashboardEditorPart extends CubridEditorPart {
 	public CubridDatabase getDatabase() {
 		return database;
 	}
-	
+
 	private String serialMinValue() {
 		if (database != null && database.getDatabaseInfo().isSupportUserSchema()){
 			return SERIAL_MIN_AFTER_120;
 		}
 		return SERIAL_MIN;
 	}
-	
+
 	private String serialMaxValue() {
 		if (database != null && database.getDatabaseInfo().isSupportUserSchema()){
 			return SERIAL_MAX_AFTER_120;
 		}
 		return SERIAL_MAX;
 	}
-	
+
 	private boolean isSupportUserSchema() {
 		return database.getDatabaseInfo().isSupportUserSchema();
 	}

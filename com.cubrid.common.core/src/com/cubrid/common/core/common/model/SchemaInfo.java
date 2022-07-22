@@ -75,9 +75,8 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 	private List<PartitionInfo> partitions = null;
 	// cubrid 9.1
 	private String collation;
-	// added for cubrid 11.2 or higher
+	// Added For UserSchema(CUBRID 11.2 Or Higher)
 	private String uniqueName = null;
-	private boolean debuginputTable = false;
 
 	public DBAttribute getAutoIncrementColumn() {
 		if (attributes == null) {
@@ -1218,13 +1217,6 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 	}
 	
 	public String getClassname() {
-		if (!debuginputTable) {
-			try {
-				throw new Exception(); 
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
 		return classname;
 	}
 
@@ -1238,18 +1230,10 @@ public class SchemaInfo implements Comparable<SchemaInfo>, Cloneable {
 	}
 
 	public String getUniqueName() {
-		if (!debuginputTable) {
-			try {
-				throw new Exception(); 
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
 		return uniqueName;
 	}
 
 	public void setUniqueName(String uniqueName) {
-		this.debuginputTable = true;
 		fireClassNameChanged(uniqueName);
 		this.uniqueName = uniqueName;
 	}

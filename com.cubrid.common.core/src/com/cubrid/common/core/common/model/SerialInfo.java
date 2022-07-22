@@ -412,25 +412,19 @@ public class SerialInfo implements Cloneable {
 	
 	public String getUniqueName(boolean isSupportUserSchema) {
 		if (isSupportUserSchema) {
-			if (owner == null || owner.isEmpty()) {
-				return name;
-			} else {
+			if (owner != null || !owner.isEmpty()) {
 				return owner + "." + name;
 			}
-		} else {
-			return name;
 		}
+		return name;
 	}
 	
 	public String getUniqueNameEscapeKeyword(boolean isSupportUserSchema) {
 		if (isSupportUserSchema) {
-			if (owner == null || owner.isEmpty()) {
-				return QuerySyntax.escapeKeyword(name);
-			} else {
+			if (owner != null || !owner.isEmpty()) {
 				return QuerySyntax.escapeKeyword(owner) + "." + QuerySyntax.escapeKeyword(name);
 			}
-		} else {
-			return QuerySyntax.escapeKeyword(name);
-		}
+		} 
+		return QuerySyntax.escapeKeyword(name);
 	}
 }

@@ -66,7 +66,7 @@ public class RenameTableDialog extends
 	private Text newTableText = null;
 	private String newName;
 	private String tableOrView;
-	
+
 	private boolean isSupportUserSchema;
 	private String ownerName;
 
@@ -157,9 +157,9 @@ public class RenameTableDialog extends
 
 		if (isSupportUserSchema) {
 			ownerName = oldName.substring(0, oldName.indexOf("."));
-			oldName = oldName.substring(oldName.indexOf(".")+1);
+			oldName = oldName.substring(oldName.indexOf(".") + 1);
 		}
-		
+
 		newTableText.setLayoutData(data);
 		newTableText.setText(oldName);
 		newTableText.selectAll();
@@ -209,7 +209,7 @@ public class RenameTableDialog extends
 		return newName;
 
 	}
-	
+
 	public String getOwnerName() {
 		return ownerName;
 

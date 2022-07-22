@@ -158,7 +158,6 @@ public class FKTableViewerLabelProvider implements
 
 		switch (columnIndex) {
 		case 0:
-			String temp = fk.getName();
 			return fk.getName() == null ? "" : fk.getName();
 		case 1:
 			List<String> columns = fk.getAttributes();

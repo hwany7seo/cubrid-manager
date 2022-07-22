@@ -61,7 +61,7 @@ public class CreateLikeTableAction extends
 		SelectionAction {
 
 	private boolean isSupportUserSchema = false;
-	
+
 	public static final String ID = CreateLikeTableAction.class.getName();
 
 	/**
@@ -199,20 +199,18 @@ public class CreateLikeTableAction extends
 							CubridNodeChangedEventType.NODE_ADD));
 		}
 	}
-	
+
 	private String getClassName(String tableName) {
 		if (isSupportUserSchema) {
 			return tableName.substring(tableName.indexOf(".")+1);
-		} else {
-			return tableName;
 		}
+		return tableName;
 	}
-	
+
 	private String getOwnerName(String tableName) {
 		if (isSupportUserSchema) {
 			return tableName.substring(0, tableName.indexOf("."));
-		} else {
-			return tableName;
 		}
+		return tableName;
 	}
 }

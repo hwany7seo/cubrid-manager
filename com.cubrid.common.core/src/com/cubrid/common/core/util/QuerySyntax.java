@@ -748,7 +748,7 @@ public final class QuerySyntax {
 
 		return "[" + text + "]";
 	}
-	
+
 	/**
 	 * Get the Key words map.
 	 * 

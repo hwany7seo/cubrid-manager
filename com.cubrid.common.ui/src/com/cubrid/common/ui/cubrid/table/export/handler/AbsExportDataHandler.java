@@ -604,7 +604,11 @@ public abstract class AbsExportDataHandler {
 		sqlbuf.append(QuerySyntax.escapeKeyword("current_val")).append(", ");
 		sqlbuf.append(QuerySyntax.escapeKeyword("increment_val")).append(", ");
 		sqlbuf.append(QuerySyntax.escapeKeyword("started"));
-		sqlbuf.append(" FROM db_serial WHERE name = '").append(serialName).append("'");
+		if (dbInfo.isSupportUserSchema()) {
+			sqlbuf.append(" FROM db_serial WHERE CONCAT(owner.name, '.', name) = '").append(serialName).append("'");
+		} else {
+			sqlbuf.append(" FROM db_serial WHERE name = '").append(serialName).append("'");
+		}
 
 		String sql = DatabaseInfo.wrapShardQuery(dbInfo, sqlbuf.toString());
 

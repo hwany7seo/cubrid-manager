@@ -784,7 +784,7 @@ public final class QueryUtil {
 		StringBuilder sql = new StringBuilder();
 		sql.append("CREATE SERIAL "); 
 		sql.append(QuerySyntax.escapeKeyword(serial.getUniqueNameEscapeKeyword(isSupportUserSchema)));
-				
+
 		String startVal = serial.getStartedValue();
 		String currentVal = serial.getCurrentValue();
 		String minVal = serial.getMinValue();

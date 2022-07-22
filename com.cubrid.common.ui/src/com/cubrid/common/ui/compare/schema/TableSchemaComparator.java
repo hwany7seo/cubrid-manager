@@ -155,7 +155,6 @@ public class TableSchemaComparator {
 
 		while (leftkeys.hasNext()) {
 			compareStatus = TableSchemaCompareModel.SCHEMA_EQUAL;
-			//String key = (String) leftkeys.next().toLowerCase();
 			String key = (String) leftkeys.next();
 
 			TableSchema lTableSchema = leftTableSchema.get(key);
@@ -216,10 +215,10 @@ public class TableSchemaComparator {
 			TableSchema lTableSchema = leftTableSchema.get(key);
 			TableDetailInfo lTableDetail = leftTableDetail.get(key);
 
-			if (!duplicateNameMap.containsKey(key.toLowerCase() + RIGHT_PATTERN)) {
-				duplicateNameMap.put(key.toLowerCase() + RIGHT_PATTERN, new ArrayList<String>());
+			if (!duplicateNameMap.containsKey(key + RIGHT_PATTERN)) {
+				duplicateNameMap.put(key + RIGHT_PATTERN, new ArrayList<String>());
 			}
-			duplicateNameMap.get(key.toLowerCase() + RIGHT_PATTERN).add(key);
+			duplicateNameMap.get(key + RIGHT_PATTERN).add(key);
 			TableSchema rTableSchema = rightTableSchema.get(key);
 			TableDetailInfo rTableDetail = rightTableDetail.get(key);
 

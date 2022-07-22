@@ -563,7 +563,7 @@ public class CreateViewDialog extends
 			if (dbInfo.isSupportUserSchema() && isNewTableFlag) {
 				isSameOwner = true;
 			}
-			
+
 			if (!isSameOwner) {
 				sql = makeChangeOwnerSQLScript();
 
@@ -616,9 +616,8 @@ public class CreateViewDialog extends
 			}
 			viewNameText.setEditable(false);
 			viewNameText.setText(classInfo.getClassName());
-
 			ownerOld = classInfo.getOwnerName();
-			
+
 			if (isCommentSupport) {
 				if (!classInfo.isSystemClass()) {
 					String comment = getViewComment(ownerOld);
@@ -835,7 +834,7 @@ public class CreateViewDialog extends
 		String classNameOld = classInfo.getClassName();
 		String classNameNew;
 		classNameNew = viewNameText.getText();
-		
+
 		boolean isSameClass = StringUtil.isEqualIgnoreCase(classNameOld, classNameNew);
 		if (isNewTableFlag || isSameClass) {
 			return "";
@@ -1116,7 +1115,6 @@ public class CreateViewDialog extends
 
 		String viewName = viewNameText.getText();
 		String ownerNew = ownerCombo.getText();
-		//String ownerOld = dbInfo.getAuthLoginedDbUserInfo().getName();
 		String ownerOld;
 		if (database.getDatabaseInfo().isSupportUserSchema()) {
 			ownerOld = classInfo.getOwnerName();

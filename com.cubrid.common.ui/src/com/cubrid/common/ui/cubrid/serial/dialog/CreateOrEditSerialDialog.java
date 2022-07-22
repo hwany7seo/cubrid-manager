@@ -342,12 +342,9 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 		if (database.getDatabaseInfo().isSupportUserSchema()) {
 			if (ownerName != null && !ownerName.isEmpty()){
 				serialName = QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(serialName);
-			} else {
-				serialName = QuerySyntax.escapeKeyword(serialName);
 			}
-		} else {
-			serialName = QuerySyntax.escapeKeyword(serialName);
 		}
+		serialName = QuerySyntax.escapeKeyword(serialName);
 		
 		if (editedNode == null) {
 			sb.append("CREATE").append(" SERIAL ");
@@ -766,25 +763,25 @@ public class CreateOrEditSerialDialog extends CMTitleAreaDialog implements Modif
 	 */
 	private boolean verifyBigValue(String bigValue) {
 		boolean isValidBigVal = ValidateUtil.isInteger(bigValue);
-		
+
 		if (isChangeMaxMinValue()) {
 			if (!isValidBigVal) {
 				isValidBigVal = false;
 			}
 			String intbigValue = bigValue.replaceAll("[^\\d]",""); 
-			
+
 			if (isValidBigVal && intbigValue.length() > 38) {
 				isValidBigVal = false;
 			}
-			
+
 		} else {
 			String bigValueTrim = bigValue.trim();
 			if (bigValueTrim.length() == 0) {
 				return false;
 			}
-	
+
 			boolean notLimitValue = !bigValueTrim.equals(serialMaxValue()) && !bigValueTrim.equals(serialMinValue());
-			
+
 			if (isValidBigVal && bigValueTrim.length() == 38 && notLimitValue) {
 				isValidBigVal = false;
 			}

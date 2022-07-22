@@ -73,9 +73,10 @@ public class ViewDetailInfo {
 	
 	public String getViewUniqueName(boolean isSupportUserSchema) {
 		if (isSupportUserSchema) {
-			return viewOwnerName + "." + viewName; 
-		} 
-		
+			if (viewOwnerName != null && !viewOwnerName.isEmpty()) {
+				return viewOwnerName + "." + viewName;
+			}
+		}
 		return viewName;
 	}
 }

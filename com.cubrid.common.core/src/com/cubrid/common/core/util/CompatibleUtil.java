@@ -368,10 +368,10 @@ public final class CompatibleUtil {
     }
 
     /**
-     * Is the version of database after the 11.2.0
+     * Is the version of database after the 10.2.0
      *
      * @param database IDatabaseSpec
-     * @return true:11.2.0 or higher
+     * @return true:10.2.0 or higher
      */
     public static boolean isAfter1020(IDatabaseSpec database) {
         return compareVersion(database.getVersion(), VER_10_2_0) >= 0;

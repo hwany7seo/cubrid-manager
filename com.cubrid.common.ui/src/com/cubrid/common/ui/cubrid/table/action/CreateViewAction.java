@@ -90,9 +90,9 @@ public class CreateViewAction extends SelectionAction {
 	public void run(CubridDatabase database) {
 		TaskExecutor taskExcutor = new CommonTaskExec(null);
 		DatabaseInfo databaseInfo = database.getDatabaseInfo();
-		JDBCGetAllDbUserTask task = new JDBCGetAllDbUserTask(databaseInfo);
 		boolean isSupportUserSchema = databaseInfo.isSupportUserSchema();
 		
+		JDBCGetAllDbUserTask task = new JDBCGetAllDbUserTask(databaseInfo);
 		taskExcutor.addTask(task);
 		new ExecTaskWithProgress(taskExcutor).busyCursorWhile();
 		if (!taskExcutor.isSuccess()) {

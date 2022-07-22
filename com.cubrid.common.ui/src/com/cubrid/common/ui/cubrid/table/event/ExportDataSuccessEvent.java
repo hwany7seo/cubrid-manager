@@ -65,7 +65,7 @@ public class ExportDataSuccessEvent extends
 		return successCount;
 	}
 
-	public void setSuccessCountbb(int successCount) {
+	public void setSuccessCount(int successCount) {
 		this.successCount = successCount;
 	}
 

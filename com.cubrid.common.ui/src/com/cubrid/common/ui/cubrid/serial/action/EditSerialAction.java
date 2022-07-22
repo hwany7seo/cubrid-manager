@@ -76,9 +76,9 @@ public class EditSerialAction extends
 
 	/**
 	 * The constructor
-	 * @param provider
 	 * 
 	 * @param shell
+	 * @param provider
 	 * @param text
 	 * @param icon
 	 */
