@@ -562,6 +562,14 @@ public class ExportSchemaTask extends
 						position.setValue("" + order++);
 
 						KeyGroupMemberColumn column = new KeyGroupMemberColumn();
+						if (keyName.indexOf("char_length") >= 0) {
+							int attrCheckIdx = keyName.indexOf("[");
+							String tempAttrKeyName = keyName.substring(attrCheckIdx + 1);
+							attrCheckIdx = tempAttrKeyName.indexOf("[");
+							tempAttrKeyName = tempAttrKeyName.substring(attrCheckIdx);
+							attrCheckIdx = tempAttrKeyName.indexOf("]");
+							keyName = tempAttrKeyName.substring(1, attrCheckIdx);
+						}
 						Attribute attrTemp = schemaAttrMap.get(keyName);
 						column.setValue(attrTemp.getId());
 						propList.setKeyGroupMemberColumn(column);
