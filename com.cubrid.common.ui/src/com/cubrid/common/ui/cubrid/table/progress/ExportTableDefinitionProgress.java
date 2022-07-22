@@ -183,13 +183,13 @@ public class ExportTableDefinitionProgress implements
 		ResultSet rs = null;
 		StringBuilder sql = new StringBuilder();
 		if (database.getDatabaseInfo().isSupportUserSchema()) {
-			sql.append("SELECT c.class_name, c.class_type, c.owner_name ");
+			sql.append("SELECT c.class_name, c.class_type, a.owner_name ");
 			sql.append("FROM db_class c, db_attribute a ");
 			sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
 			sql.append("AND c.owner_name=a.owner_name ");
 			sql.append("AND a.from_class_name IS NULL AND c.class_type='CLASS' ");
 			sql.append("GROUP BY c.owner_name, c.class_name, c.class_type ");
-			sql.append("ORDER BY c.owenr_name, c.class_type, c.class_name");
+			sql.append("ORDER BY c.owner_name, c.class_type, c.class_name");
 			String query = sql.toString();
 		} else {
 			sql.append("SELECT c.class_name, c.class_type ");
