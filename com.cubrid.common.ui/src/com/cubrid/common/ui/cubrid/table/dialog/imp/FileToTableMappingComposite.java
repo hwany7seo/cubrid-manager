@@ -223,7 +223,7 @@ public class FileToTableMappingComposite extends Composite {
 						StringBuilder sql = new StringBuilder();
 						
 						if (isSupportUserSchema()) {
-							sql.append("SELECT c.class_name, c.owner_name");
+							sql.append("SELECT c.class_name, c.owner_name ");
 							sql.append("FROM db_class c, db_attribute a ");
 							sql.append("WHERE c.class_name = a.class_name AND c.is_system_class = 'NO' ");
 							sql.append("AND c.owner_name = a.owner_name ");
