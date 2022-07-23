@@ -560,17 +560,15 @@ public class ExportSchemaTask extends
 						KeyGroupPosition position = new KeyGroupPosition();
 						propList.setKeyGroupPosition(position);
 						position.setValue("" + order++);
-
+						String AttrKeyName;
 						KeyGroupMemberColumn column = new KeyGroupMemberColumn();
 						if (keyName.indexOf("char_length") >= 0) {
-							int attrCheckIdx = keyName.indexOf("[");
-							String tempAttrKeyName = keyName.substring(attrCheckIdx + 1);
-							attrCheckIdx = tempAttrKeyName.indexOf("[");
-							tempAttrKeyName = tempAttrKeyName.substring(attrCheckIdx);
-							attrCheckIdx = tempAttrKeyName.indexOf("]");
-							keyName = tempAttrKeyName.substring(1, attrCheckIdx);
+							AttrKeyName = keyName.substring(
+								keyName.lastIndexOf("[") + 1, keyName.lastIndexOf("]"));
+						} else {
+							AttrKeyName = keyName;
 						}
-						Attribute attrTemp = schemaAttrMap.get(keyName);
+						Attribute attrTemp = schemaAttrMap.get(AttrKeyName);
 						column.setValue(attrTemp.getId());
 						propList.setKeyGroupMemberColumn(column);
 					}
