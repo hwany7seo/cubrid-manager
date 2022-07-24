@@ -1067,7 +1067,7 @@ public class DataCompareEditorPart extends
 		StringBuilder extraColumns = new StringBuilder();
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT MD5(CONCAT(");
+		sql.append("SELECT MD5(");
 
 		StringBuilder cols = new StringBuilder();
 		List<DBAttribute> attrs = schemaInfo.getAttributes();
@@ -1077,14 +1077,14 @@ public class DataCompareEditorPart extends
 			DBAttribute attr = attrs.get(i);
 
 			if (cols.length() > 0) {
-				cols.append(",");
+				cols.append(" || ");
 			}
 
 			makeColumnsClause(extraColumns, cols, attr);
 		}
 
 		sql.append(cols);
-		sql.append(")) AS _record_hash_ ");
+		sql.append(") AS _record_hash_ ");
 
 		if (extraColumns.length() > 0) {
 			sql.append(",");

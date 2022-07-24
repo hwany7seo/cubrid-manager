@@ -353,9 +353,6 @@ public class GetAllSchemaTask extends
 					tableName = className;
 				}
 				
-				if (tableName.equals("event")) {
-					System.out.println(tableName + "afasfsasfa");
-				}
 				String partitioned = rs.getString("partitioned");
 
 				schemaInfo = schemas.get(tableName);
@@ -685,9 +682,9 @@ public class GetAllSchemaTask extends
 			Map<String, String> constraint2Unique = new HashMap<String, String>();
 			while (rs.next()) {
 				String className = rs.getString("class_name");
-				boolean isUserClass = "NO".equals(rs.getString("is_system_class"));
-				String tableName = "";
+				String tableName;
 				if (isSupportUserSchema()) {
+					boolean isUserClass = "NO".equals(rs.getString("is_system_class"));
 					if (isUserClass) {
 						tableName = rs.getString("owner_name") + "." + className;
 					} else {
