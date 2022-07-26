@@ -44,13 +44,13 @@ import com.cubrid.common.core.util.LogUtil;
 public class DBResolution implements Cloneable {
 	private static final Logger LOGGER = LogUtil.getLogger(DBResolution.class);
 	private String name;
-	private String className;
+	private String tableName;
 	private String alias;
 	private boolean isClassResolution;
 
-	public DBResolution(String name, String className, String alias) {
+	public DBResolution(String name, String tableName, String alias) {
 		this.name = name;
-		this.className = className;
+		this.tableName = tableName;
 		this.alias = alias;
 	}
 
@@ -81,12 +81,12 @@ public class DBResolution implements Cloneable {
 		this.name = name;
 	}
 
-	public String getClassName() {
-		return className;
+	public String getTableName() {
+		return tableName;
 	}
 
-	public void setClassName(String className) {
-		this.className = className;
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class DBResolution implements Cloneable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((className == null) ? 0 : className.hashCode());
+				+ ((tableName == null) ? 0 : tableName.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -135,11 +135,11 @@ public class DBResolution implements Cloneable {
 			return false;
 		}
 		final DBResolution other = (DBResolution) obj;
-		if (className == null) {
-			if (other.className != null) {
+		if (tableName == null) {
+			if (other.tableName != null) {
 				return false;
 			}
-		} else if (!className.equals(other.className)) {
+		} else if (!tableName.equals(other.tableName)) {
 			return false;
 		}
 		if (name == null) {

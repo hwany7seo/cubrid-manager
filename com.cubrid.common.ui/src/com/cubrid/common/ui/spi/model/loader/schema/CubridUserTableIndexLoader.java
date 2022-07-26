@@ -87,7 +87,7 @@ public class CubridUserTableIndexLoader extends
 
 			monitorCancel(monitor, new ITask[] {task});
 
-			String tableName = parent.getParent().getLabel();
+			String tableName = parent.getParent().getName();
 			List<TableIndex> indexes = task.getIndexesNames(tableName);
 			final String errorMsg = task.getErrorMsg();
 			if (!monitor.isCanceled() && errorMsg != null
@@ -111,6 +111,7 @@ public class CubridUserTableIndexLoader extends
 			if (indexes != null && !indexes.isEmpty()) {
 				for (TableIndex index : indexes) {
 					String indexName = index.getIndexName();
+					String ownerName = index.getOwnerName();
 					String nodeId = parentId + NODE_SEPARATOR + indexName;
 					String label = indexName;
 
@@ -120,7 +121,7 @@ public class CubridUserTableIndexLoader extends
 						label += keyAttrName.replace('[', '(').replace(']', ')');
 					}
 
-					ICubridNode node = new DefaultSchemaNode(nodeId, label,
+					ICubridNode node = new DefaultSchemaNode(nodeId, label, label,
 							"icons/navigator/table_index_item.png");
 					if (index.isPrimaryKey()) {
 						node.setIconPath("icons/primary_key.png");

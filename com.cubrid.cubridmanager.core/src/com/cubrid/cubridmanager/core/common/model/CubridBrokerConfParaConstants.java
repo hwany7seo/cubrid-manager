@@ -41,7 +41,7 @@ public interface CubridBrokerConfParaConstants { // NOPMD
 
     public static final String MASTER_SHM_ID = "MASTER_SHM_ID";
     public static final String ADMIN_LOG_FILE = "ADMIN_LOG_FILE";
-    public static final String ENABLE_ACCESS_CONTROL = "ENABLE_ACCESS_CONTROL";
+    public static final String ENABLE_ACCESS_CONTROL = "ACCESS_CONTROL";
     public static final String ACCESS_CONTROL_FILE = "ACCESS_CONTROL_FILE";
     public static final String SERVICE = "SERVICE";
     public static final String BROKER_PORT = "BROKER_PORT";

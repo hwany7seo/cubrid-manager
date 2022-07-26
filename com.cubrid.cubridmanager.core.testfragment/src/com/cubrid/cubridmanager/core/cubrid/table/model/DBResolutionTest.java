@@ -46,18 +46,18 @@ public class DBResolutionTest extends TestCase {
 	public final void testDBResolution() {
 
 		String name = "name";
-		String className = "className";
+		String tableName = "tableName";
 		String alias = "alias";
 		boolean isClassResolution = true;
 		// test getters and setters
-		DBResolution dbResolution = new DBResolution(name, className, alias);
+		DBResolution dbResolution = new DBResolution(name, tableName, alias);
 		dbResolution.getAlias();
 		dbResolution.setName(name);
-		dbResolution.setClassName(className);
+		dbResolution.setTableName(tableName);
 		dbResolution.setAlias(alias);
 		dbResolution.setClassResolution(isClassResolution);
 		assertEquals(dbResolution.getName(), name);
-		assertEquals(dbResolution.getClassName(), className);
+		assertEquals(dbResolution.getTableName(), tableName);
 		assertEquals(dbResolution.getAlias(), alias);
 		assertTrue(dbResolution.isClassResolution());
 		

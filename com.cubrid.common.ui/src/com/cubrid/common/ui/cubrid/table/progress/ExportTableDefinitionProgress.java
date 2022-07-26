@@ -182,12 +182,23 @@ public class ExportTableDefinitionProgress implements
 		Statement stmt = null;
 		ResultSet rs = null;
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT c.class_name, c.class_type ");
-		sql.append("FROM db_class c, db_attribute a ");
-		sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
-		sql.append("AND a.from_class_name IS NULL AND c.class_type='CLASS' ");
-		sql.append("GROUP BY c.class_name, c.class_type ");
-		sql.append("ORDER BY c.class_type, c.class_name");
+		if (database.getDatabaseInfo().isSupportUserSchema()) {
+			sql.append("SELECT c.class_name, c.class_type, c.owner_name ");
+			sql.append("FROM db_class c, db_attribute a ");
+			sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
+			sql.append("AND c.owner_name=a.owner_name ");
+			sql.append("AND a.from_class_name IS NULL AND c.class_type='CLASS' ");
+			sql.append("GROUP BY c.owner_name, c.class_name, c.class_type ");
+			sql.append("ORDER BY c.owner_name, c.class_type, c.class_name");
+			String query = sql.toString();
+		} else {
+			sql.append("SELECT c.class_name, c.class_type ");
+			sql.append("FROM db_class c, db_attribute a ");
+			sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
+			sql.append("AND a.from_class_name IS NULL AND c.class_type='CLASS' ");
+			sql.append("GROUP BY c.class_name, c.class_type ");
+			sql.append("ORDER BY c.class_type, c.class_name");
+		}
 		String query = sql.toString();
 
 		// [TOOLS-2425]Support shard broker
@@ -200,6 +211,10 @@ public class ExportTableDefinitionProgress implements
 			rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				String tableName = rs.getString(1);
+				if (database.getDatabaseInfo().isSupportUserSchema()) {
+					String ownerName = rs.getString(3);
+					tableName = ownerName + "." + tableName;
+				}
 				if (ConstantsUtil.isExtensionalSystemTable(tableName)) {
 					continue;
 				}
@@ -313,7 +328,7 @@ public class ExportTableDefinitionProgress implements
 		isInstalledMetaTable = SchemaCommentHandler.isInstalledMetaTable(dbSpec, conn);
 		if (isInstalledMetaTable) {
 			try {
-				schemaCommentMap = SchemaCommentHandler.loadDescriptions(dbSpec, conn);
+				schemaCommentMap = SchemaCommentHandler.loadDescriptions(dbSpec, conn, database.getDatabaseInfo().isSupportUserSchema());
 			} catch (Exception e) {
 				LOGGER.error("load schema comment error", e);
 			}

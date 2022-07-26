@@ -36,6 +36,7 @@ import java.util.Locale;
 
 import org.slf4j.Logger;
 
+import com.cubrid.common.core.util.CompatibleUtil;
 import com.cubrid.common.core.util.ConstantsUtil;
 import com.cubrid.common.core.util.LogUtil;
 import com.cubrid.cubridmanager.core.Messages;
@@ -104,10 +105,20 @@ public class GetAllClassListTask extends JDBCTask {
 				sql += " OR class_name='" + ConstantsUtil.CUNITOR_HA_TABLE + "'";
 			}
 			
-			sql += " ORDER BY class_name";
+			if (databaseInfo.isSupportUserSchema()) {
+				sql += " ORDER BY owner_name, class_name";
+			} else {
+				sql += " ORDER BY class_name";
+			}
 			
 			sql = databaseInfo.wrapShardQuery(sql);
 			boolean existSchemaCommentTable = false;
+			boolean isSupportUserSchema = false;
+			if (CompatibleUtil.isAfter112(databaseInfo)) {
+				isSupportUserSchema = true;
+				databaseInfo.setSupportUserSchema(isSupportUserSchema);
+			}
+			
 			stmt = connection.createStatement();
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -137,8 +148,9 @@ public class GetAllClassListTask extends JDBCTask {
 				if (partitioned != null && partitioned.equalsIgnoreCase("YES")) {
 					isPartitioned = true;
 				}
+				
 				ClassInfo classInfo = new ClassInfo(className, ownerName, type,
-						isSystemClass, isPartitioned);
+						isSystemClass, isPartitioned, isSupportUserSchema);
 				allClassInfoList.add(classInfo);
 			}
 
@@ -212,7 +224,7 @@ public class GetAllClassListTask extends JDBCTask {
 					isPartitioned = true;
 				}
 				ClassInfo classInfo = new ClassInfo(className, ownerName, type,
-						isSystemClass, isPartitioned);
+						isSystemClass, isPartitioned, databaseInfo.isSupportUserSchema());
 				allClassInfoList.add(classInfo);
 			}
 		} catch (SQLException e) {
@@ -244,8 +256,15 @@ public class GetAllClassListTask extends JDBCTask {
 				return;
 			}
 
-			String sql = "SELECT class_name, owner_name, class_type, is_system_class,"
+			String sql = "";
+			boolean isSupportUserSchema = databaseInfo.isSupportUserSchema();
+			if (isSupportUserSchema) {
+				sql = "SELECT class_name, owner_name, class_type, is_system_class,"
+					+ " partitioned FROM db_class WHERE CONCAT(owner_name, '.', class_name)=?";
+			} else {
+				sql = "SELECT class_name, owner_name, class_type, is_system_class,"
 					+ " partitioned FROM db_class WHERE class_name=?";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			if (databaseInfo != null) {
@@ -253,7 +272,7 @@ public class GetAllClassListTask extends JDBCTask {
 			}
 
 			stmt = connection.prepareStatement(sql);
-			((PreparedStatement) stmt).setString(1, tableName.toLowerCase(Locale.getDefault()));
+			((PreparedStatement) stmt).setString(1, tableName);
 			rs = ((PreparedStatement) stmt).executeQuery();
 			if (rs.next()) {
 				String className = rs.getString("class_name");
@@ -275,8 +294,9 @@ public class GetAllClassListTask extends JDBCTask {
 				if (partitioned != null && partitioned.equalsIgnoreCase("YES")) {
 					isPartitioned = true;
 				}
+				
 				classInfo = new ClassInfo(className, ownerName, type,
-						isSystemClass, isPartitioned);
+						isSystemClass, isPartitioned, isSupportUserSchema);
 			}
 		} catch (SQLException e) {
 			errorMsg = e.getMessage();
@@ -286,7 +306,7 @@ public class GetAllClassListTask extends JDBCTask {
 	}
 
 	public void setTableName(String tableName) {
-		this.tableName = tableName.toLowerCase(Locale.getDefault());
+		this.tableName = tableName;
 	}
 
 	/**
@@ -297,5 +317,9 @@ public class GetAllClassListTask extends JDBCTask {
 	 */
 	public ClassInfo getClassInfo() {
 		return classInfo;
+	}
+	
+	public boolean isSupportUserSchema() {
+		return databaseInfo.isSupportUserSchema();
 	}
 }

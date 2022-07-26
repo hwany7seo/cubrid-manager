@@ -59,7 +59,7 @@ public class CubridSerialFolderLoader extends
 		CubridNodeLoader {
 
 	public static final String SERIAL_FOLDER_ID = "Serials";
-
+	
 	/**
 	 * 
 	 * Load children object for parent
@@ -108,8 +108,8 @@ public class CubridSerialFolderLoader extends
 				for (SerialInfo serialInfo : serialInfoList) {
 					authSerialInfoList.add(serialInfo);
 					String id = parent.getId() + NODE_SEPARATOR
-							+ serialInfo.getName();
-					ICubridNode serialNode = createSerialNode(id, serialInfo);
+							+ serialInfo.getOwner() + "." + serialInfo.getName();
+					ICubridNode serialNode = createSerialNode(databaseInfo, id, serialInfo);
 					parent.addChild(serialNode);
 				}
 			}
@@ -130,13 +130,24 @@ public class CubridSerialFolderLoader extends
 	 * @param serialInfo The model object
 	 * @return ICubridNode
 	 */
-	public static ICubridNode createSerialNode(String id, SerialInfo serialInfo) {
-		ICubridNode serialNode = new DefaultSchemaNode(id,
-				serialInfo.getName(), "icons/navigator/serial_item.png");
+	public static ICubridNode createSerialNode(DatabaseInfo databaseInfo, String id, SerialInfo serialInfo) {
+		ICubridNode serialNode;
+		if (databaseInfo.isSupportUserSchema()) {
+			serialNode= new DefaultSchemaNode(id,
+					"[" + serialInfo.getOwner() + "] " + serialInfo.getName(),
+					serialInfo.getOwner() + "." + serialInfo.getName(),
+					"icons/navigator/serial_item.png");
+		} else {
+			serialNode= new DefaultSchemaNode(id,
+					serialInfo.getName(),
+					serialInfo.getName(), "icons/navigator/serial_item.png");
+		}
 		serialNode.setId(id);
 		serialNode.setType(NodeType.SERIAL);
 		serialNode.setModelObj(serialInfo);
 		serialNode.setContainer(false);
 		return serialNode;
 	}
+	
+	
 }

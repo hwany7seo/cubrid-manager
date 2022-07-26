@@ -210,7 +210,7 @@ public class CreatePartitionWizard extends
 			}
 			for (int i = 0; i < Integer.parseInt(partitionNum); i++) {
 				PartitionInfo partitonInfo = new PartitionInfo(
-						schemaInfo.getClassname(), "p" + i, partitionType,
+						schemaInfo.getUniqueName(), "p" + i, partitionType,
 						expr, null, -1);
 				partitionInfoList.add(partitonInfo);
 			}
@@ -221,7 +221,7 @@ public class CreatePartitionWizard extends
 			List<String> valuesList = listPage.getListValues();
 			if (this.editedPartitionInfo == null) {
 				PartitionInfo partitonInfo = new PartitionInfo(
-						schemaInfo.getClassname(), partitionName,
+						schemaInfo.getUniqueName(), partitionName,
 						partitionType, expr, valuesList, -1);
 				partitonInfo.setPartitionExprType(exprDataType);
 				partitonInfo.setDescription(partitionDescription);
@@ -254,7 +254,7 @@ public class CreatePartitionWizard extends
 					rangeList.add(newValue);
 				}
 				PartitionInfo partitonInfo = new PartitionInfo(
-						schemaInfo.getClassname(), partitionName,
+						schemaInfo.getUniqueName(), partitionName,
 						partitionType, expr, rangeList, -1);
 				partitonInfo.setPartitionExprType(exprDataType);
 				partitonInfo.setDescription(partitionDescription);

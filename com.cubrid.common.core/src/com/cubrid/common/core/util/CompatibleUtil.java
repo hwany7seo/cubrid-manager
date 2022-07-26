@@ -60,8 +60,7 @@ public final class CompatibleUtil {
     private static final String VER_10_2_1 = "10.2.1";
     private static final String VER_11_0_0 = "11.0.0";
     private static final String VER_11_0_1 = "11.0.1";
-    private static final String VER_11_2_0 =
-            "11.2.0"; // From 11.2 version, the engine and jdbc versioning  are different.
+    private static final String VER_11_2_0 = "11.2.0"; // From 11.2 version, the engine and jdbc versioning  are different.
 
     private CompatibleUtil() {}
 
@@ -369,6 +368,16 @@ public final class CompatibleUtil {
     }
 
     /**
+     * Is the version of database after the 10.2.0
+     *
+     * @param database IDatabaseSpec
+     * @return true:10.2.0 or higher
+     */
+    public static boolean isAfter1020(IDatabaseSpec database) {
+        return compareVersion(database.getVersion(), VER_10_2_0) >= 0;
+    }
+    
+    /**
      * Is the version of database after the 10.2.1
      *
      * @param database IServerSpec
@@ -388,6 +397,16 @@ public final class CompatibleUtil {
         return compareVersion(serverInfo.getServerVersionKey(), VER_11_0_1) >= 0;
     }
 
+    /**
+     * Is the version of database after the 11.2.0
+     *
+     * @param database IDatabaseSpec
+     * @return true:11.2.0 or higher
+     */
+    public static boolean isAfter112(IDatabaseSpec database) {
+        return compareVersion(database.getVersion(), VER_11_2_0) >= 0;
+    }
+    
     /**
      * Is the version of database after the 11.2.0
      *
@@ -978,10 +997,6 @@ public final class CompatibleUtil {
      */
     public static boolean isSupportEnableAccessControl(IServerSpec serverInfo) {
         if (serverInfo == null) {
-            return false;
-        }
-
-        if (isAfter1101(serverInfo)) {
             return false;
         }
 

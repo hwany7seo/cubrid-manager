@@ -352,7 +352,7 @@ public class ExportSchemaTask extends
 				continue;
 			SchemaInfo schemaInfo = entry.getValue();
 
-			Map<String, Attribute> schemaAttrMap = entityAttrMap.get(schemaInfo.getClassname());
+			Map<String, Attribute> schemaAttrMap = entityAttrMap.get(schemaInfo.getUniqueName());
 
 			KeyGroupGroups keyGroups = new KeyGroupGroups();
 			entity.setKeyGroupGroups(keyGroups);
@@ -417,7 +417,7 @@ public class ExportSchemaTask extends
 					if (pEntity == null) {
 						continue;
 					}
-					Map<String, Attribute> tempAttrMap = entityAttrMap.get(schemaInfo.getClassname());
+					Map<String, Attribute> tempAttrMap = entityAttrMap.get(schemaInfo.getUniqueName());
 					Map<String, Attribute> parentAttrMap = entityAttrMap.get(inherit);
 
 					Relationship relationShip = new Relationship();
@@ -486,7 +486,7 @@ public class ExportSchemaTask extends
 
 					relationShipPropsList.setRelationshipChildEntity(new RelationshipChildEntity());
 					relationShipPropsList.getRelationshipChildEntity().setValue(
-							entityMap.get(schemaInfo.getClassname()).getId());
+							entityMap.get(schemaInfo.getUniqueName()).getId());
 					LinkedList<String> pkAttr = new LinkedList<String>();
 
 					SchemaInfo parentTable = allSchemaInfos.get(inherit);
@@ -560,9 +560,15 @@ public class ExportSchemaTask extends
 						KeyGroupPosition position = new KeyGroupPosition();
 						propList.setKeyGroupPosition(position);
 						position.setValue("" + order++);
-
+						String AttrKeyName;
 						KeyGroupMemberColumn column = new KeyGroupMemberColumn();
-						Attribute attrTemp = schemaAttrMap.get(keyName);
+						if (keyName.indexOf("char_length") >= 0) {
+							AttrKeyName = keyName.substring(
+								keyName.lastIndexOf("[") + 1, keyName.lastIndexOf("]"));
+						} else {
+							AttrKeyName = keyName;
+						}
+						Attribute attrTemp = schemaAttrMap.get(AttrKeyName);
 						column.setValue(attrTemp.getId());
 						propList.setKeyGroupMemberColumn(column);
 					}

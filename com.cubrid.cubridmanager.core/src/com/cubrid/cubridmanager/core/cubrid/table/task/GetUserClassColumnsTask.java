@@ -82,7 +82,7 @@ public class GetUserClassColumnsTask extends
 				return columns;
 			}
 			columns = SchemaUtil.getTableColumn(databaseInfo, connection, tableName);
-			List<String> pkColumns = QueryUtil.getPrimaryKeys(connection, tableName);
+			List<String> pkColumns = QueryUtil.getPrimaryKeys(connection, tableName, databaseInfo.isSupportUserSchema());
 
 			for (TableColumn dbColumn : columns) {
 				String columnName = dbColumn.getColumnName();

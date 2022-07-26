@@ -71,7 +71,7 @@ public class CommonSQLExcuterTask extends
 			if (sqls != null) {
 				for (String sql : sqls) {
 					currentDDL = sql;
-					stmt.executeUpdate(sql);
+ 					stmt.executeUpdate(sql);
 				}
 			}
 			stmt.close();

@@ -148,9 +148,9 @@ public class DeleteSerialAction extends SelectionAction {
 			}
 			ISchemaNode schemaNode = (ISchemaNode) nodeArray[i];
 			if (i == 0) {
-				serialNames.append(schemaNode.getLabel());
+				serialNames.append(schemaNode.getName());
 			}
-			serialNameList.add(schemaNode.getLabel());
+			serialNameList.add(schemaNode.getName());
 		}
 		if (nodeArray.length > 1) {
 			serialNames.append(", ...");

@@ -150,11 +150,11 @@ public class CreateSerialAction extends
 					Locale.getDefault());
 			DbUserInfo userInfo = database.getDatabaseInfo().getAuthLoginedDbUserInfo();
 			String id = folderNode.getId() + ICubridNodeLoader.NODE_SEPARATOR
-					+ serialName;
+					+ userInfo.getName() + "." + serialName;
 			SerialInfo serialInfo = new SerialInfo();
 			serialInfo.setName(serialName);
 			serialInfo.setOwner(userInfo.getName());
-			ICubridNode newNode = CubridSerialFolderLoader.createSerialNode(id,
+			ICubridNode newNode = CubridSerialFolderLoader.createSerialNode(database.getDatabaseInfo(), id,
 					serialInfo);
 			CommonUITool.addNodeToTree(treeViewer, folderNode, newNode);
 			CommonUITool.updateFolderNodeLabelIncludingChildrenCount(treeViewer, folderNode);

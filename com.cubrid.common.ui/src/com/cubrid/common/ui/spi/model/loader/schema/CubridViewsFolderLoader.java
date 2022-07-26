@@ -112,7 +112,7 @@ public class CubridViewsFolderLoader extends
 			parent.removeAllChild();
 			if (systemViewFolder == null) {
 				systemViewFolder = new DefaultSchemaNode(systemViewFolderId,
-						SYSTEM_VIEW_FOLDER_NAME, "icons/navigator/folder_sys.png");
+						SYSTEM_VIEW_FOLDER_NAME, SYSTEM_VIEW_FOLDER_NAME, "icons/navigator/folder_sys.png");
 				systemViewFolder.setType(NodeType.SYSTEM_VIEW_FOLDER);
 				systemViewFolder.setContainer(true);
 				ICubridNodeLoader loader = new CubridSystemViewFolderLoader();
@@ -133,7 +133,7 @@ public class CubridViewsFolderLoader extends
 			if (allClassInfoList != null) {
 				for (ClassInfo classInfo : allClassInfoList) {
 					String id = parent.getId() + NODE_SEPARATOR
-							+ classInfo.getClassName();
+							+ classInfo.getUniqueName();
 					ICubridNode classNode = createUserViewNode(id, classInfo);
 					parent.addChild(classNode);
 				}
@@ -156,9 +156,18 @@ public class CubridViewsFolderLoader extends
 	 * @return ICubridNode
 	 */
 	public static ICubridNode createUserViewNode(String id, ClassInfo classInfo) {
-		ICubridNode classNode = new DefaultSchemaNode(id,
-				classInfo.getClassName(),
+		String viewName = classInfo.getUniqueName();
+		String viewClassName = classInfo.getClassName();
+		ICubridNode classNode;
+		if (classInfo.isSupportUserSchema()) {
+			classNode = new DefaultSchemaNode(id,
+				"[" + classInfo.getOwnerName() + "] " + viewClassName, viewName,
 				"icons/navigator/schema_view_item.png");
+		} else {
+			classNode = new DefaultSchemaNode(id,
+				viewClassName, viewName,
+				"icons/navigator/schema_view_item.png");
+		}
 		classNode.setType(NodeType.USER_VIEW);
 		classNode.setEditorId(SchemaInfoEditorPart.ID);
 		classNode.setContainer(false);

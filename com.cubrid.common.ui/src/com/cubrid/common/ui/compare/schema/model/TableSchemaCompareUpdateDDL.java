@@ -77,7 +77,7 @@ public class TableSchemaCompareUpdateDDL {
 		if (sourceTableSchema == null) {
 			alterDDL = targetSchemaDDL.getSchemaDDL(targetTableSchema);
 		} else if (targetTableSchema == null) {
-			String escapedTableName = QuerySyntax.escapeKeyword(sourceTableSchema.getClassname());
+			String escapedTableName = QuerySyntax.escapeKeyword(sourceTableSchema.getUniqueName());
 			alterDDL = "DROP TABLE " + escapedTableName + ";" + StringUtil.NEWLINE;
 		} else {
 			setClassNameAlterDDL();
@@ -95,8 +95,8 @@ public class TableSchemaCompareUpdateDDL {
 	 * Compare table class name
 	 */
 	public void setClassNameAlterDDL() { // FIXME logic code move to core module
-		String sourceClassName = sourceTableSchema.getClassname();
-		String targetClassName = targetTableSchema.getClassname();
+		String sourceClassName = sourceTableSchema.getUniqueName();
+		String targetClassName = targetTableSchema.getUniqueName();
 
 		if (!sourceClassName.toLowerCase().equals(targetClassName.toLowerCase())) {
 			changeManager.addSchemeChangeLog(new SchemaChangeLog(
@@ -160,16 +160,16 @@ public class TableSchemaCompareUpdateDDL {
 				if (sourceCons != null) {
 					if (!targetCons.equals(sourceCons)) {
 						changeManager.addSchemeChangeLog(new SchemaChangeLog(
-								sourceCons.getDefaultName(sourceTableSchema.getClassname())
+								sourceCons.getDefaultName(sourceTableSchema.getUniqueName())
 										+ "$" + sourceCons.getName(),
-								targetCons.getDefaultName(targetTableSchema.getClassname())
+								targetCons.getDefaultName(targetTableSchema.getUniqueName())
 										+ "$" + targetCons.getName(),
 								SchemeInnerType.TYPE_INDEX));
 					}
 				} else {
 					changeManager.addSchemeChangeLog(new SchemaChangeLog(
 							null,
-							targetCons.getDefaultName(targetTableSchema.getClassname())
+							targetCons.getDefaultName(targetTableSchema.getUniqueName())
 									+ "$" + targetCons.getName(),
 							SchemeInnerType.TYPE_INDEX));
 				}
@@ -184,7 +184,7 @@ public class TableSchemaCompareUpdateDDL {
 					&& (sourceCons.getType().equals(Constraint.ConstraintType.INDEX.getText())
 					|| sourceCons.getType().equals(Constraint.ConstraintType.UNIQUE.getText()))) {
 				changeManager.addSchemeChangeLog(new SchemaChangeLog(
-						sourceCons.getDefaultName(sourceTableSchema.getClassname())
+						sourceCons.getDefaultName(sourceTableSchema.getUniqueName())
 								+ "$" + sourceCons.getName(), null,
 						SchemeInnerType.TYPE_INDEX));
 			}

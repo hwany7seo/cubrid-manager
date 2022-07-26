@@ -138,7 +138,7 @@ public class TableDashboardComposite extends Composite implements ITableButtonSu
 		this.databaseInfo = database;
 		labelProvider.setSchema(schema);
 		labelProvider.setDatabase(database);
-		tabItem.setText(schema == null ? "" : schema.getClassname());
+		tabItem.setText(schema == null ? "" : schema.getUniqueName());
 		tabItem.setData(schema);
 		columnTableView.setInput(schema);
 		columnTableView.refresh();
@@ -329,7 +329,7 @@ public class TableDashboardComposite extends Composite implements ITableButtonSu
 				com.cubrid.common.ui.cubrid.table.Messages.labelColumnDescEditor,
 				attr.getDescription());
 		if (dialog.open() == IDialogConstants.OK_ID) { // FIXME move this logic to core module
-			String tableName = info.getClassname();
+			String tableName = info.getUniqueName();
 			String columnName = attr.getName();
 			String description = dialog.getResult();
 			Connection conn = null;

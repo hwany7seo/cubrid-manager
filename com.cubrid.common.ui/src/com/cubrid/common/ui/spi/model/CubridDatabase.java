@@ -57,7 +57,7 @@ public class CubridDatabase extends
 	 * @param label
 	 */
 	public CubridDatabase(String id, String label) {
-		super(id, label, "");
+		super(id, label, label, "");
 		setType(NodeType.DATABASE);
 		setDatabase(this);
 		setContainer(true);
