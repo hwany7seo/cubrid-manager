@@ -30,6 +30,7 @@ package com.cubrid.cubridmanager.core.common.task;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cubrid.common.core.util.CompatibleUtil;
 import com.cubrid.cubridmanager.core.common.model.CasAuthType;
 import com.cubrid.cubridmanager.core.common.model.ServerInfo;
 import com.cubrid.cubridmanager.core.common.model.ServerUserInfo;
@@ -310,6 +311,7 @@ public class GetCMUserListTask extends
 				databaseInfo.setBrokerPort(brokerPort);
 			}
 			databaseInfo.setAuthLoginedDbUserInfo(databaseUserInfo);
+			databaseInfo.setSupportUserSchema(CompatibleUtil.isAfter112(databaseInfo));
 			userInfo.addDatabaseInfo(databaseInfo);
 		}
 	}

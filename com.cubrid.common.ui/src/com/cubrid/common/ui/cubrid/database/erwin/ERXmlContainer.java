@@ -346,7 +346,7 @@ public class ERXmlContainer {
 			if (schemaInfo.getVirtual().equals(ClassType.VIEW.getText())) {
 				strDDL = createViewSchema(schemaInfo);
 			} else {
-				strDDL = ddl.getSchemaDDL(schemaInfo);
+				strDDL = ddl.getSchemaDDLforErwin(schemaInfo);
 			}
 
 			tableSchema.setSchemaInfo(strDDL);
