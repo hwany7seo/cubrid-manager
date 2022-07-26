@@ -41,6 +41,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 
+import com.cubrid.common.core.util.CompatibleUtil;
 import com.cubrid.common.core.util.LogUtil;
 import com.cubrid.common.core.util.StringUtil;
 import com.cubrid.common.ui.common.Messages;
@@ -346,6 +347,7 @@ public class CubridWorkbenchContrItem extends
 			dbInfo.setRunningType(DbRunningType.CS);
 			dbInfo.getServerInfo().setConnected(true);
 			dbInfo.setLogined(true);
+			dbInfo.setSupportUserSchema(CompatibleUtil.isAfter112(dbInfo));
 			return true;
 		} catch (SQLException e) {
 			CommonUITool.openErrorBox(Messages.bind(Messages.errCommonTip,
