@@ -40,6 +40,7 @@ import com.cubrid.common.ui.spi.model.ICubridNode;
 import com.cubrid.common.ui.spi.model.ICubridNodeLoader;
 import com.cubrid.common.ui.spi.model.NodeType;
 import com.cubrid.common.ui.spi.model.loader.CubridSerialFolderLoader;
+import com.cubrid.common.ui.spi.model.loader.CubridSynonymFolderLoader;
 import com.cubrid.common.ui.spi.model.loader.CubridTriggerFolderLoader;
 import com.cubrid.common.ui.spi.model.loader.schema.CubridTablesFolderLoader;
 import com.cubrid.common.ui.spi.model.loader.schema.CubridViewsFolderLoader;
@@ -62,6 +63,7 @@ public class CQBDbConnectionLoader extends
 	private static final String VIEWS_FOLDER_NAME = Messages.msgViewsFolderName;
 	private static final String SP_FOLDER_NAME = Messages.msgSpFolderName;
 	private static final String TRIGGER_FOLDER_NAME = Messages.msgTriggerFolderName;
+	private static final String SYNONYM_FOLDER_NAME = Messages.msgSynonymFolderName;
 	private static final String SERIAL_FOLDER_NAME = Messages.msgSerialFolderName;
 	private static final String USERS_FOLDER_NAME = Messages.msgUserFolderName;
 	
@@ -69,6 +71,7 @@ public class CQBDbConnectionLoader extends
 	public static final String VIEWS_FOLDER_ID = "Views";
 	public static final String SP_FOLDER_ID = "Stored procedure";
 	public static final String TRIGGER_FOLDER_ID = "Triggers";
+	public static final String SYNONYM_FOLDER_ID = "Synonym";
 	public static final String SERIAL_FOLDER_ID = "Serials";
 
 	/**
@@ -103,6 +106,10 @@ public class CQBDbConnectionLoader extends
 			addUserFolder(monitor, database);
 			// add triggers folder
 			addTriggerFolder(monitor, database);
+			// add synonyms folder
+			if (database.getDatabaseInfo().isSupportSynonym()) {
+				addSynonymFolder(monitor, database);
+			}
 			// add stored procedure folder
 			addProcedureFolder(monitor, database);
 
@@ -210,6 +217,41 @@ public class CQBDbConnectionLoader extends
 		}
 	}
 
+	/**
+	 * Add synonym folder
+	 * 
+	 * @param monitor the IProgressMonitor
+	 * @param database the CubridDatabase
+	 */
+	private void addSynonymFolder(final IProgressMonitor monitor,
+			CubridDatabase database) {
+		if (!database.getDatabaseInfo().getAuthLoginedDbUserInfo().isDbaAuthority()) {
+			return;
+		}
+		String synoymFolderId = database.getId() + NODE_SEPARATOR
+				+ SYNONYM_FOLDER_ID;
+		ICubridNode synonymFolder = database.getChild(synoymFolderId);
+		if (synonymFolder == null) {
+			synonymFolder = new DefaultSchemaNode(synoymFolderId,
+					SYNONYM_FOLDER_NAME, SYNONYM_FOLDER_NAME, "icons/navigator/synonym_group.png");
+			synonymFolder.setType(NodeType.SYNONYM_FOLDER);
+			synonymFolder.setContainer(true);
+			ICubridNodeLoader loader = new CubridSynonymFolderLoader();
+			loader.setLevel(getLevel());
+			synonymFolder.setLoader(loader);
+			database.addChild(synonymFolder);
+			if (getLevel() == DEFINITE_LEVEL) {
+				synonymFolder.getChildren(monitor);
+			}
+		} else {
+			if (synonymFolder.getLoader() != null
+					&& synonymFolder.getLoader().isLoaded()) {
+				synonymFolder.getLoader().setLoaded(false);
+				synonymFolder.getChildren(monitor);
+			}
+		}
+	}
+	
 	/**
 	 * Add view folder
 	 * 

@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.cubrid.common.core.util.CompatibleUtil;
 import com.cubrid.common.ui.common.control.ConnectionComposite;
 import com.cubrid.common.ui.common.control.SelectColorCombo;
 import com.cubrid.common.ui.common.persist.ConnectionInfo;
@@ -350,6 +351,7 @@ public class QueryConnDialog extends
 			userInfo.setName(userName);
 			userInfo.setNoEncryptPassword(password);
 			dbInfo.setAuthLoginedDbUserInfo(userInfo);
+			dbInfo.setSupportUserSchema(CompatibleUtil.isAfter112(dbInfo));
 
 			if (buttonId == TEST_CONNECT_ID || buttonId == CONNECT_ID) {
 				TaskExecutor taskExcutor = new ConnectDatabaseExecutor(dbInfo);

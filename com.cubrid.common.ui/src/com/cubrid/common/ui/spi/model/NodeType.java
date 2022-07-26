@@ -58,6 +58,8 @@ public class NodeType {
 	public static final String STORED_PROCEDURE_PROCEDURE = "STORED_PROCEDURE_PROCEDURE";
 	public static final String TRIGGER_FOLDER = "TRIGGER_FOLDER";
 	public static final String TRIGGER = "TRIGGER";
+	public static final String SYNONYM_FOLDER = "SYNONYM_FOLDER";
+	public static final String SYNONYM = "SYNONYM";
 	public static final String SERIAL_FOLDER = "SERIAL_FOLDER";
 	public static final String SERIAL = "SERIAL";
 	public static final String TABLE_COLUMN_FOLDER = "TABLE_COLUMN_FOLDER";

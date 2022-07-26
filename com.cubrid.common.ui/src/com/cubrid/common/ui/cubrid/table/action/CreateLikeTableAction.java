@@ -27,15 +27,19 @@
  */
 package com.cubrid.common.ui.cubrid.table.action;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import com.cubrid.common.ui.common.navigator.CubridNavigatorView;
 import com.cubrid.common.ui.cubrid.table.dialog.CreateLikeTableDialog;
+import com.cubrid.common.ui.cubrid.table.dialog.CreateViewDialog;
 import com.cubrid.common.ui.spi.CubridNodeManager;
 import com.cubrid.common.ui.spi.action.SelectionAction;
 import com.cubrid.common.ui.spi.event.CubridNodeChangedEvent;
@@ -45,9 +49,14 @@ import com.cubrid.common.ui.spi.model.ICubridNodeLoader;
 import com.cubrid.common.ui.spi.model.ISchemaNode;
 import com.cubrid.common.ui.spi.model.NodeType;
 import com.cubrid.common.ui.spi.model.loader.schema.CubridTablesFolderLoader;
+import com.cubrid.common.ui.spi.progress.CommonTaskExec;
+import com.cubrid.common.ui.spi.progress.ExecTaskWithProgress;
+import com.cubrid.common.ui.spi.progress.TaskExecutor;
 import com.cubrid.common.ui.spi.util.ActionSupportUtil;
 import com.cubrid.common.ui.spi.util.CommonUITool;
+import com.cubrid.cubridmanager.core.cubrid.database.model.DatabaseInfo;
 import com.cubrid.cubridmanager.core.cubrid.table.model.ClassInfo;
+import com.cubrid.cubridmanager.core.cubrid.user.task.JDBCGetAllDbUserTask;
 import com.cubrid.cubridmanager.core.utils.ModelUtil.ClassType;
 
 /**
@@ -146,31 +155,39 @@ public class CreateLikeTableAction extends
 	 */
 	private void doRun(ISchemaNode node) {
 
-		CreateLikeTableDialog dialog = new CreateLikeTableDialog(getShell());
-		dialog.setDatabase(node.getDatabase());
+		TaskExecutor taskExcutor = new CommonTaskExec(null);
+		
+		JDBCGetAllDbUserTask task = new JDBCGetAllDbUserTask(node.getDatabase().getDatabaseInfo());
+		taskExcutor.addTask(task);
+		new ExecTaskWithProgress(taskExcutor).busyCursorWhile();
+		if (!taskExcutor.isSuccess()) {
+			return;
+		}
+
+		List<String> dbUserList = task.getDbUserList();
+
+		CreateLikeTableDialog dialog = new CreateLikeTableDialog(getShell(), node.getDatabase(), dbUserList);
 		isSupportUserSchema = node.getDatabase().getDatabaseInfo().isSupportUserSchema();
 		if (NodeType.USER_TABLE.equals(node.getType())) {
-			String tableName = node.getName();
-			dialog.setLikeTableName(tableName);
+			ClassInfo classInfo = (ClassInfo) node.getAdapter(ClassInfo.class);
+			if (classInfo != null) {
+				dialog.setLikeTableName(classInfo.getClassName());
+				dialog.setLikeTableOwnerName(classInfo.getOwnerName());
+			}
 		}
 		if (IDialogConstants.OK_ID == dialog.open()) { // FIXME
 			TreeViewer treeViewer = CubridNavigatorView.findNavigationView().getViewer();
-			String tableName = dialog.getNewTableName();
+			String className = dialog.getNewTableName();
+			String ownerName = dialog.getNewOwnerName();
+			String uniqueName = dialog.getNewUniqueTable();
 			ICubridNode newNode = null;
 			if (NodeType.USER_TABLE.equals(node.getType())) {
 				ClassInfo classInfo = (ClassInfo) node.getAdapter(ClassInfo.class);
 				String id = node.getParent().getId()
-						+ ICubridNodeLoader.NODE_SEPARATOR + tableName;
-				ClassInfo newClassInfo = null;
-				if (isSupportUserSchema) {
-					newClassInfo = new ClassInfo(getClassName(tableName), getOwnerName(tableName),
+						+ ICubridNodeLoader.NODE_SEPARATOR + uniqueName;
+				ClassInfo newClassInfo = new ClassInfo(className, ownerName,
 						ClassType.NORMAL, classInfo.isSystemClass(),
 						classInfo.isPartitionedClass(), classInfo.isSupportUserSchema());
-				} else {
-					newClassInfo = new ClassInfo(tableName, null,
-							ClassType.NORMAL, classInfo.isSystemClass(),
-							classInfo.isPartitionedClass(), classInfo.isSupportUserSchema());
-				}
 				newNode = CubridTablesFolderLoader.createUserTableNode(
 						node.getParent(), id, newClassInfo,
 						node.getParent().getLoader().getLevel(),
@@ -181,13 +198,16 @@ public class CreateLikeTableAction extends
 				}
 				CommonUITool.addNodeToTree(treeViewer, node.getParent(),
 						newNode);
+				CommonUITool.updateFolderNodeLabelIncludingChildrenCount(treeViewer, node.getParent());
+				CubridNodeManager.getInstance().fireCubridNodeChanged(
+						new CubridNodeChangedEvent(newNode, CubridNodeChangedEventType.NODE_ADD));
 			} else {
 				if (node == null || !node.getLoader().isLoaded()) {
 					return;
 				}
 				String id = node.getId() + ICubridNodeLoader.NODE_SEPARATOR
-						+ tableName;
-				ClassInfo newClassInfo = new ClassInfo(tableName, null,
+						+ className;
+				ClassInfo newClassInfo = new ClassInfo(className, null,
 						ClassType.NORMAL, false, false, false);
 				newNode = CubridTablesFolderLoader.createUserTableNode(
 						node, id, newClassInfo, node.getLoader().getLevel(),
@@ -202,15 +222,22 @@ public class CreateLikeTableAction extends
 
 	private String getClassName(String tableName) {
 		if (isSupportUserSchema) {
-			return tableName.substring(tableName.indexOf(".")+1);
+			int idx = tableName.indexOf(".");
+			if (idx > 0) {
+				return tableName.substring(idx + 1);
+			} 
 		}
 		return tableName;
 	}
 
 	private String getOwnerName(String tableName) {
 		if (isSupportUserSchema) {
-			return tableName.substring(0, tableName.indexOf("."));
+			int idx = tableName.indexOf(".");
+			if (idx > 0) {
+				return tableName.substring(0, idx);
+			}
 		}
 		return tableName;
 	}
+	
 }

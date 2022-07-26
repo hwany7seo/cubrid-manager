@@ -477,6 +477,8 @@ public class ExportSchemaTask extends
 								deleteRule.setValue("9999");
 							} else if (tmp == "RESTRICT".hashCode()) {
 								deleteRule.setValue("10004");
+							} else if (tmp == "SET NULL".hashCode()) {
+								deleteRule.setValue("10006");
 							}
 						}
 					}
