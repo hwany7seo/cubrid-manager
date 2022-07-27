@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -611,11 +612,17 @@ public class GetAllSchemaTask extends
 					Map<String, String> fkInfo = new HashMap<String, String>();
 					fkInfo.put("PKTABLE_CAT", metaRs.getString("PKTABLE_CAT"));
 					fkInfo.put("PKTABLE_SCHEM", metaRs.getString("PKTABLE_SCHEM"));
-					fkInfo.put("PKTABLE_NAME", metaRs.getString("PKTABLE_NAME"));
+					String pkTableName = metaRs.getString("PKTABLE_NAME");;
+					String fkTableName = metaRs.getString("FKTABLE_NAME");
+					if (databaseInfo.isSupportUserSchema()) {
+						pkTableName = schemaNameToUpperCase(pkTableName);
+						fkTableName = schemaNameToUpperCase(fkTableName);
+					}
+					fkInfo.put("PKTABLE_NAME", pkTableName);
 					fkInfo.put("PKCOLUMN_NAME", metaRs.getString("PKCOLUMN_NAME"));
 					fkInfo.put("FKTABLE_CAT", metaRs.getString("FKTABLE_CAT"));
 					fkInfo.put("FKTABLE_SCHEM", metaRs.getString("FKTABLE_SCHEM"));
-					fkInfo.put("FKTABLE_NAME", metaRs.getString("FKTABLE_NAME"));
+					fkInfo.put("FKTABLE_NAME", fkTableName);
 					fkInfo.put("FKCOLUMN_NAME", fkColName);
 					fkInfo.put("KEY_SEQ", metaRs.getString("KEY_SEQ"));
 					fkInfo.put("UPDATE_RULE", FOREIGN_KEY_ACTION_MAP.get(metaRs.getInt("UPDATE_RULE")));
@@ -1079,4 +1086,13 @@ public class GetAllSchemaTask extends
 		return databaseInfo.isSupportUserSchema();
 	}
 	
+	private String schemaNameToUpperCase(String uniqueName) {
+		int dotIdx = uniqueName.indexOf(".");
+		if (dotIdx > 0) {
+			uniqueName = uniqueName.substring(0, dotIdx).toUpperCase(Locale.getDefault())
+					+ uniqueName.substring(dotIdx);
+		}
+		return uniqueName;
+	}
+
 }
