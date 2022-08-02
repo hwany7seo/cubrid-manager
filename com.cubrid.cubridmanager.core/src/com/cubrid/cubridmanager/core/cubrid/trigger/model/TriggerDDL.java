@@ -32,7 +32,6 @@ import java.math.BigDecimal;
 import com.cubrid.common.core.common.model.Trigger;
 import com.cubrid.common.core.util.QuerySyntax;
 import com.cubrid.common.core.util.StringUtil;
-import com.cubrid.cubridmanager.core.cubrid.database.model.DatabaseInfo;
 
 /**
  * 

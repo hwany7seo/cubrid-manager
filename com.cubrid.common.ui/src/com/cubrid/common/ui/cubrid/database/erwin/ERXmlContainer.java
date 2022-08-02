@@ -98,6 +98,8 @@ public class ERXmlContainer {
 	//private final int CHILD_UPDATE_NONE = NONE_ACTION;
 	private final int PARENT_DELETE_RESTRICT = 10004;
 	private final int PARENT_DELETE_CASCADE = PARENT_DELETE_RESTRICT + 1;
+	//https://bookshelf.erwin.com/bookshelf/9.8.00/Bookshelf_Files/HTML/MM%20Ref/PROPERTY-Parent_Delete_Rule_Identifying.html
+	private final int PARENT_SET_NULL = PARENT_DELETE_CASCADE + 1;
 	private final int PARENT_DELETE_NOACTION = 9999;
 	//private final int PARENT_DELETE_NONE = NONE_ACTION;
 	//private final int CHILD_DELETE_RESTRICT = 10016;
@@ -108,8 +110,8 @@ public class ERXmlContainer {
 	//private final int PARENT_INSERT_CASCADE = PARENT_INSERT_RESTRICT + 1;
 	//private final int PARENT_INSERT_NOACTION = 9997;
 	//private final int PARENT_INSERT_NONE = NONE_ACTION;
-	//private final int CHILD_INSERT_RESTRICT = 10008;
 	//private final int CHILD_INSERT_CASCADE = CHILD_INSERT_RESTRICT + 1;
+	//private final int CHILD_INSERT_RESTRICT = 10008;
 	//private final int CHILD_INSERT_NOACTION = 9994;
 	//private final int CHILD_INSERT_NONE = NONE_ACTION;
 	private Document doc;
@@ -879,6 +881,7 @@ public class ERXmlContainer {
 			return "NO ACTION";
 
 		case NONE_ACTION:
+		case PARENT_SET_NULL:
 			return "SET NULL";
 
 		default:

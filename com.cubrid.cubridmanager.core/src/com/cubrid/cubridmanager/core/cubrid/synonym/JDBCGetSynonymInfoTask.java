@@ -25,97 +25,74 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package com.cubrid.cubridmanager.core.cubrid.table.task;
+package com.cubrid.cubridmanager.core.cubrid.synonym;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
 
+import com.cubrid.common.core.common.model.Synonym;
 import com.cubrid.common.core.util.LogUtil;
-import com.cubrid.common.core.util.QuerySyntax;
 import com.cubrid.cubridmanager.core.Messages;
 import com.cubrid.cubridmanager.core.common.jdbc.JDBCTask;
 import com.cubrid.cubridmanager.core.cubrid.database.model.DatabaseInfo;
 
-/**
- * Create like table task
- * 
- * @author pangqiren
- * @version 1.0 - 2010-4-19 created by pangqiren
- */
-public class CreateLikeTableTask extends JDBCTask {
-	private static final Logger LOGGER = LogUtil.getLogger(CreateLikeTableTask.class);
-	private String newTableName;
-	private String newOwnerName;
-	private String likeTableName;
-	private String likeOwnerName;
-	private DatabaseInfo databaseInfo;
+public class JDBCGetSynonymInfoTask extends JDBCTask {
+	private static final Logger LOGGER = LogUtil.getLogger(JDBCGetSynonymInfoTask.class);
 
-	public CreateLikeTableTask(DatabaseInfo dbInfo) {
-		super("CreateLikeTable", dbInfo);
-		databaseInfo = dbInfo;
+	/**
+	 * The constructor
+	 * 
+	 * @param dbInfo
+	 */
+	public JDBCGetSynonymInfoTask(DatabaseInfo dbInfo) {
+		super("GetSynonymInfo", dbInfo);
 	}
 
-	public void execute() {
+	/**
+	 * Get Synonym information by Synonym Unique name
+	 * 
+	 * @param synonymUniqueName String The given synonym Unique name
+	 * @return Synonym The instance of Synonym
+	 */
+	public Synonym getSynonymInfo(String synonymUniqueName) {
+		Synonym synonym = null;
 		try {
 			if (errorMsg != null && errorMsg.trim().length() > 0) {
-				return;
+				return null;
 			}
+
 			if (connection == null || connection.isClosed()) {
 				errorMsg = Messages.error_getConnection;
-				return;
+				return null;
 			}
-			
-			String sql;
-			if (isSupportUserSchema()) {
-				sql = "CREATE TABLE " + QuerySyntax.escapeKeyword(newOwnerName) + "." + QuerySyntax.escapeKeyword(newTableName) + " LIKE "
-					+ QuerySyntax.escapeKeyword(likeOwnerName) + "." + QuerySyntax.escapeKeyword(likeTableName);
-			} else {
-				sql = "CREATE TABLE " + QuerySyntax.escapeKeyword(newTableName) + " LIKE "
-						+ QuerySyntax.escapeKeyword(likeTableName);
+
+			String sql = "SELECT *"
+					+ " FROM db_synonym"
+					+ " WHERE CONCAT(synonym_owner_name , '.' , synonym_name)=?";
+
+			// [TOOLS-2425]Support shard broker
+			sql = DatabaseInfo.wrapShardQuery(databaseInfo, sql);
+
+			stmt = connection.prepareStatement(sql);
+			((PreparedStatement) stmt).setString(1, synonymUniqueName);
+			rs = ((PreparedStatement) stmt).executeQuery();
+			while (rs.next()) {
+				synonym = new Synonym();
+				synonym.setName(rs.getString("synonym_name"));
+				synonym.setOwner(rs.getString("synonym_owner_name"));
+				synonym.setTargetName(rs.getString("target_name"));
+				synonym.setTargetOwner(rs.getString("target_owner_name"));
+				synonym.setComment(rs.getString("comment"));
 			}
-			
-			stmt = connection.createStatement();
-			stmt.execute(sql);
-			connection.commit();
 		} catch (SQLException e) {
-			LOGGER.error("", e);
 			errorMsg = e.getMessage();
+			LOGGER.error(e.getMessage(), e);
 		} finally {
 			finish();
 		}
-	}
 
-	/**
-	 * Set new table name
-	 * 
-	 * @param tableName The string
-	 */
-	public void setTableName(String tableName) {
-		newTableName = tableName;
-	}
-
-	public void setOwnerName(String ownerName) {
-		newOwnerName = ownerName;
-	}
-	
-	/**
-	 * Set like table name
-	 * 
-	 * @param tableName The string
-	 */
-	public void setLikeTableName(String tableName) {
-		likeTableName = tableName;
-	}
-	
-	public void setLikeOwnerName(String ownerName) {
-		likeOwnerName = ownerName;
-	}
-	
-	private boolean isSupportUserSchema() {
-		if (databaseInfo != null) {
-			return databaseInfo.isSupportUserSchema();
-		} 
-		return false;
+		return synonym;
 	}
 }

@@ -25,12 +25,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  */
-package com.cubrid.common.ui.cubrid.trigger.editor;
+package com.cubrid.common.ui.cubrid.synonym.editor;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -64,12 +63,12 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-import com.cubrid.common.core.common.model.Trigger;
+import com.cubrid.common.core.common.model.Synonym;
 import com.cubrid.common.ui.CommonUIPlugin;
-import com.cubrid.common.ui.cubrid.trigger.Messages;
-import com.cubrid.common.ui.cubrid.trigger.action.AlterTriggerAction;
-import com.cubrid.common.ui.cubrid.trigger.action.DropTriggerAction;
-import com.cubrid.common.ui.cubrid.trigger.action.NewTriggerAction;
+import com.cubrid.common.ui.cubrid.synonym.Messages;
+import com.cubrid.common.ui.cubrid.synonym.action.AlterSynonymAction;
+import com.cubrid.common.ui.cubrid.synonym.action.DropSynonymAction;
+import com.cubrid.common.ui.cubrid.synonym.action.NewSynonymAction;
 import com.cubrid.common.ui.spi.action.ActionManager;
 import com.cubrid.common.ui.spi.event.CubridNodeChangedEvent;
 import com.cubrid.common.ui.spi.event.CubridNodeChangedEventType;
@@ -79,22 +78,16 @@ import com.cubrid.common.ui.spi.model.ICubridNode;
 import com.cubrid.common.ui.spi.model.ISchemaNode;
 import com.cubrid.common.ui.spi.model.NodeType;
 import com.cubrid.common.ui.spi.part.CubridEditorPart;
-import com.cubrid.common.ui.spi.progress.OpenTriggerDetailInfoPartProgress;
+import com.cubrid.common.ui.spi.progress.OpenSynonymDetailInfoPartProgress;
 import com.cubrid.common.ui.spi.util.CommonUITool;
 
-/**
- * Trigger Dashboard
- *
- * @author fulei
- * @version 1.0 - 2013-1-9 created by fulei
- */
-public class TriggerDashboardEditorPart extends CubridEditorPart {
+public class SynonymDashboardEditorPart extends CubridEditorPart {
 
-	public static final String ID = TriggerDashboardEditorPart.class.getName();
-	private boolean triggerChangeFlag;
+	public static final String ID = SynonymDashboardEditorPart.class.getName();
+	private boolean synonymChangeFlag;
 	private CubridDatabase database;
-	private List<Trigger> triggerList = null;
-	private TableViewer triggersDetailInfoTable;
+	private List<Synonym> synonymList = null;
+	private TableViewer synonymsDetailInfoTable;
 	
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout(1, false));
@@ -113,34 +106,34 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 		});
 		
 		new ToolItem(toolBar, SWT.SEPARATOR);
-		ToolItem addSerailItem = new ToolItem(toolBar, SWT.NONE);
-		addSerailItem.setText(Messages.triggersDetailInfoPartCreateTriggerBtn);
-		addSerailItem.setImage(CommonUIPlugin.getImage("icons/action/trigger_add.png"));
-		addSerailItem.addSelectionListener(new SelectionAdapter() {
+		ToolItem addItem = new ToolItem(toolBar, SWT.NONE);
+		addItem.setText(Messages.synonymsDetailInfoPartCreateSynonymBtn);
+		addItem.setImage(CommonUIPlugin.getImage("icons/action/trigger_add.png"));
+		addItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(final SelectionEvent event) {
-				addTrigger();
+				addSynonym();
 			}
 		});
 		
-		ToolItem editSerailItem = new ToolItem(toolBar, SWT.NONE);
-		editSerailItem.setText(Messages.triggersDetailInfoPartEditTriggerBtn);
-		editSerailItem.setImage(CommonUIPlugin.getImage("icons/action/trigger_edit.png"));
-		editSerailItem.addSelectionListener(new SelectionAdapter() {
+		ToolItem editlItem = new ToolItem(toolBar, SWT.NONE);
+		editlItem.setText(Messages.synonymsDetailInfoPartEditSynonymBtn);
+		editlItem.setImage(CommonUIPlugin.getImage("icons/action/trigger_edit.png"));
+		editlItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(final SelectionEvent event) {
-				editTrigger();
+				editSynonym();
 			}
 		});
 		
-		ToolItem dropSerailItem = new ToolItem(toolBar, SWT.NONE);
-		dropSerailItem.setText(Messages.triggersDetailInfoPartDropTriggerBtn);
-		dropSerailItem.setImage(CommonUIPlugin.getImage("icons/action/trigger_delete.png"));
-		dropSerailItem.addSelectionListener(new SelectionAdapter() {
+		ToolItem dropItem = new ToolItem(toolBar, SWT.NONE);
+		dropItem.setText(Messages.synonymsDetailInfoPartDropSynonymBtn);
+		dropItem.setImage(CommonUIPlugin.getImage("icons/action/trigger_delete.png"));
+		dropItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(final SelectionEvent event) {
-				dropTrigger();
+				dropSynonym();
 			}
 		});;
 		
-		createTriggersDetailInfoTable(parent);
+		createSynonymsDetailInfoTable(parent);
 		this.setInputs();
 		
 	}
@@ -149,65 +142,46 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 	 * create table
 	 * @param parent
 	 */
-	public void createTriggersDetailInfoTable(Composite parent) {
+	public void createSynonymsDetailInfoTable(Composite parent) {
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		tableComposite.setLayout(new FillLayout());
 		tableComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true));
 
-		triggersDetailInfoTable = new TableViewer(tableComposite, SWT.H_SCROLL
+		synonymsDetailInfoTable = new TableViewer(tableComposite, SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
-		triggersDetailInfoTable.getTable().setHeaderVisible(true);
-		triggersDetailInfoTable.getTable().setLinesVisible(true);
+		synonymsDetailInfoTable.getTable().setHeaderVisible(true);
+		synonymsDetailInfoTable.getTable().setLinesVisible(true);
 		
 		final TableViewerColumn ownerColumn = new TableViewerColumn(
-				triggersDetailInfoTable, SWT.LEFT);
-		if (database != null && database.getDatabaseInfo().isSupportUserSchema()) {
-			ownerColumn.getColumn().setWidth(80);
-		} else {
-			ownerColumn.getColumn().setWidth(0);
-		}
-		ownerColumn.getColumn().setText(Messages.triggersDetailInfoPartTableOwnerCol);
+				synonymsDetailInfoTable, SWT.LEFT);
+		ownerColumn.getColumn().setWidth(150);
+		ownerColumn.getColumn().setText(Messages.synonymsDetailInfoPartTableOwnerCol);
 		
 		final TableViewerColumn nameColumn = new TableViewerColumn(
-				triggersDetailInfoTable, SWT.LEFT);
-		nameColumn.getColumn().setWidth(2);
-		nameColumn.getColumn().setText(Messages.triggersDetailInfoPartTableNameCol);
+				synonymsDetailInfoTable, SWT.LEFT);
+		nameColumn.getColumn().setWidth(200);
+		nameColumn.getColumn().setText(Messages.synonymsDetailInfoPartTableNameCol);
 		
-		final TableViewerColumn targetTableColumn = new TableViewerColumn(
-				triggersDetailInfoTable, SWT.LEFT);
-		targetTableColumn.getColumn().setWidth(120);
-		targetTableColumn.getColumn().setText(Messages.triggersDetailInfoPartTableTargetTableCol);
+		final TableViewerColumn targetOwnerColumn = new TableViewerColumn(
+				synonymsDetailInfoTable, SWT.LEFT);
+		targetOwnerColumn.getColumn().setWidth(150);
+		targetOwnerColumn.getColumn().setText(Messages.synonymsDetailInfoPartTableTargetOwnerCol);
 		
-		final TableViewerColumn eventTypeColumn = new TableViewerColumn(
-				triggersDetailInfoTable, SWT.LEFT);
-		eventTypeColumn.getColumn().setWidth(150);
-		eventTypeColumn.getColumn().setText(Messages.triggersDetailInfoPartTableEventTypeCol);
+		final TableViewerColumn targetNameColumn = new TableViewerColumn(
+				synonymsDetailInfoTable, SWT.LEFT);
+		targetNameColumn.getColumn().setWidth(200);
+		targetNameColumn.getColumn().setText(Messages.synonymsDetailInfoPartTableTargetNameCol);
 		
-		final TableViewerColumn triggerStatusColumn = new TableViewerColumn(
-				triggersDetailInfoTable, SWT.LEFT);
-		triggerStatusColumn.getColumn().setWidth(100);
-		triggerStatusColumn.getColumn().setText(Messages.triggersDetailInfoPartTableTriggerStatusCol);
+		final TableViewerColumn CommentColumn = new TableViewerColumn(
+				synonymsDetailInfoTable, SWT.LEFT);
+		CommentColumn.getColumn().setWidth(250);
+		CommentColumn.getColumn().setText(Messages.synonymsDetailInfoPartTableCommentCol);
 		
-		final TableViewerColumn triggerPriorityColumn = new TableViewerColumn(
-				triggersDetailInfoTable, SWT.LEFT);
-		triggerPriorityColumn.getColumn().setWidth(120);
-		triggerPriorityColumn.getColumn().setText(Messages.triggersDetailInfoPartTableTriggerPriorityCol);
+		synonymsDetailInfoTable.setComparator(new ColumnViewerSorter());
 		
-		final TableViewerColumn executionTimeColumn = new TableViewerColumn(
-				triggersDetailInfoTable, SWT.LEFT);
-		executionTimeColumn.getColumn().setWidth(100);
-		executionTimeColumn.getColumn().setText(Messages.triggersDetailInfoPartTableExecutionTimeCol);
-		
-		final TableViewerColumn actionTypeColumn = new TableViewerColumn(
-				triggersDetailInfoTable, SWT.LEFT);
-		actionTypeColumn.getColumn().setWidth(150);
-		actionTypeColumn.getColumn().setText(Messages.triggersDetailInfoPartTableActionTypeCol);
-		
-		triggersDetailInfoTable.setComparator(new ColumnViewerSorter());
-		
-		triggersDetailInfoTable.setContentProvider(new TriggersDetailTableViewerContentProvider());
-		triggersDetailInfoTable.setLabelProvider(new TriggersTableViewerLabelProvider());
+		synonymsDetailInfoTable.setContentProvider(new SynonymsDetailTableViewerContentProvider());
+		synonymsDetailInfoTable.setLabelProvider(new SynonymsTableViewerLabelProvider());
 		
 		registerContextMenu();
 	}
@@ -216,58 +190,56 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 	 * register context menu
 	 */
 	private void registerContextMenu() {
-		triggersDetailInfoTable.getTable().addFocusListener(new FocusAdapter() {
+		synonymsDetailInfoTable.getTable().addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent event) {
-				ActionManager.getInstance().changeFocusProvider(triggersDetailInfoTable.getTable());
+				ActionManager.getInstance().changeFocusProvider(synonymsDetailInfoTable.getTable());
 			}
 		});
 		
 		MenuManager menuManager = new MenuManager();
 		menuManager.setRemoveAllWhenShown(true);
 		
-		Menu contextMenu = menuManager.createContextMenu(triggersDetailInfoTable.getTable());
-		triggersDetailInfoTable.getTable().setMenu(contextMenu);
+		Menu contextMenu = menuManager.createContextMenu(synonymsDetailInfoTable.getTable());
+		synonymsDetailInfoTable.getTable().setMenu(contextMenu);
 		
 		Menu menu = new Menu(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.POP_UP);
 		
 		final MenuItem addSerialItem = new MenuItem(menu, SWT.PUSH);
-		addSerialItem.setText(Messages.triggersDetailInfoPartCreateTriggerBtn);
+		addSerialItem.setText(Messages.synonymsDetailInfoPartCreateSynonymBtn);
 		addSerialItem.setImage(CommonUIPlugin.getImage("icons/action/trigger_add.png"));
 		addSerialItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				addTrigger();
+				addSynonym();
 			}
 		});
 		
 		final MenuItem editSerialItem = new MenuItem(menu, SWT.PUSH);
-		editSerialItem.setText(Messages.triggersDetailInfoPartEditTriggerBtn);
+		editSerialItem.setText(Messages.synonymsDetailInfoPartEditSynonymBtn);
 		editSerialItem.setImage(CommonUIPlugin.getImage("icons/action/trigger_edit.png"));
 		editSerialItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				editTrigger();
+				editSynonym();
 			}
 		});
 		
 		final MenuItem dropSerialItem = new MenuItem(menu, SWT.PUSH);
-		dropSerialItem.setText(Messages.triggersDetailInfoPartDropTriggerBtn);
+		dropSerialItem.setText(Messages.synonymsDetailInfoPartDropSynonymBtn);
 		dropSerialItem.setImage(CommonUIPlugin.getImage("icons/action/trigger_delete.png"));
 		dropSerialItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				dropTrigger();
+				dropSynonym();
 			}
 		});
 		
-		
-		
-		triggersDetailInfoTable.getTable().setMenu(menu);
+		synonymsDetailInfoTable.getTable().setMenu(menu);
 	}
 	
 	/**
 	 * addTrigger
 	 */
-	public void addTrigger () {
-		NewTriggerAction action = (NewTriggerAction) ActionManager.getInstance().getAction(
-				NewTriggerAction.ID);
+	public void addSynonym () {
+		NewSynonymAction action = (NewSynonymAction) ActionManager.getInstance().getAction(
+				NewSynonymAction.ID);
 		action.run(database);
 		refresh();
 	}
@@ -275,55 +247,55 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 	/**
 	 * editTrigger
 	 */
-	public void editTrigger () {
-		TableItem[] items = triggersDetailInfoTable.getTable().getSelection();
+	public void editSynonym () {
+		TableItem[] items = synonymsDetailInfoTable.getTable().getSelection();
 		if (items.length != 0) {
 			TableItem item = items[0];
-			Trigger trigger = (Trigger) item.getData();
+			Synonym synonym = (Synonym) item.getData();
 			Set<String> typeSet = new HashSet<String>();
-			typeSet.add(NodeType.TRIGGER);
+			typeSet.add(NodeType.SYNONYM);
 
-			ICubridNode triggerNode = CommonUITool.findNode(database, typeSet,
-					trigger.getName());
-			if (triggerNode != null) {
-				AlterTriggerAction action = (AlterTriggerAction) ActionManager.getInstance().getAction(
-						AlterTriggerAction.ID);
-				if (action.run(database, (ISchemaNode) triggerNode) == IDialogConstants.OK_ID) {
+			ICubridNode Node = CommonUITool.findNode(database, typeSet,
+					synonym.getUniqueName());
+			if (Node != null) {
+				AlterSynonymAction action = (AlterSynonymAction) ActionManager.getInstance().getAction(
+						AlterSynonymAction.ID);
+				if (action.run(database, (ISchemaNode) Node) == IDialogConstants.OK_ID) {
 					refresh();
 				}
 			}
 		} else {
-			CommonUITool.openWarningBox(Messages.errTriggerNoSelection);
+			CommonUITool.openWarningBox(Messages.errSynonymNoSelection);
 		}
 	}
 	
 	/**
 	 * dropTrigger
 	 */
-	public void dropTrigger () {
-		TableItem[] items = triggersDetailInfoTable.getTable().getSelection();
+	public void dropSynonym () {
+		TableItem[] items = synonymsDetailInfoTable.getTable().getSelection();
 		if (items.length > 0) {
 			List<ISchemaNode> selectNodeList = new ArrayList<ISchemaNode>();
 			for (TableItem item : items) {
-				Trigger trigger = (Trigger) item.getData();
+				Synonym synonym = (Synonym) item.getData();
 				Set<String> typeSet = new HashSet<String>();
-				typeSet.add(NodeType.TRIGGER);
+				typeSet.add(NodeType.SYNONYM);
 
-				ICubridNode triggerNode = CommonUITool.findNode(database, typeSet,
-						trigger.getName());
-				selectNodeList.add((ISchemaNode)triggerNode);
+				ICubridNode Node = CommonUITool.findNode(database, typeSet,
+						synonym.getUniqueName());
+				selectNodeList.add((ISchemaNode)Node);
 			}
 			
 			if (selectNodeList.size() > 0) {
-				DropTriggerAction action = (DropTriggerAction) ActionManager.getInstance().getAction(
-						DropTriggerAction.ID);
+				DropSynonymAction action = (DropSynonymAction) ActionManager.getInstance().getAction(
+						DropSynonymAction.ID);
 				
 				ISchemaNode[] nodeArr = new ISchemaNode[selectNodeList.size()];
 				action.run(selectNodeList.toArray(nodeArr));
 				refresh();
 			}
 		} else {
-			CommonUITool.openWarningBox(Messages.errTriggerNoSelection);
+			CommonUITool.openWarningBox(Messages.errSynonymNoSelection);
 		}
 	}
 	
@@ -331,13 +303,13 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 	 * refresh data
 	 */
 	public void refresh () {
-		OpenTriggerDetailInfoPartProgress progress = new OpenTriggerDetailInfoPartProgress(database);
-		progress.loadTriggerInfoList();
+		OpenSynonymDetailInfoPartProgress progress = new OpenSynonymDetailInfoPartProgress(database);
+		progress.loadSynonymInfoList();
 		if (progress.isSuccess()) {
-			triggerList = progress.getTriggerList();
+			synonymList = progress.getSynonymList();
 			setInputs();
 		}
-		triggerChangeFlag = false;
+		synonymChangeFlag = false;
 	}
 	
 	/* (non-Javadoc)
@@ -348,10 +320,10 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 			throws PartInitException {
 		super.init(site, input);
 		this.database = (CubridDatabase)input.getAdapter(CubridDatabase.class);
-		this.triggerList = (List<Trigger>)input.getAdapter(List.class);
+		this.synonymList = (List<Synonym>)input.getAdapter(List.class);
 		
 		StringBuilder partName = new StringBuilder(
-				Messages.triggersDetailInfoPartTitle);
+				Messages.synonymsDetailInfoPartTitle);
 		partName.append(" [").append(database.getUserName()).append("@")
 				.append(database.getName()).append(":")
 				.append(database.getDatabaseInfo().getBrokerIP()).append("]");
@@ -359,14 +331,14 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 	}
 	
 	public void setInputs() {
-		triggersDetailInfoTable.setInput(triggerList);
-		triggersDetailInfoTable.refresh();
+		synonymsDetailInfoTable.setInput(synonymList);
+		synonymsDetailInfoTable.refresh();
 		pack();
 	}
 	
 	public void pack () {
-		for (int i = 0; i < triggersDetailInfoTable.getTable().getColumnCount(); i++) {
-			TableColumn column = triggersDetailInfoTable.getTable().getColumn(i);
+		for (int i = 0; i < synonymsDetailInfoTable.getTable().getColumnCount(); i++) {
+			TableColumn column = synonymsDetailInfoTable.getTable().getColumn(i);
 			if (column.getWidth() > 600) {
 				column.setWidth(600);
 			}
@@ -379,10 +351,10 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 	public void nodeChanged(CubridNodeChangedEvent event) {
 		if (event.getSource() instanceof DefaultSchemaNode) {
 			DefaultSchemaNode node = (DefaultSchemaNode)event.getSource();
-			if ((node.getType().equals(NodeType.TRIGGER_FOLDER)
-					||node.getType().equals(NodeType.TRIGGER)
+			if ((node.getType().equals(NodeType.SYNONYM_FOLDER)
+					||node.getType().equals(NodeType.SYNONYM)
 					&& node.getDatabase().equals(database) )) {
-				triggerChangeFlag = true;
+				synonymChangeFlag = true;
 			}
 		}
 		if (CubridNodeChangedEventType.SERVER_DISCONNECTED.equals(event.getType())) {
@@ -397,20 +369,20 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 
 	public void setFocus() {
 		//if view info chaned, ask whether refresh
-		if (triggerChangeFlag) {
+		if (synonymChangeFlag) {
 			if (CommonUITool.openConfirmBox(com.cubrid.common.ui.common.Messages.dashboardConfirmRefreshDataMsg)) {
 				refresh();
 			}
-			triggerChangeFlag = false;
+			synonymChangeFlag = false;
 		}
 	}
 	
 	/**
-	 * trigger table label provider
+	 * synonym table label provider
 	 * @author Administrator
 	 *
 	 */
-	public class TriggersTableViewerLabelProvider extends LabelProvider implements
+	public class SynonymsTableViewerLabelProvider extends LabelProvider implements
 	ITableLabelProvider {
 
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -418,42 +390,15 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof Trigger) {
-				Trigger trigger = (Trigger)element;
-				if (trigger != null) {
-					String owner = null;
-					if (trigger.getOwner() != null) {
-						owner = trigger.getOwner().toUpperCase(Locale.getDefault());
-					}
-					String name = trigger.getName();
-					if (database.getDatabaseInfo().isSupportUserSchema()) {
-						if (owner == null || owner.isEmpty()) {
-							int idx = name.indexOf(".");
-							if (idx > 0) {
-								owner = name.substring(0, idx).toUpperCase(Locale.getDefault());
-								name = name.substring(idx + 1);
-							} else {
-								owner = "";
-							}
-						}
-					} else {
-						if (owner == null || owner.isEmpty()) {
-							owner = "";
-						}
-					}
+			if (element instanceof Synonym) {
+				Synonym synonym = (Synonym) element;
+				if (synonym != null) {
 					switch (columnIndex) {
-						case 0 : return owner;
-						case 1 : return name;
-						case 2 : return trigger.getTarget_class();
-						case 3 : return trigger.getEventType();
-						case 4 : 
-							return trigger.getStatus();
-						case 5 : 
-							return trigger.getPriority();
-						case 6 :
-							return trigger.getActionTime();
-						case 7 :
-							return trigger.getActionType();
+						case 0 : return synonym.getOwner();
+						case 1 : return synonym.getName();
+						case 2 : return synonym.getTargetOwner();
+						case 3 : return synonym.getTargetName();
+						case 4 : return synonym.getComment();
 					}
 				}
 			}
@@ -466,7 +411,7 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 	 * @author fulei
 	 *
 	 */
-	public class TriggersDetailTableViewerContentProvider implements IStructuredContentProvider {
+	public class SynonymsDetailTableViewerContentProvider implements IStructuredContentProvider {
 		/**
 		 * getElements
 		 *
@@ -476,8 +421,8 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 		@SuppressWarnings("unchecked")
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof List) {
-				List<Trigger> list = (List<Trigger>) inputElement;
-				Trigger[] nodeArr = new Trigger[list.size()];
+				List<Synonym> list = (List<Synonym>) inputElement;
+				Synonym[] nodeArr = new Synonym[list.size()];
 				return list.toArray(nodeArr);
 			}
 		
@@ -512,9 +457,9 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 			ViewerSorter {
 		
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			Trigger t1 = (Trigger)e1;
-			Trigger t2 = (Trigger)e2;
-			return t1.getName().compareTo(t2.getName());
+			Synonym t1 = (Synonym)e1;
+			Synonym t2 = (Synonym)e2;
+			return t1.getOwner().compareTo(t2.getOwner());
 		}
 	}
 	

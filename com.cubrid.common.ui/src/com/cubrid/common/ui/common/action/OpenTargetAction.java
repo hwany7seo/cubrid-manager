@@ -43,6 +43,8 @@ import com.cubrid.common.core.util.ThreadUtil;
 import com.cubrid.common.ui.common.navigator.CubridNavigatorView;
 import com.cubrid.common.ui.cubrid.serial.editor.SerialDashboardEditorPart;
 import com.cubrid.common.ui.cubrid.serial.editor.SerialDashboardInput;
+import com.cubrid.common.ui.cubrid.synonym.editor.SynonymDashboardEditorPart;
+import com.cubrid.common.ui.cubrid.synonym.editor.SynonymDashboardInput;
 import com.cubrid.common.ui.cubrid.table.dashboard.control.TableDashboardInput;
 import com.cubrid.common.ui.cubrid.table.dashboard.control.TableDashboardPart;
 import com.cubrid.common.ui.cubrid.trigger.editor.TriggerDashboardEditorPart;
@@ -59,6 +61,7 @@ import com.cubrid.common.ui.spi.model.DefaultSchemaNode;
 import com.cubrid.common.ui.spi.model.ICubridNode;
 import com.cubrid.common.ui.spi.model.NodeType;
 import com.cubrid.common.ui.spi.progress.OpenSerialDetailInfoPartProgress;
+import com.cubrid.common.ui.spi.progress.OpenSynonymDetailInfoPartProgress;
 import com.cubrid.common.ui.spi.progress.OpenTablesDetailInfoPartProgress;
 import com.cubrid.common.ui.spi.progress.OpenTriggerDetailInfoPartProgress;
 import com.cubrid.common.ui.spi.progress.OpenViewsDetailInfoPartProgress;
@@ -184,7 +187,23 @@ public class OpenTargetAction extends SelectionAction {
 					}
 				}
 				openTriggersDetailInfoEditor(NodeUtil.getCubridDatabase(node));
-			}else if(NodeUtil.isUserFolderNode(node)) {
+			} else if (NodeUtil.isSynonymFolderNode(node)) {
+				CubridNavigatorView view = CubridNavigatorView.findNavigationView();
+
+				if (view == null) {
+					return;
+				}
+
+				//if not expand ,expand the node and wait until all children be added
+				TreeViewer treeViewer = view.getViewer();
+				if (!treeViewer.getExpandedState(node)) {
+					treeViewer.expandToLevel(node, 1);
+					while (node.getChildren().size() == 0) {
+						ThreadUtil.sleep(500);
+					}
+				}
+				openSynonymsDetailInfoEditor(NodeUtil.getCubridDatabase(node));
+			} else if(NodeUtil.isUserFolderNode(node)) {
 				CubridNavigatorView view = CubridNavigatorView.findNavigationView();
 
 				if (view == null) {
@@ -349,6 +368,40 @@ public class OpenTargetAction extends SelectionAction {
 			TriggerDashboardEditorPart triggerDetailInfoPart = (TriggerDashboardEditorPart)editorPart;
 			window.getActivePage().activate(triggerDetailInfoPart);
 			triggerDetailInfoPart.refresh();
+		}
+	}
+	
+	/**
+	 * open synonym detail info part
+	 * @param database
+	 */
+	public void openSynonymsDetailInfoEditor(CubridDatabase database) {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (null == window) {
+			return;
+		}
+
+		if (database == null) {
+			return;
+		}
+		
+		/*Check it open same editor*/
+		IEditorPart editorPart = getOpenedEditorPart(database, SynonymDashboardEditorPart.ID);
+		if (editorPart == null) {
+			OpenSynonymDetailInfoPartProgress progress = new OpenSynonymDetailInfoPartProgress(database);
+			progress.loadSynonymInfoList();
+			if (progress.isSuccess()) {
+				SynonymDashboardInput input = new SynonymDashboardInput(database, progress.getSynonymList());
+				try {
+					window.getActivePage().openEditor(input, SynonymDashboardEditorPart.ID);
+				} catch (PartInitException e) {
+					LOGGER.error("Can not initialize the synonym view list UI.", e);
+				}
+			}
+		} else {
+			SynonymDashboardEditorPart synonymDetailInfoPart = (SynonymDashboardEditorPart)editorPart;
+			window.getActivePage().activate(synonymDetailInfoPart);
+			synonymDetailInfoPart.refresh();
 		}
 	}
 	

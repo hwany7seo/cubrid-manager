@@ -37,6 +37,7 @@ import java.util.Map;
 import com.cubrid.common.core.common.model.IDatabaseSpec;
 import com.cubrid.common.core.common.model.SchemaInfo;
 import com.cubrid.common.core.common.model.SerialInfo;
+import com.cubrid.common.core.common.model.Synonym;
 import com.cubrid.common.core.common.model.Trigger;
 import com.cubrid.common.core.util.FileUtil;
 import com.cubrid.common.core.util.QueryUtil;
@@ -77,6 +78,8 @@ public class DatabaseInfo implements IDatabaseSpec {
 	private String jdbcAttrs = null;
 	// all trigger
 	private List<Trigger> triggerList = null;
+	// all synonym
+	private List<Synonym> synonymList = null;
 	// all classes
 	private List<ClassInfo> userTableInfoList = null;
 	private List<ClassInfo> userViewInfoList = null;
@@ -194,6 +197,7 @@ public class DatabaseInfo implements IDatabaseSpec {
 			partitionedTableMap = null;
 			dbSpaceInfoList = null;
 			triggerList = null;
+			synonymList = null;
 			backupPlanInfoList = null;
 			queryPlanInfoList = null;
 			spProcedureInfoList = null;
@@ -389,6 +393,31 @@ public class DatabaseInfo implements IDatabaseSpec {
 		}
 	}
 
+	/**
+	 * 
+	 * Get all synonyms list
+	 * 
+	 * @return List<Synonym>
+	 */
+	public List<Synonym> getSynonymList() {
+		synchronized (this) {
+			return synonymList;
+		}
+	}
+
+	/**
+	 * 
+	 * Set synonyms list
+	 * 
+	 * @param synonymList List<Synonym> The given list that includes the
+	 *        Synonym of Synonyms
+	 */
+	public void setSynonymList(List<Synonym> synonymList) {
+		synchronized (this) {
+			this.synonymList = synonymList;
+		}
+	}
+	
 	/**
 	 * 
 	 * Get class info list
