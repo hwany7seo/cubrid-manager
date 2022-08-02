@@ -47,6 +47,7 @@ import com.cubrid.common.ui.spi.model.ICubridNode;
 import com.cubrid.common.ui.spi.model.ICubridNodeLoader;
 import com.cubrid.common.ui.spi.model.NodeType;
 import com.cubrid.common.ui.spi.model.loader.CubridSerialFolderLoader;
+import com.cubrid.common.ui.spi.model.loader.CubridSynonymFolderLoader;
 import com.cubrid.common.ui.spi.model.loader.CubridTriggerFolderLoader;
 import com.cubrid.common.ui.spi.model.loader.schema.CubridTablesFolderLoader;
 import com.cubrid.common.ui.spi.model.loader.schema.CubridViewsFolderLoader;
@@ -97,6 +98,7 @@ public class CubridDatabaseLoader extends
 	private static final String VIEWS_FOLDER_NAME = Messages.msgViewsFolderName;
 	private static final String SP_FOLDER_NAME = Messages.msgSpFolderName;
 	private static final String TRIGGER_FOLDER_NAME = Messages.msgTriggerFolderName;
+	private static final String SYNONYM_FOLDER_NAME = Messages.msgSynonymFolderName;
 	private static final String SERIAL_FOLDER_NAME = Messages.msgSerialFolderName;
 
 	public static final String JOB_AUTO_FOLDER_ID = "Job automation";
@@ -193,6 +195,10 @@ public class CubridDatabaseLoader extends
 			addUserFolder(monitor, database);
 			// add triggers folder
 			addTriggerFolder(monitor, database);
+			// add synonyms folder
+			if (database.getDatabaseInfo().isSupportSynonym()) {
+				addSynonymFolder(monitor, database);
+			}
 			// add stored procedure folder
 			addProcedureFolder(monitor, database);
 			// add job automation folder
@@ -371,6 +377,39 @@ public class CubridDatabaseLoader extends
 		}
 	}
 
+	/**
+	 * Add Synonym folder
+	 * 
+	 * @param monitor the IProgressMonitor
+	 * @param database the CubridDatabase
+	 */
+	private void addSynonymFolder(final IProgressMonitor monitor,
+			CubridDatabase database) {
+		String synonymFolderId = database.getId() + NODE_SEPARATOR
+				+ CubridSynonymFolderLoader.SYNONYM_FOLDER_ID;
+		ICubridNode synonymFolder = database.getChild(synonymFolderId);
+		//IsDBAUserTask
+		if (synonymFolder == null) {
+			synonymFolder = new DefaultSchemaNode(synonymFolderId,
+					SYNONYM_FOLDER_NAME, "icons/navigator/synonym_group.png");
+			synonymFolder.setType(NodeType.SYNONYM_FOLDER);
+			synonymFolder.setContainer(true);
+			ICubridNodeLoader loader = new CubridSynonymFolderLoader();
+			loader.setLevel(getLevel());
+			synonymFolder.setLoader(loader);
+			database.addChild(synonymFolder);
+			if (getLevel() == DEFINITE_LEVEL) {
+				synonymFolder.getChildren(monitor);
+			}
+		} else {
+			if (synonymFolder.getLoader() != null
+					&& synonymFolder.getLoader().isLoaded()) {
+				synonymFolder.getLoader().setLoaded(false);
+				synonymFolder.getChildren(monitor);
+			}
+		}
+	}
+	
 	/**
 	 * Add view folder
 	 * 

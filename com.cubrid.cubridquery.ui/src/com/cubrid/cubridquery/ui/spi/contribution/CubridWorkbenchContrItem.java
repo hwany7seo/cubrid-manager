@@ -147,6 +147,7 @@ public class CubridWorkbenchContrItem extends
 				|| cubridNode.getType() == NodeType.TABLE_FOLDER
 				|| cubridNode.getType() == NodeType.VIEW_FOLDER
 				|| cubridNode.getType() == NodeType.TRIGGER_FOLDER
+				|| cubridNode.getType() == NodeType.SYNONYM_FOLDER
 				|| cubridNode.getType() == NodeType.SERIAL_FOLDER
 				|| cubridNode.getType() == NodeType.USER_FOLDER) {
 
@@ -186,6 +187,13 @@ public class CubridWorkbenchContrItem extends
 					treeViewer.expandToLevel(cubridNode, 1);
 				}
 				openTriggersDetailInfoPart(database);
+			} else if (cubridNode.getType() == NodeType.SYNONYM_FOLDER) {
+				//if not expand ,expand the node
+				//if not open child node ,edit serial from dashboard can not open edit dialog
+				if (!treeViewer.getExpandedState(cubridNode)) {
+					treeViewer.expandToLevel(cubridNode, 1);
+				}
+				openSynonymsDetailInfoPart(database);
 			} else if (cubridNode.getType() == NodeType.SERIAL_FOLDER) {
 				//if not expand ,expand the node
 				//if not open child node ,edit trigger from dashboard can not open edit dialog
@@ -263,6 +271,15 @@ public class CubridWorkbenchContrItem extends
 		action.openTriggersDetailInfoEditor(database);
 	}
 
+	/**
+	 * openSynonymsDetailInfoPart
+	 * @param CubridDatabase database
+	 */
+	public void openSynonymsDetailInfoPart(CubridDatabase database) {
+		OpenTargetAction action = new OpenTargetAction();
+		action.openSynonymsDetailInfoEditor(database);
+	}
+	
 	/**
 	 * open user InfoPart
 	 *

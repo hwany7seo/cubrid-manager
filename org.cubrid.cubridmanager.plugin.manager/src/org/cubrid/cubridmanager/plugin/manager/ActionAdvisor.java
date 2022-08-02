@@ -57,6 +57,7 @@ import com.cubrid.common.ui.compare.schema.action.SchemaCompareWizardAction;
 import com.cubrid.common.ui.cubrid.database.erwin.action.ExportERwinAction;
 import com.cubrid.common.ui.cubrid.database.erwin.action.ImportERwinAction;
 import com.cubrid.common.ui.cubrid.serial.action.CreateSerialAction;
+import com.cubrid.common.ui.cubrid.synonym.action.NewSynonymAction;
 import com.cubrid.common.ui.cubrid.table.action.CreateViewAction;
 import com.cubrid.common.ui.cubrid.table.action.ExportWizardAction;
 import com.cubrid.common.ui.cubrid.table.action.ImportWizardAction;
@@ -272,6 +273,7 @@ public class ActionAdvisor extends AbsActionAdvisor {
 		schemaActionManager.add(manager.getAction(CreateViewAction.ID));
 		schemaActionManager.add(manager.getAction(CreateSerialAction.ID));
 		schemaActionManager.add(manager.getAction(NewTriggerAction.ID));
+		schemaActionManager.add(manager.getAction(NewSynonymAction.ID));
 		ActionContributionItem schemaItems = new ActionContributionItem(
 				schemaDropAction);
 		schemaItems.setMode(ActionContributionItem.MODE_FORCE_TEXT);

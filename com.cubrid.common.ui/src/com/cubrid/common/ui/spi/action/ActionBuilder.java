@@ -63,6 +63,9 @@ import com.cubrid.common.ui.cubrid.procedure.action.EditProcedureAction;
 import com.cubrid.common.ui.cubrid.serial.action.CreateSerialAction;
 import com.cubrid.common.ui.cubrid.serial.action.DeleteSerialAction;
 import com.cubrid.common.ui.cubrid.serial.action.EditSerialAction;
+import com.cubrid.common.ui.cubrid.synonym.action.AlterSynonymAction;
+import com.cubrid.common.ui.cubrid.synonym.action.DropSynonymAction;
+import com.cubrid.common.ui.cubrid.synonym.action.NewSynonymAction;
 import com.cubrid.common.ui.cubrid.table.action.ColumnSelectCountAction;
 import com.cubrid.common.ui.cubrid.table.action.ColumnSelectSqlAction;
 import com.cubrid.common.ui.cubrid.table.action.CreateLikeTableAction;
@@ -401,7 +404,25 @@ public class ActionBuilder {
 				Messages.dropTriggerActionName,
 				loadImage("icons/action/trigger_delete.png"));
 		registerAction(dropTriggerAction);
+		// synonym related action
+		IAction newSynonymAction = new NewSynonymAction(
+				shell,
+				Messages.newSynonymActionName,
+				loadImage("icons/action/trigger_add.png"),
+				loadImage("icons/action/trigger_add_disabled.png"));
+		registerAction(newSynonymAction);
 
+		IAction alterSynonymAction = new AlterSynonymAction(
+				shell,
+				Messages.alterSynonymActionName,
+				loadImage("icons/action/trigger_edit.png"));
+		registerAction(alterSynonymAction);
+
+		IAction dropSynonymAction = new DropSynonymAction(
+				shell,
+				Messages.dropSynonymActionName,
+				loadImage("icons/action/trigger_delete.png"));
+		registerAction(dropSynonymAction);
 		// serial related action
 		IAction deleteSerialAction = new DeleteSerialAction(
 				shell,

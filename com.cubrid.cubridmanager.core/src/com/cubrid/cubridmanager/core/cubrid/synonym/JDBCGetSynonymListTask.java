@@ -25,37 +25,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package com.cubrid.cubridmanager.core.cubrid.table.task;
+
+package com.cubrid.cubridmanager.core.cubrid.synonym;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 
+import com.cubrid.common.core.common.model.Synonym;
 import com.cubrid.common.core.util.LogUtil;
-import com.cubrid.common.core.util.QuerySyntax;
 import com.cubrid.cubridmanager.core.Messages;
 import com.cubrid.cubridmanager.core.common.jdbc.JDBCTask;
 import com.cubrid.cubridmanager.core.cubrid.database.model.DatabaseInfo;
 
-/**
- * Create like table task
- * 
- * @author pangqiren
- * @version 1.0 - 2010-4-19 created by pangqiren
- */
-public class CreateLikeTableTask extends JDBCTask {
-	private static final Logger LOGGER = LogUtil.getLogger(CreateLikeTableTask.class);
-	private String newTableName;
-	private String newOwnerName;
-	private String likeTableName;
-	private String likeOwnerName;
-	private DatabaseInfo databaseInfo;
+public class JDBCGetSynonymListTask extends JDBCTask {
+	private static final Logger LOGGER = LogUtil.getLogger(JDBCGetSynonymListTask.class);
+	private final List<Synonym> synonyms = new ArrayList<Synonym>();
 
-	public CreateLikeTableTask(DatabaseInfo dbInfo) {
-		super("CreateLikeTable", dbInfo);
-		databaseInfo = dbInfo;
+	public JDBCGetSynonymListTask(DatabaseInfo dbInfo) {
+		super("GetSynonymList", dbInfo);
 	}
 
+	/**
+	 * Execute select sql.
+	 */
 	public void execute() {
 		try {
 			if (errorMsg != null && errorMsg.trim().length() > 0) {
@@ -65,57 +60,40 @@ public class CreateLikeTableTask extends JDBCTask {
 				errorMsg = Messages.error_getConnection;
 				return;
 			}
-			
-			String sql;
-			if (isSupportUserSchema()) {
-				sql = "CREATE TABLE " + QuerySyntax.escapeKeyword(newOwnerName) + "." + QuerySyntax.escapeKeyword(newTableName) + " LIKE "
-					+ QuerySyntax.escapeKeyword(likeOwnerName) + "." + QuerySyntax.escapeKeyword(likeTableName);
-			} else {
-				sql = "CREATE TABLE " + QuerySyntax.escapeKeyword(newTableName) + " LIKE "
-						+ QuerySyntax.escapeKeyword(likeTableName);
-			}
-			
 			stmt = connection.createStatement();
-			stmt.execute(sql);
-			connection.commit();
+			String sql = "select * from db_synonym";
+			
+			// [TOOLS-2425]Support shard broker
+			sql = DatabaseInfo.wrapShardQuery(databaseInfo, sql);
+
+			rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				Synonym synonym = new Synonym();
+				synonym.setName(rs.getString("synonym_name"));
+				synonym.setOwner(rs.getString("synonym_owner_name"));
+				synonym.setTargetName(rs.getString("target_name"));
+				synonym.setTargetOwner(rs.getString("target_owner_name"));
+				synonym.setComment(rs.getString("comment"));
+				synonyms.add(synonym);
+			}
 		} catch (SQLException e) {
-			LOGGER.error("", e);
 			errorMsg = e.getMessage();
+			if (errorMsg.indexOf("Select is not authorized on db_trigger") >= 0) {
+				errorMsg = "";
+			}
+
+			LOGGER.error(e.getMessage(), e);
 		} finally {
 			finish();
 		}
 	}
 
 	/**
-	 * Set new table name
+	 * Return whether adding synonym task is executed well
 	 * 
-	 * @param tableName The string
+	 * @return List<Synonym>
 	 */
-	public void setTableName(String tableName) {
-		newTableName = tableName;
-	}
-
-	public void setOwnerName(String ownerName) {
-		newOwnerName = ownerName;
-	}
-	
-	/**
-	 * Set like table name
-	 * 
-	 * @param tableName The string
-	 */
-	public void setLikeTableName(String tableName) {
-		likeTableName = tableName;
-	}
-	
-	public void setLikeOwnerName(String ownerName) {
-		likeOwnerName = ownerName;
-	}
-	
-	private boolean isSupportUserSchema() {
-		if (databaseInfo != null) {
-			return databaseInfo.isSupportUserSchema();
-		} 
-		return false;
+	public List<Synonym> getSynonymInfoList() {
+		return synonyms;
 	}
 }

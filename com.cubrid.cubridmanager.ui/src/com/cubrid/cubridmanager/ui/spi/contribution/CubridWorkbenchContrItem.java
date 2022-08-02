@@ -277,6 +277,7 @@ public final class CubridWorkbenchContrItem extends WorkbenchContrItem {
 				NodeType.TABLE_FOLDER,
 				NodeType.VIEW_FOLDER,
 				NodeType.TRIGGER_FOLDER,
+				NodeType.SYNONYM_FOLDER,
 				NodeType.SERIAL_FOLDER,
 				NodeType.USER_FOLDER,
 				CubridNodeType.JOB_FOLDER });
@@ -313,6 +314,8 @@ public final class CubridWorkbenchContrItem extends WorkbenchContrItem {
 				openViewsDetailInfoPart(database);
 			} else if (StringUtil.isEqual(cubridNode.getType(), NodeType.TRIGGER_FOLDER)) {
 				openTriggersDetailInfoPart(database);
+			} else if (StringUtil.isEqual(cubridNode.getType(), NodeType.SYNONYM_FOLDER)) {
+				openSynonymsDetailInfoPart(database);
 			} else if (StringUtil.isEqual(cubridNode.getType(), NodeType.SERIAL_FOLDER)) {
 				openSerialsDetailInfoPart(database);
 			} else if (StringUtil.isEqual(cubridNode.getType(), CubridNodeType.JOB_FOLDER)) {
@@ -390,6 +393,16 @@ public final class CubridWorkbenchContrItem extends WorkbenchContrItem {
 		action.openTriggersDetailInfoEditor(database);
 	}
 
+	/**
+	 * openTriggersDetailInfoPart
+	 *
+	 * @param CubridDatabase database
+	 */
+	public void openSynonymsDetailInfoPart(CubridDatabase database) {
+		OpenTargetAction action = new OpenTargetAction();
+		action.openSynonymsDetailInfoEditor(database);
+	}
+	
 	/**
 	 * openJobDetailInfoPart
 	 *

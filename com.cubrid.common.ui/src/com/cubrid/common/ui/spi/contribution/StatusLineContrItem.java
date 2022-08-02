@@ -153,6 +153,8 @@ public class StatusLineContrItem {
 			return Messages.bind(Messages.msgSysViewNum, size);
 		} else if (NodeType.TRIGGER_FOLDER.equals(nodeType)) {
 			return Messages.bind(Messages.msgTriggerNum, size);
+		} else if (NodeType.SYNONYM_FOLDER.equals(nodeType)) {
+			return Messages.bind(Messages.msgSynonymNum, size);
 		} else if (NodeType.SERIAL_FOLDER.equals(nodeType)) {
 			return Messages.bind(Messages.msgSerialNum, size);
 		} else if (NodeType.STORED_PROCEDURE_FUNCTION_FOLDER.equals(nodeType)) {
