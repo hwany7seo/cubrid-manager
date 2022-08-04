@@ -188,8 +188,6 @@ public class CubridWorkbenchContrItem extends
 				}
 				openTriggersDetailInfoPart(database);
 			} else if (cubridNode.getType() == NodeType.SYNONYM_FOLDER) {
-				//if not expand ,expand the node
-				//if not open child node ,edit serial from dashboard can not open edit dialog
 				if (!treeViewer.getExpandedState(cubridNode)) {
 					treeViewer.expandToLevel(cubridNode, 1);
 				}

@@ -388,7 +388,6 @@ public class CubridDatabaseLoader extends
 		String synonymFolderId = database.getId() + NODE_SEPARATOR
 				+ CubridSynonymFolderLoader.SYNONYM_FOLDER_ID;
 		ICubridNode synonymFolder = database.getChild(synonymFolderId);
-		//IsDBAUserTask
 		if (synonymFolder == null) {
 			synonymFolder = new DefaultSchemaNode(synonymFolderId,
 					SYNONYM_FOLDER_NAME, "icons/navigator/synonym_group.png");

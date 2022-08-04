@@ -194,7 +194,6 @@ public class OpenTargetAction extends SelectionAction {
 					return;
 				}
 
-				//if not expand ,expand the node and wait until all children be added
 				TreeViewer treeViewer = view.getViewer();
 				if (!treeViewer.getExpandedState(node)) {
 					treeViewer.expandToLevel(node, 1);
