@@ -136,9 +136,9 @@ public class MenuProvider implements
 		} else if (NodeType.TRIGGER.equals(type)) { // trigger instance
 			addActionToManager(manager, getAction(AlterTriggerAction.ID));
 			addActionToManager(manager, getAction(DropTriggerAction.ID));
-		} else if (NodeType.SYNONYM_FOLDER.equals(type)) { // trigger
+		} else if (NodeType.SYNONYM_FOLDER.equals(type)) {
 			addActionToManager(manager, getAction(NewSynonymAction.ID));
-		} else if (NodeType.SYNONYM.equals(type)) { // trigger instance
+		} else if (NodeType.SYNONYM.equals(type)) {
 			addActionToManager(manager, getAction(AlterSynonymAction.ID));
 			addActionToManager(manager, getAction(DropSynonymAction.ID));
 		} else if (NodeType.SERIAL_FOLDER.equals(type)) {

@@ -171,7 +171,7 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 		
 		final TableViewerColumn nameColumn = new TableViewerColumn(
 				triggersDetailInfoTable, SWT.LEFT);
-		nameColumn.getColumn().setWidth(2);
+		nameColumn.getColumn().setWidth(150);
 		nameColumn.getColumn().setText(Messages.triggersDetailInfoPartTableNameCol);
 		
 		final TableViewerColumn targetTableColumn = new TableViewerColumn(
