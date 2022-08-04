@@ -27,7 +27,6 @@
  */
 package com.cubrid.common.ui.cubrid.synonym.action;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,15 +36,9 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 
 import com.cubrid.common.core.common.model.Synonym;
-import com.cubrid.common.core.schemacomment.SchemaCommentHandler;
-import com.cubrid.common.core.schemacomment.model.CommentType;
-import com.cubrid.common.core.schemacomment.model.SchemaComment;
 import com.cubrid.common.core.task.ITask;
-import com.cubrid.common.core.util.ApplicationType;
-import com.cubrid.common.core.util.CompatibleUtil;
 import com.cubrid.common.ui.cubrid.synonym.Messages;
 import com.cubrid.common.ui.cubrid.synonym.dialog.CreateSynonymDialog;
-import com.cubrid.common.ui.perspective.PerspectiveManager;
 import com.cubrid.common.ui.spi.CubridNodeManager;
 import com.cubrid.common.ui.spi.action.ActionManager;
 import com.cubrid.common.ui.spi.action.SelectionAction;
@@ -58,8 +51,6 @@ import com.cubrid.common.ui.spi.progress.CommonTaskExec;
 import com.cubrid.common.ui.spi.progress.ExecTaskWithProgress;
 import com.cubrid.common.ui.spi.progress.TaskExecutor;
 import com.cubrid.common.ui.spi.util.ActionSupportUtil;
-import com.cubrid.common.ui.spi.util.CommonUITool;
-import com.cubrid.cubridmanager.core.common.jdbc.JDBCConnectionManager;
 import com.cubrid.cubridmanager.core.cubrid.synonym.JDBCGetSynonymInfoTask;
 import com.cubrid.cubridmanager.core.cubrid.user.task.JDBCGetAllDbUserTask;
 
