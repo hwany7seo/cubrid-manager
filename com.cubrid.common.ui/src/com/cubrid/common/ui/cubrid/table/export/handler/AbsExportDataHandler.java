@@ -58,6 +58,7 @@ import org.slf4j.Logger;
 import com.cubrid.common.core.common.model.SchemaInfo;
 import com.cubrid.common.core.common.model.SerialInfo;
 import com.cubrid.common.core.common.model.Trigger;
+import com.cubrid.common.core.util.ApplicationType;
 import com.cubrid.common.core.util.Closer;
 import com.cubrid.common.core.util.CompatibleUtil;
 import com.cubrid.common.core.util.FileUtil;
@@ -68,6 +69,7 @@ import com.cubrid.common.core.util.StringUtil;
 import com.cubrid.common.ui.cubrid.table.dialog.PstmtParameter;
 import com.cubrid.common.ui.cubrid.table.event.handler.IExportDataEventHandler;
 import com.cubrid.common.ui.cubrid.table.progress.ExportConfig;
+import com.cubrid.common.ui.perspective.PerspectiveManager;
 import com.cubrid.common.ui.query.control.QueryExecuter;
 import com.cubrid.common.ui.spi.util.FieldHandlerUtils;
 import com.cubrid.cubridmanager.core.common.jdbc.JDBCConnectionManager;
@@ -78,6 +80,7 @@ import com.cubrid.cubridmanager.core.cubrid.table.model.SchemaDDL;
 import com.cubrid.cubridmanager.core.cubrid.trigger.model.TriggerDDL;
 import com.cubrid.cubridmanager.core.cubrid.trigger.task.GetTriggerListTask;
 import com.cubrid.cubridmanager.core.cubrid.trigger.task.JDBCGetTriggerInfoTask;
+import com.cubrid.cubridmanager.core.cubrid.trigger.task.JDBCGetTriggerListTask;
 import com.cubrid.jdbc.proxy.driver.CUBRIDBlobProxy;
 import com.cubrid.jdbc.proxy.driver.CUBRIDClobProxy;
 import com.cubrid.jdbc.proxy.driver.CUBRIDPreparedStatementProxy;
@@ -566,10 +569,17 @@ public abstract class AbsExportDataHandler {
 
 			// TOOLS-4299 export the triggers
 			if (triggerList != null) {
-				GetTriggerListTask triggerNameTask = new GetTriggerListTask(databaseInfo.getServerInfo());
-				triggerNameTask.setDbName(databaseInfo.getDbName());
-				triggerNameTask.execute();
-				triggerList = triggerNameTask.getTriggerInfoList();
+				if (ApplicationType.CUBRID_MANAGER.equals(PerspectiveManager.getInstance().getCurrentMode())) {
+					GetTriggerListTask triggerNameTask = new GetTriggerListTask(databaseInfo.getServerInfo());
+					triggerNameTask.setDbName(databaseInfo.getDbName());
+					triggerNameTask.execute();
+					triggerList = triggerNameTask.getTriggerInfoList();
+				} else {
+					JDBCGetTriggerListTask jdbcGetTriggerListTask = new JDBCGetTriggerListTask(databaseInfo);
+					jdbcGetTriggerListTask.execute();
+					triggerList = jdbcGetTriggerListTask.getTriggerInfoList();
+				}
+				
 				for (Trigger t: triggerList) {
 					triggerWriter.write(TriggerDDL.getDDL(t, databaseInfo.isSupportUserSchema()));
 					triggerWriter.write(StringUtil.NEWLINE);

@@ -76,7 +76,7 @@ public class JDBCGetTriggerInfoTask extends JDBCTask {
 
 			String sql;
 			if (databaseInfo.isSupportUserSchema()) {
-				sql = "SELECT t.*, c.target_class_name, t.owner.name as trigger_owner"
+				sql = "SELECT t.*, c.target_class_name, c.target_owner_name, t.owner.name as trigger_owner"
 					+ " FROM db_trigger t, db_trig c"
 					+ " WHERE t.name=c.trigger_name"
 					+ " AND t.owner.name=c.owner_name" 
@@ -103,7 +103,11 @@ public class JDBCGetTriggerInfoTask extends JDBCTask {
 				trigger.setOwner(rs.getString("trigger_owner"));
 				trigger.setConditionTime(JDBCGetTriggerListTask.getConditionTime(rs.getInt("condition_time")));
 				trigger.setEventType(JDBCGetTriggerListTask.getEventType(rs.getInt("event")));
-				trigger.setTarget_class(rs.getString("target_class_name"));
+				if (databaseInfo.isSupportUserSchema()) {
+					trigger.setTarget_class(rs.getString("target_owner_name") + "." + rs.getString("target_class_name"));
+				} else {
+					trigger.setTarget_class(rs.getString("target_class_name"));
+				}
 				trigger.setTarget_att(rs.getString("target_attribute"));
 				trigger.setCondition(rs.getString("condition"));
 				trigger.setActionTime(JDBCGetTriggerListTask.getActionTime(rs.getInt("action_time")));
