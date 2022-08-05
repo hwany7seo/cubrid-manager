@@ -1446,7 +1446,8 @@ public final class CommonUITool {
 				&& !node.getType().equals(NodeType.USER_FOLDER)
 				&& !node.getType().equals(NodeType.VIEW_FOLDER)
 				&& !node.getType().equals(NodeType.SERIAL_FOLDER)
-				&& !node.getType().equals(NodeType.TRIGGER_FOLDER)) {
+				&& !node.getType().equals(NodeType.TRIGGER_FOLDER)
+				&& !node.getType().equals(NodeType.SYNONYM_FOLDER)) {
 			return;
 		}
 		int count = 0;

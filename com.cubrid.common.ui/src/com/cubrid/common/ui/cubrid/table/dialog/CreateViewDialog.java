@@ -552,9 +552,7 @@ public class CreateViewDialog extends
 
 			DatabaseInfo dbInfo = database.getDatabaseInfo();
 			String ownerOld = "";
-			if (isNewTableFlag) {
-				ownerOld = ownerCombo.getText();
-			} else {
+			if (!isNewTableFlag) {
 				ownerOld = classInfo.getOwnerName();
 			}
 			String ownerNew = ownerCombo.getText();

@@ -64,6 +64,7 @@ import com.cubrid.common.ui.cubrid.database.erwin.action.ImportERwinAction;
 import com.cubrid.common.ui.cubrid.procedure.action.AddFunctionAction;
 import com.cubrid.common.ui.cubrid.procedure.action.AddProcedureAction;
 import com.cubrid.common.ui.cubrid.serial.action.CreateSerialAction;
+import com.cubrid.common.ui.cubrid.synonym.action.NewSynonymAction;
 import com.cubrid.common.ui.cubrid.table.action.CreateViewAction;
 import com.cubrid.common.ui.cubrid.table.action.ExportWizardAction;
 import com.cubrid.common.ui.cubrid.table.action.ImportWizardAction;
@@ -282,6 +283,16 @@ public class ActionAdvisor extends AbsActionAdvisor {
 							.getImageDescriptor("icons/toolbar/qb_new_trigger_off.png"));
 			ActionManager.getInstance().registerAction(newTriggerAction);
 
+			ProxyAction newSynonymAction = new ProxyAction(
+					NewSynonymAction.ID,
+					com.cubrid.common.ui.spi.Messages.newSynonymActionName
+							.replaceAll("\\.", ""),
+					Activator
+							.getImageDescriptor("icons/toolbar/qb_new_trigger_on.png"),
+					Activator
+							.getImageDescriptor("icons/toolbar/qb_new_trigger_off.png"));
+			ActionManager.getInstance().registerAction(newSynonymAction);
+			
 			ProxyAction importAction = new ProxyAction(
 					ImportWizardAction.ID,
 					com.cubrid.common.ui.spi.Messages.tableImportActionName
@@ -461,6 +472,8 @@ public class ActionAdvisor extends AbsActionAdvisor {
 		toolsMenu.add(manager.getAction(CreateSerialAction.ID));
 		toolsMenu.add(new Separator());
 		toolsMenu.add(manager.getAction(NewTriggerAction.ID));
+		toolsMenu.add(new Separator());
+		toolsMenu.add(manager.getAction(NewSynonymAction.ID));
 		toolsMenu.add(new Separator());
 		toolsMenu.add(manager.getAction(AddFunctionAction.ID));
 		toolsMenu.add(manager.getAction(AddProcedureAction.ID));

@@ -449,22 +449,17 @@ public class GetSchemaTask extends JDBCTask {
 				Map<String, String> fkInfo = new HashMap<String, String>();
 				fkInfo.put("PKTABLE_CAT", rs.getString("PKTABLE_CAT"));
 				fkInfo.put("PKTABLE_SCHEM", rs.getString("PKTABLE_SCHEM"));
-				String pkTableName;
+				String pkTableName = rs.getString("PKTABLE_NAME");;
+				String fkTableName = rs.getString("FKTABLE_NAME");
 				if (databaseInfo.isSupportUserSchema()) {
-					pkTableName = rs.getString("PKTABLE_NAME");
-					int dotIdx = pkTableName.indexOf(".");
-					if (dotIdx > 0) {
-						pkTableName = pkTableName.substring(0, dotIdx).toUpperCase(Locale.getDefault())
-								+ pkTableName.substring(dotIdx);
-					}
-				} else {
-					pkTableName = rs.getString("PKTABLE_NAME");
+					pkTableName = schemaNameToUpperCase(pkTableName);
+					fkTableName = schemaNameToUpperCase(fkTableName);
 				}
 				fkInfo.put("PKTABLE_NAME", pkTableName);
 				fkInfo.put("PKCOLUMN_NAME", rs.getString("PKCOLUMN_NAME"));
 				fkInfo.put("FKTABLE_CAT", rs.getString("FKTABLE_CAT"));
 				fkInfo.put("FKTABLE_SCHEM", rs.getString("FKTABLE_SCHEM"));
-				fkInfo.put("FKTABLE_NAME", rs.getString("FKTABLE_NAME"));
+				fkInfo.put("FKTABLE_NAME", fkTableName);
 				String fkColName = rs.getString("FKCOLUMN_NAME");
 				fkInfo.put("FKCOLUMN_NAME", fkColName);
 				fkInfo.put("KEY_SEQ", rs.getString("KEY_SEQ"));
@@ -1044,6 +1039,15 @@ public class GetSchemaTask extends JDBCTask {
 		this.isNeedCollationInfo = isNeedCollationInfo;
 	}
 	
+	private String schemaNameToUpperCase(String uniqueName) {
+		int dotIdx = uniqueName.indexOf(".");
+		if (dotIdx > 0) {
+			uniqueName = uniqueName.substring(0, dotIdx).toUpperCase(Locale.getDefault())
+					+ uniqueName.substring(dotIdx);
+		}
+		return uniqueName;
+	}
+	
 }
 
 class SubAttribute{
@@ -1070,6 +1074,5 @@ class SubAttribute{
 	public String getsubDataType() {
 		return subDataType;
 	}
-	
 	
 }

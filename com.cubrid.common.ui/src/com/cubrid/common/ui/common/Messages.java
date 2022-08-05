@@ -246,6 +246,7 @@ public class Messages extends NLS {
 	public static String msgSysViewNum;
 	public static String msgToggleExitConfirm;
 	public static String msgTriggerNum;
+	public static String msgSynonymNum;
 	public static String msgUserTableNum;
 	public static String msgUserViewNum;
 	public static String msgZeroDateTimeBehavior1;

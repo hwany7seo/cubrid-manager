@@ -27,18 +27,24 @@
  */
 package com.cubrid.common.ui.cubrid.table.dialog;
 
+import java.util.List;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.cubrid.common.core.util.StringUtil;
 import com.cubrid.common.ui.cubrid.table.Messages;
 import com.cubrid.common.ui.spi.dialog.CMTitleAreaDialog;
 import com.cubrid.common.ui.spi.model.CubridDatabase;
@@ -47,7 +53,9 @@ import com.cubrid.common.ui.spi.progress.ExecTaskWithProgress;
 import com.cubrid.common.ui.spi.progress.TaskExecutor;
 import com.cubrid.common.ui.spi.util.CommonUITool;
 import com.cubrid.common.ui.spi.util.ValidateUtil;
+import com.cubrid.cubridmanager.core.cubrid.database.model.DatabaseInfo;
 import com.cubrid.cubridmanager.core.cubrid.table.task.CreateLikeTableTask;
+import com.cubrid.cubridmanager.core.utils.SchemaUtil;
 
 /**
  * 
@@ -59,19 +67,26 @@ import com.cubrid.cubridmanager.core.cubrid.table.task.CreateLikeTableTask;
 public class CreateLikeTableDialog extends
 		CMTitleAreaDialog implements
 		ModifyListener {
+	private Text likeTableOwnerText = null;
+	private Combo newTableOwnerCombo = null;
 	private Text likeTableNameText = null;
 	private Text newTableNameText = null;
 	private CubridDatabase database = null;
+	private String likeTableOwnerName = null;
 	private String likeTableName = null;
 	private String newTableName = null;
+	private String newOwnerName = null;
+	private List<String> dbUserList = null;
 
 	/**
 	 * The constructor
 	 * 
 	 * @param parentShell
 	 */
-	public CreateLikeTableDialog(Shell parentShell) {
+	public CreateLikeTableDialog(Shell parentShell, CubridDatabase database, List<String> dbUserList) {
 		super(parentShell);
+		this.database = database;
+		this.dbUserList = dbUserList;
 	}
 
 	/**
@@ -86,7 +101,8 @@ public class CreateLikeTableDialog extends
 		Composite composite = new Composite(parentComp, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		DatabaseInfo dbInfo = database.getDatabaseInfo();
+		layout.numColumns = 5;
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
@@ -96,17 +112,40 @@ public class CreateLikeTableDialog extends
 		Label tableNameLabel = new Label(composite, SWT.LEFT);
 		tableNameLabel.setText(Messages.lblLikeTableName);
 		tableNameLabel.setLayoutData(CommonUITool.createGridData(1, 1, -1, -1));
+		
+		likeTableOwnerText = new Text(composite, SWT.LEFT | SWT.BORDER | SWT.READ_ONLY);
+		likeTableOwnerText.setLayoutData(CommonUITool.createGridData(
+				GridData.FILL_HORIZONTAL, 1, 1, 30, -1));
+		
 		likeTableNameText = new Text(composite, SWT.LEFT | SWT.BORDER);
+		int horSpan = 3;
 		likeTableNameText.setLayoutData(CommonUITool.createGridData(
-				GridData.FILL_HORIZONTAL, 2, 1, 100, -1));
+				GridData.FILL_HORIZONTAL, horSpan, 1, 100, -1));
 
 		Label newTableNameLabel = new Label(composite, SWT.LEFT);
 		newTableNameLabel.setText(Messages.lblNewTableName);
 		newTableNameLabel.setLayoutData(CommonUITool.createGridData(1, 1, -1, -1));
+		
+		newTableOwnerCombo = new Combo(composite, SWT.LEFT | SWT.BORDER | SWT.READ_ONLY);
+		newTableOwnerCombo.setLayoutData(CommonUITool.createGridData(
+				GridData.FILL_HORIZONTAL, 1, 1, 30, -1));
+		newTableOwnerCombo.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				modifyText(null);				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				
+			}
+		});
+		
 		newTableNameText = new Text(composite, SWT.LEFT | SWT.BORDER);
 		newTableNameText.setTextLimit(ValidateUtil.MAX_SCHEMA_NAME_LENGTH);
 		newTableNameText.setLayoutData(CommonUITool.createGridData(
-				GridData.FILL_HORIZONTAL, 2, 1, 100, -1));
+				GridData.FILL_HORIZONTAL, horSpan, 1, 100, -1));
 		newTableNameText.addModifyListener(this);
 
 		if (likeTableName == null) {
@@ -116,6 +155,26 @@ public class CreateLikeTableDialog extends
 			likeTableNameText.setText(likeTableName);
 			likeTableNameText.setEnabled(false);
 			newTableNameText.setFocus();
+		}
+		
+		if (likeTableOwnerName != null) {
+			likeTableOwnerText.setText(likeTableOwnerName);
+			likeTableOwnerText.setEnabled(false);
+		}
+		
+		if (dbInfo != null) {
+			String ownerName;
+			for (int i = 0 ; i < dbUserList.size() ; i++ ) {
+				ownerName = dbUserList.get(i);
+				newTableOwnerCombo.add(ownerName);
+				boolean isSame = StringUtil.isEqualIgnoreCase(ownerName, database.getDatabaseInfo().getAuthLoginedDbUserInfo().getName());
+				if (isSame) {
+					newTableOwnerCombo.select(i);
+				}
+			}
+			if (!database.getDatabaseInfo().isSupportUserSchema()) {
+				newTableOwnerCombo.setEnabled(false);
+			}
 		}
 
 		setTitle(Messages.titleCreateLikeTableDialog);
@@ -165,15 +224,17 @@ public class CreateLikeTableDialog extends
 	 * 
 	 */
 	private void createTable() {
+		newOwnerName = newTableOwnerCombo.getText();
 		newTableName = newTableNameText.getText();
 		String taskName = Messages.bind(Messages.createLikeTableTaskName,
-				newTableName);
+				getNewTableName());
 		TaskExecutor executor = new CommonTaskExec(taskName);
 		CreateLikeTableTask task = new CreateLikeTableTask(
 				getDatabase().getDatabaseInfo());
-		likeTableName = likeTableNameText.getText();
 		task.setTableName(newTableName);
-		task.setLikeTableName(likeTableName);
+		task.setOwnerName(newOwnerName);
+		task.setLikeTableName(getLikeTableName());
+		task.setLikeOwnerName(getLikeTableOwnerName());
 		executor.addTask(task);
 		new ExecTaskWithProgress(executor).exec();
 		if (task.isSuccess()) {
@@ -188,6 +249,7 @@ public class CreateLikeTableDialog extends
 	 */
 	public void modifyText(ModifyEvent event) {
 		String newTableName = newTableNameText.getText();
+		String newOwnerName = newTableOwnerCombo.getText();
 		String likeTableName = likeTableNameText.getText();
 		boolean isValid = true;
 		if ("".equals(newTableName) || "".equals(likeTableName)) {
@@ -201,9 +263,17 @@ public class CreateLikeTableDialog extends
 				isValid = false;
 				newTableNameText.selectAll();
 				newTableNameText.setFocus();
-			} else if (newTableName.equalsIgnoreCase(likeTableName)) {
+			} else if (database.getDatabaseInfo().isSupportUserSchema()
+					&& newTableName.equalsIgnoreCase(getLikeTableName())
+					&& newOwnerName.equalsIgnoreCase(getLikeTableOwnerName())) {
 				setErrorMessage(Messages.bind(Messages.errExistTable,
-						newTableName));
+						newOwnerName + "." + newTableName));
+				isValid = false;
+				newTableNameText.setFocus();
+			} else if (!database.getDatabaseInfo().isSupportUserSchema()
+					&& newTableName.equalsIgnoreCase(getLikeTableName())) {
+				setErrorMessage(Messages.bind(Messages.errExistTable,
+						likeTableOwnerName + "." + newTableName));
 				isValid = false;
 				newTableNameText.setFocus();
 			} else if (!ValidateUtil.isASCII(newTableName)
@@ -248,6 +318,14 @@ public class CreateLikeTableDialog extends
 		this.likeTableName = likeTableName;
 	}
 
+	public String getLikeTableOwnerName() {
+		return likeTableOwnerName;
+	}
+	
+	public void setLikeTableOwnerName(String ownerName) {
+		likeTableOwnerName = ownerName;
+	}
+	
 	/**
 	 * 
 	 * Return the new table name
@@ -257,4 +335,21 @@ public class CreateLikeTableDialog extends
 	public String getNewTableName() {
 		return newTableName;
 	}
+	
+	public String getNewOwnerName() {
+		return newOwnerName;
+	}
+	
+	public String getNewUniqueTable() {
+		return newOwnerName + "." + newTableName;
+	}
+	
+	public String getLikeUniqueTable() {
+		return likeTableOwnerName + "." + likeTableName;
+	}
+	
+	public void setDbUserList(List<String> dbUserList) {
+		this.dbUserList = dbUserList;
+	}
+
 }

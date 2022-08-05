@@ -67,6 +67,7 @@ public class Messages extends NLS {
 	public static String msgSystemViewFolderName;
 	public static String msgSpFolderName;
 	public static String msgTriggerFolderName;
+	public static String msgSynonymFolderName;
 	public static String msgSerialFolderName;
 	public static String msgGenerialVolumeFolderName;
 	public static String msgDataVolumeFolderName;

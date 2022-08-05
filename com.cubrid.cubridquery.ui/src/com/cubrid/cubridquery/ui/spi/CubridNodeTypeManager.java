@@ -52,7 +52,9 @@ public final class CubridNodeTypeManager {
 			NodeType.STORED_PROCEDURE_FOLDER,
 			NodeType.STORED_PROCEDURE_FUNCTION_FOLDER,
 			NodeType.STORED_PROCEDURE_PROCEDURE_FOLDER,
-			NodeType.TRIGGER_FOLDER, NodeType.SERIAL_FOLDER,
+			NodeType.TRIGGER_FOLDER, 
+			NodeType.SYNONYM_FOLDER,
+			NodeType.SERIAL_FOLDER,
 			NodeType.USER_FOLDER};
 
 	/**

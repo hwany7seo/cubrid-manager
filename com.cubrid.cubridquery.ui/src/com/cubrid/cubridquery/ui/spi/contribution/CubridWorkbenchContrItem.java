@@ -41,6 +41,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 
+import com.cubrid.common.core.util.CompatibleUtil;
 import com.cubrid.common.core.util.LogUtil;
 import com.cubrid.common.core.util.StringUtil;
 import com.cubrid.common.ui.common.Messages;
@@ -146,6 +147,7 @@ public class CubridWorkbenchContrItem extends
 				|| cubridNode.getType() == NodeType.TABLE_FOLDER
 				|| cubridNode.getType() == NodeType.VIEW_FOLDER
 				|| cubridNode.getType() == NodeType.TRIGGER_FOLDER
+				|| cubridNode.getType() == NodeType.SYNONYM_FOLDER
 				|| cubridNode.getType() == NodeType.SERIAL_FOLDER
 				|| cubridNode.getType() == NodeType.USER_FOLDER) {
 
@@ -185,6 +187,11 @@ public class CubridWorkbenchContrItem extends
 					treeViewer.expandToLevel(cubridNode, 1);
 				}
 				openTriggersDetailInfoPart(database);
+			} else if (cubridNode.getType() == NodeType.SYNONYM_FOLDER) {
+				if (!treeViewer.getExpandedState(cubridNode)) {
+					treeViewer.expandToLevel(cubridNode, 1);
+				}
+				openSynonymsDetailInfoPart(database);
 			} else if (cubridNode.getType() == NodeType.SERIAL_FOLDER) {
 				//if not expand ,expand the node
 				//if not open child node ,edit trigger from dashboard can not open edit dialog
@@ -262,6 +269,15 @@ public class CubridWorkbenchContrItem extends
 		action.openTriggersDetailInfoEditor(database);
 	}
 
+	/**
+	 * openSynonymsDetailInfoPart
+	 * @param CubridDatabase database
+	 */
+	public void openSynonymsDetailInfoPart(CubridDatabase database) {
+		OpenTargetAction action = new OpenTargetAction();
+		action.openSynonymsDetailInfoEditor(database);
+	}
+	
 	/**
 	 * open user InfoPart
 	 *
@@ -346,6 +362,7 @@ public class CubridWorkbenchContrItem extends
 			dbInfo.setRunningType(DbRunningType.CS);
 			dbInfo.getServerInfo().setConnected(true);
 			dbInfo.setLogined(true);
+			dbInfo.setSupportUserSchema(CompatibleUtil.isAfter112(dbInfo));
 			return true;
 		} catch (SQLException e) {
 			CommonUITool.openErrorBox(Messages.bind(Messages.errCommonTip,

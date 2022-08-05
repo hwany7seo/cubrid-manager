@@ -99,8 +99,14 @@ public class GetTablesTask extends
 	 * @return List<String>
 	 */
 	public List<String> getUserTables() {
-		String sql = "SELECT class_name FROM db_class WHERE is_system_class='NO'"
+		String sql;
+		if(databaseInfo.isSupportUserSchema()) {
+			sql = "SELECT owner_name, class_name FROM db_class WHERE is_system_class='NO'"
 				+ " AND class_type='CLASS' ORDER BY class_name ASC";
+		} else {
+			sql = "SELECT class_name FROM db_class WHERE is_system_class='NO'"
+					+ " AND class_type='CLASS' ORDER BY class_name ASC";
+		}
 
 		// [TOOLS-2425]Support shard broker
 		sql = databaseInfo.wrapShardQuery(sql);
