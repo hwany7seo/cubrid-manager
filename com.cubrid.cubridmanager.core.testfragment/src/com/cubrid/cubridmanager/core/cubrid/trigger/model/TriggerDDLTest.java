@@ -187,7 +187,7 @@ public class TriggerDDLTest extends
 		newTrigger.setAction(action);
 		newTrigger.setStatus(status);
 		newTrigger.setPriority(priority);
-		TriggerDDL.getAlterDDL(trigger, newTrigger);
+		TriggerDDL.getAlterDDL(trigger, newTrigger, false);
 		trigger.setName(name);
 		trigger.setConditionTime(conditionTime);
 		trigger.setEventType(eventType);
@@ -210,7 +210,7 @@ public class TriggerDDLTest extends
 		newTrigger.setAction(action);
 		newTrigger.setStatus("no");
 		newTrigger.setPriority("99");
-		TriggerDDL.getAlterDDL(trigger, newTrigger);
+		TriggerDDL.getAlterDDL(trigger, newTrigger, false);
 	}
 
 }

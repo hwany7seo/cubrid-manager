@@ -30,6 +30,8 @@ package com.cubrid.common.ui.spi.util;
 import org.slf4j.Logger;
 
 import com.cubrid.common.core.common.model.SerialInfo;
+import com.cubrid.common.core.common.model.Synonym;
+import com.cubrid.common.core.common.model.Trigger;
 import com.cubrid.common.core.util.LogUtil;
 import com.cubrid.common.core.util.StringUtil;
 import com.cubrid.common.ui.spi.model.CubridDatabase;
@@ -216,15 +218,6 @@ public final class ActionSupportUtil {
 			}
 
 			boolean isSameUser = StringUtil.isEqualIgnoreCase(userInfo.getName(), getOwner(schemaNode));
-			if (!isSameUser && type == NodeType.TRIGGER) {
-				if (dbInfo.isSupportUserSchema()) {
-					int idx = schemaNode.getName().indexOf(".");
-					if (idx > 0) {
-						String ownerName = schemaNode.getName().substring(0, idx);
-						isSameUser = StringUtil.isEqualIgnoreCase(userInfo.getName(), ownerName);
-					}
-				}
-			}
 			
 			if (isSameUser) {
 				return true;
@@ -250,6 +243,12 @@ public final class ActionSupportUtil {
 				|| NodeType.STORED_PROCEDURE_PROCEDURE.equals(type)) {
 			SPInfo spInfo = (SPInfo) node.getAdapter(SPInfo.class);
 			return spInfo == null ? null : spInfo.getOwner();
+		} else if (NodeType.SYNONYM.equals(type)) {
+			Synonym syInfo = (Synonym) node.getAdapter(Synonym.class);
+			return syInfo == null ? null : syInfo.getOwner();
+		} else if (NodeType.TRIGGER.equals(type)) {
+			Trigger triInfo = (Trigger) node.getAdapter(Trigger.class);
+			return triInfo == null ? null : triInfo.getOwner();
 		}
 		return null;
 	}

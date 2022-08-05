@@ -46,6 +46,9 @@ import com.cubrid.common.ui.cubrid.procedure.action.EditProcedureAction;
 import com.cubrid.common.ui.cubrid.serial.action.CreateSerialAction;
 import com.cubrid.common.ui.cubrid.serial.action.DeleteSerialAction;
 import com.cubrid.common.ui.cubrid.serial.action.EditSerialAction;
+import com.cubrid.common.ui.cubrid.synonym.action.AlterSynonymAction;
+import com.cubrid.common.ui.cubrid.synonym.action.DropSynonymAction;
+import com.cubrid.common.ui.cubrid.synonym.action.NewSynonymAction;
 import com.cubrid.common.ui.cubrid.table.action.ColumnSelectCountAction;
 import com.cubrid.common.ui.cubrid.table.action.ColumnSelectSqlAction;
 import com.cubrid.common.ui.cubrid.table.action.CreateLikeTableAction;
@@ -133,6 +136,11 @@ public class MenuProvider implements
 		} else if (NodeType.TRIGGER.equals(type)) { // trigger instance
 			addActionToManager(manager, getAction(AlterTriggerAction.ID));
 			addActionToManager(manager, getAction(DropTriggerAction.ID));
+		} else if (NodeType.SYNONYM_FOLDER.equals(type)) {
+			addActionToManager(manager, getAction(NewSynonymAction.ID));
+		} else if (NodeType.SYNONYM.equals(type)) {
+			addActionToManager(manager, getAction(AlterSynonymAction.ID));
+			addActionToManager(manager, getAction(DropSynonymAction.ID));
 		} else if (NodeType.SERIAL_FOLDER.equals(type)) {
 			addActionToManager(manager, getAction(CreateSerialAction.ID));
 		} else if (NodeType.SERIAL.equals(type)) {

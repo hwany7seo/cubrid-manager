@@ -749,6 +749,26 @@ public final class QuerySyntax {
 		return "[" + text + "]";
 	}
 
+	public static String escapeKeywordFromUniqueName(String text, boolean isSupportUserSchema) {
+		if (text == null) {
+			return null;
+		}
+
+		if (text.length() == 0) {
+			return "";
+		}
+
+		if (isSupportUserSchema) {
+			int idx = text.indexOf(".");
+			if (idx > 0) {
+				String ownerName = text.substring(0, idx);
+				String className = text.substring(idx + 1);
+				return escapeKeyword(ownerName) + "." + escapeKeyword(className);
+			}
+		}
+		return escapeKeyword(text);
+	}
+	
 	/**
 	 * Get the Key words map.
 	 * 

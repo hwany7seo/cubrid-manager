@@ -136,6 +136,13 @@
           name="%triggersDetailInfoName">
     </editor>
     <editor
+          class="com.cubrid.common.ui.cubrid.synonym.editor.SynonymDashboardEditorPart"
+          default="false"
+          icon="icons/navigator/synonym_group.png"
+          id="com.cubrid.common.ui.cubrid.synonym.editor.SynonymDashboardEditorPart"
+          name="%triggersDetailInfoName">
+    </editor>
+    <editor
           class="com.cubrid.common.ui.cubrid.user.editor.UserDashboardEditorPart"
           default="false"
           icon="icons/navigator/user_group.png"
