@@ -191,6 +191,7 @@ public class EditViewAction extends
 				ClassInfo newClassInfo = (ClassInfo) node.getAdapter(ClassInfo.class);
 				newClassInfo.setClassName(newViewName);
 				newClassInfo.setOwnerName(owner);
+				newClassInfo.setSupportUserSchema(database.getDatabaseInfo().isSupportUserSchema());
 				node.setId(node.getParent().getId()
 						+ ICubridNodeLoader.NODE_SEPARATOR + newViewName);
 				node.setLabel(newViewName);

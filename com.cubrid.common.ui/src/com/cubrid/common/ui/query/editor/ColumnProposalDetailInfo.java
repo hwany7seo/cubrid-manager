@@ -196,7 +196,7 @@ public class ColumnProposalDetailInfo { // move to core module
 
 			List<String> fetchedTableNames = new ArrayList<String>();
 			for (SchemaInfo schemaInfo : schemas.values()) {
-				String tableName = schemaInfo.getClassname();
+				String tableName = schemaInfo.getUniqueName();
 				fetchedTableNames.add(tableName);
 			}
 
@@ -231,7 +231,7 @@ public class ColumnProposalDetailInfo { // move to core module
 					colInfoList.add(colInfo);
 				}
 
-				columns.put(schemaInfo.getClassname(), colInfoList);
+				columns.put(schemaInfo.getUniqueName(), colInfoList);
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);

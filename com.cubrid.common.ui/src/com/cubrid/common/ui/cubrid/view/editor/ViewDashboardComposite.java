@@ -93,7 +93,7 @@ public class ViewDashboardComposite extends Composite {
 	}
 	
 	public void setInput(SchemaInfo schema) {
-		tabItem.setText(schema == null ? "" : schema.getClassname());
+		tabItem.setText(schema == null ? "" : schema.getUniqueName());
 		columnTableView.setInput(schema.getAttributes());
 		columnTableView.refresh();
 		pack();

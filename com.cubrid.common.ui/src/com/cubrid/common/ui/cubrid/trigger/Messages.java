@@ -137,6 +137,7 @@ public class Messages extends
 	public static String triggersDetailInfoPartEditTriggerBtn;
 	public static String triggersDetailInfoPartDropTriggerBtn;
 
+	public static String triggersDetailInfoPartTableOwnerCol;
 	public static String triggersDetailInfoPartTableNameCol;
 	public static String triggersDetailInfoPartTableTargetTableCol;
 	public static String triggersDetailInfoPartTableEventTimeCol;

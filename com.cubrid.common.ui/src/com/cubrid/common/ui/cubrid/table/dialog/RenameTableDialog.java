@@ -67,8 +67,11 @@ public class RenameTableDialog extends
 	private String newName;
 	private String tableOrView;
 
+	private boolean isSupportUserSchema;
+	private String ownerName;
+
 	public RenameTableDialog(Shell parentShell, String name, boolean isTable,
-			List<String> nameList, boolean isPhysical) {
+			List<String> nameList, boolean isPhysical, boolean isSupportUserSchema) {
 		super(parentShell);
 		this.oldName = name;
 		this.existNameList = nameList;
@@ -79,6 +82,7 @@ public class RenameTableDialog extends
 			tableOrView = Messages.renameView;
 		}
 		this.isPhysical = isPhysical;
+		this.isSupportUserSchema = isSupportUserSchema;
 	}
 
 	/**
@@ -151,6 +155,11 @@ public class RenameTableDialog extends
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 
+		if (isSupportUserSchema) {
+			ownerName = oldName.substring(0, oldName.indexOf("."));
+			oldName = oldName.substring(oldName.indexOf(".") + 1);
+		}
+
 		newTableText.setLayoutData(data);
 		newTableText.setText(oldName);
 		newTableText.selectAll();
@@ -198,6 +207,11 @@ public class RenameTableDialog extends
 
 	public String getNewName() {
 		return newName;
+
+	}
+
+	public String getOwnerName() {
+		return ownerName;
 
 	}
 }

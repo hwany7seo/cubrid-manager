@@ -187,7 +187,7 @@ public class ImportERwinAction extends
 				Collection<ERWinSchemaInfo> erwinSchemas = schemaInfos.values();
 				for (ERWinSchemaInfo erwinSchema : erwinSchemas) {
 					SchemaInfo schemaInfo = (SchemaInfo) erwinSchema;
-					dbSchemaInfos.put(schemaInfo.getClassname(), schemaInfo);
+					dbSchemaInfos.put(schemaInfo.getUniqueName(), schemaInfo);
 				}
 				wrappedDatabaseInfo.addSchemaInfos(dbSchemaInfos);
 				wrappedDatabaseInfo.addTableSchemas(tableSchema);

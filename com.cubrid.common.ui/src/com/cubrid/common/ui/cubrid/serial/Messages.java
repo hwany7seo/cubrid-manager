@@ -65,11 +65,15 @@ public class Messages extends
 	public static String errSerialName;
 	public static String errSerialNameLength;
 	public static String errStartValue;
+	public static String errStartValueAfter1020;
 	public static String msgStartValue;
 	public static String msgCurrentValue;
 	public static String errIncrementValue;
+	public static String errIncrementValueAfter1020;
 	public static String errMinValue;
+	public static String errMinValueAfter1020;
 	public static String errMaxValue;
+	public static String errMaxValueAfter1020;
 	public static String errSerialExist;
 	public static String errValue;
 	public static String errDiffValue;
@@ -86,6 +90,7 @@ public class Messages extends
 	
 	//serial dashboard
 	public static String serialsDetailInfoPartTitle;
+	public static String serialsDetailInfoPartTableOwnerCol;
 	public static String serialsDetailInfoPartTableNameCol;
 	public static String serialsDetailInfoPartTableCurValCol;
 	public static String serialsDetailInfoPartTableIncreValCol;

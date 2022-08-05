@@ -108,7 +108,9 @@ public class DatabaseInfo implements IDatabaseSpec {
 	private String version = null;
 	private boolean isSupportTableComment;
 	private boolean isShard = false;
-
+	private boolean isSupportUserSchema = false;;
+	private boolean isSupportSynonym = false;
+	
 	public static final int SHARD_QUERY_TYPE_VAL = 0;
 	public static final int SHARD_QUERY_TYPE_ID = 1;
 	private int shardQueryType = SHARD_QUERY_TYPE_VAL;
@@ -851,7 +853,7 @@ public class DatabaseInfo implements IDatabaseSpec {
 		if (null == schemaInfo) {
 			SchemaProvider schemaProvider = new SchemaProvider(this, tableName);
 			schemaInfo = schemaProvider.getSchema();
-			if (schemaInfo == null && StringUtil.isNotEmpty(schemaProvider.getErrorMessage())) {
+			if (schemaInfo == null || StringUtil.isNotEmpty(schemaProvider.getErrorMessage())) {
 				errorMessage = schemaProvider.getErrorMessage();
 				return null;
 			} else {
@@ -908,7 +910,7 @@ public class DatabaseInfo implements IDatabaseSpec {
 		if (null == schemaMap) {
 			schemaMap = new HashMap<String, SchemaInfo>();
 		}
-		String key = schema.getClassname();
+		String key = schema.getUniqueName();
 		schemaMap.put(key, schema);
 	}
 
@@ -1041,6 +1043,39 @@ public class DatabaseInfo implements IDatabaseSpec {
 		this.isSupportTableComment = isSupportTableComment;
 	}
 
+	/**
+	 * return whether it has the UserSchema or not
+	 * @return
+	 */
+	public boolean isSupportUserSchema() {
+		return isSupportUserSchema;
+	}
+
+	/**
+	 * set the UserSchema support
+	 * @param isSupportUserSchema
+	 */
+	public void setSupportUserSchema(boolean isSupportUserSchema) {
+		this.isSupportUserSchema = isSupportUserSchema;
+		setSupportSynonym(isSupportUserSchema);
+	}
+	
+	/**
+	 * return whether it has the Synonym or not
+	 * @return
+	 */
+	public boolean isSupportSynonym() {
+		return isSupportSynonym;
+	}
+
+	/**
+	 * set the Synonym support
+	 * @param isSupportSynonym
+	 */
+	public void setSupportSynonym(boolean isSupportSynonym) {
+		this.isSupportSynonym = isSupportSynonym;
+	}
+	
 	public boolean isShard() {
 		// [TOOLS-2425]Support shard broker
 		return isShard;

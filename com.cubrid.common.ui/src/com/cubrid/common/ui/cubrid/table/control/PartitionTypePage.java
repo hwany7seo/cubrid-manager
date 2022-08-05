@@ -252,7 +252,7 @@ public class PartitionTypePage extends
 		if (!isNewTable) {
 			GetPartitionedClassListTask task = new GetPartitionedClassListTask(
 					dbInfo);
-			dbAttrStatList = task.getColumnStatistics(schemaInfo.getClassname());
+			dbAttrStatList = task.getColumnStatistics(schemaInfo.getUniqueName());
 		}
 		attrList.addAll(schemaInfo.getAttributes());
 		for (int i = 0; dbAttrStatList != null && i < dbAttrStatList.size(); i++) {

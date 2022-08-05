@@ -859,12 +859,22 @@ public class ExportSettingPage extends
 					ResultSet rs = null;
 
 					StringBuilder sql = new StringBuilder();
-					sql.append("SELECT c.class_name, c.class_type ");
-					sql.append("FROM db_class c, db_attribute a ");
-					sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
-					sql.append("AND a.from_class_name IS NULL ");
-					sql.append("GROUP BY c.class_name, c.class_type ");
-					sql.append("ORDER BY c.class_type, c.class_name");
+					if (isSupportUserSchema()) {
+						sql.append("SELECT c.class_name, c.class_type, c.owner_name ");
+						sql.append("FROM db_class c, db_attribute a ");
+						sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
+						sql.append("AND c.owner_name=a.owner_name ");
+						sql.append("AND a.from_class_name IS NULL ");
+						sql.append("GROUP BY c.owner_name, c.class_name, c.class_type ");
+						sql.append("ORDER BY c.owner_name, c.class_type, c.class_name");
+					} else {
+						sql.append("SELECT c.class_name, c.class_type ");
+						sql.append("FROM db_class c, db_attribute a ");
+						sql.append("WHERE c.class_name=a.class_name AND c.is_system_class='NO' ");
+						sql.append("AND a.from_class_name IS NULL ");
+						sql.append("GROUP BY c.class_name, c.class_type ");
+						sql.append("ORDER BY c.class_type, c.class_name");
+					}
 					String query = sql.toString();
 
 					// [TOOLS-2425]Support shard broker
@@ -879,8 +889,15 @@ public class ExportSettingPage extends
 						stmt = conn.createStatement();
 						rs = stmt.executeQuery(query);
 						while (rs.next()) {
-							String tableName = rs.getString(1); //$NON-NLS-1$
+							String className = rs.getString(1); //$NON-NLS-1$
 							String tableType = rs.getString(2); //$NON-NLS-1$
+							String tableName;
+							if (isSupportUserSchema()) {
+								String ownerName = rs.getString(3);
+								tableName = ownerName + "." + className;
+							} else {
+								tableName = className;
+							}
 							if (ConstantsUtil.isExtensionalSystemTable(tableName)) {
 								continue;
 							}
@@ -890,7 +907,7 @@ public class ExportSettingPage extends
 								//export all view now so don't need select view node
 								continue;
 							}
-							ICubridNode classNode = new DefaultSchemaNode(tableName, tableName,
+							ICubridNode classNode = new DefaultSchemaNode(tableName, tableName, tableName,
 									iconPath);
 							if ("VCLASS".equalsIgnoreCase(tableType)) {
 								classNode.setData(VIEWNODEFLAG, "true");
@@ -1396,5 +1413,12 @@ public class ExportSettingPage extends
 		if (!isFound) {
 			rowDelimiterCombo.setText(delimeter);
 		}
+	}
+	
+	private boolean isSupportUserSchema() {
+		if (getDatabase() != null) {
+			return getDatabase().getDatabaseInfo().isSupportUserSchema();
+		}
+		return false;
 	}
 }

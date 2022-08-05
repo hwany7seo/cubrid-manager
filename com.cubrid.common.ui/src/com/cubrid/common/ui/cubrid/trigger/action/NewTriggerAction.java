@@ -169,12 +169,14 @@ public class NewTriggerAction extends
 			}
 			String triggerName = dlg.getTriggerName().toLowerCase(
 					Locale.getDefault());
+			String ownerName = database.getDatabaseInfo().getAuthLoginedDbUserInfo().getName();
 			String id = folderNode.getId() + ICubridNodeLoader.NODE_SEPARATOR
-					+ triggerName;
+					+ ownerName + "." + triggerName;
 			Trigger trigger = new Trigger();
 			trigger.setName(triggerName);
+			trigger.setOwner(ownerName);
 			ICubridNode newNode = CubridTriggerFolderLoader.createTriggerNode(
-					id, trigger);
+					database.getDatabaseInfo(), id, trigger);
 			CommonUITool.addNodeToTree(treeViewer, folderNode, newNode);
 			CommonUITool.updateFolderNodeLabelIncludingChildrenCount(treeViewer, folderNode);
 			CubridNodeManager.getInstance().fireCubridNodeChanged(

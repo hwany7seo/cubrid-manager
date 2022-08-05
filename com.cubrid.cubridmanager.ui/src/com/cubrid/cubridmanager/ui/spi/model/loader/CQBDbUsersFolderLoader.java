@@ -107,7 +107,7 @@ public class CQBDbUsersFolderLoader extends
 				String id = parent.getId() + NODE_SEPARATOR
 						+ dbUserInfo.getName();
 				ICubridNode dbUserInfoNode = new DefaultSchemaNode(id,
-						dbUserInfo.getName(), "icons/navigator/user_item.png");
+						dbUserInfo.getName(), dbUserInfo.getName(), "icons/navigator/user_item.png");
 				dbUserInfoNode.setType(NodeType.USER);
 				dbUserInfoNode.setModelObj(dbUserInfo);
 				dbUserInfoNode.setContainer(false);

@@ -171,7 +171,7 @@ public class ColumnProposalAdvisor implements
 								continue;
 							}
 
-							String tableName = schemaInfo.getClassname();
+							String tableName = schemaInfo.getUniqueName();
 							if (ConstantsUtil.isExtensionalSystemTable(tableName)) {
 								continue;
 							}
@@ -216,7 +216,7 @@ public class ColumnProposalAdvisor implements
 										schemaInfo, attr);
 								colInfoList.add(colInfo);
 							}
-							columns.put(schemaInfo.getClassname(), colInfoList);
+							columns.put(schemaInfo.getUniqueName(), colInfoList);
 						}
 						/*Cache the data*/
 						ColumnProposal proposal = new ColumnProposal();

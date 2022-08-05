@@ -210,6 +210,7 @@ public class EditVirtualTableDialog extends
 		if (isNewTable) {
 			SchemaInfo newSchemaInfo = new SchemaInfo();
 			newSchemaInfo.setClassname(""); //$NON-NLS-1$
+			newSchemaInfo.setUniqueName(""); //$NON-NLS-1$
 			newSchemaInfo.setOwner(database.getUserName());
 			newSchemaInfo.setDbname(database.getName());
 			newSchemaInfo.setType(Messages.userSchema);
@@ -349,7 +350,7 @@ public class EditVirtualTableDialog extends
 		//check
 		ERSchema tmpErSchema = new ERSchema(erSchema.getName() + "_tmp", erSchema.getInput());
 		Map<String, SchemaInfo> schemaInfos = erSchema.getAllSchemaInfo();
-		schemaInfos.put(newSchemaInfo.getClassname(), newSchemaInfo);
+		schemaInfos.put(newSchemaInfo.getUniqueName(), newSchemaInfo);
 
 		CubridTableParser tableParser = new CubridTableParser(tmpErSchema);
 		tableParser.buildERTables(schemaInfos.values(), -1, -1, false);
@@ -534,7 +535,7 @@ public class EditVirtualTableDialog extends
 			String oldTableDesc = oldSchemaInfo.getDescription();
 			oldSchemaInfo.setDescription(newTableDesc);
 			if (StringUtil.isEmpty(newTableDesc)) {
-				oldERTable.setName(newSchemaInfo.getClassname(), false);
+				oldERTable.setName(newSchemaInfo.getUniqueName(), false);
 			}
 			if (StringUtil.isNotEmpty(newTableDesc)
 					&& !StringUtil.isEqual(newTableDesc, oldTableDesc)) {
@@ -843,6 +844,12 @@ public class EditVirtualTableDialog extends
 					} else if (verifyTableName()) {
 						String tableName = tableNameText.getText();
 						newSchemaInfo.setClassname(tableName);
+						newSchemaInfo.setOwner(database.getUserName());
+						if (isSupportUserSchema()) {
+							newSchemaInfo.setUniqueName(database.getUserName() + "." + tableName);
+						} else {
+							newSchemaInfo.setUniqueName(tableName);
+						}
 					}
 				}
 			});
@@ -1050,7 +1057,7 @@ public class EditVirtualTableDialog extends
 	public boolean isHasSubClass() {
 		if (isHasSubClass == null) {
 			CheckSubClassTask task = new CheckSubClassTask(database.getDatabaseInfo());
-			isHasSubClass = task.checkSubClass(oldSchemaInfo.getClassname());
+			isHasSubClass = task.checkSubClass(oldSchemaInfo.getOwner(), oldSchemaInfo.getClassname());
 		}
 
 		return isHasSubClass;
@@ -1330,7 +1337,7 @@ public class EditVirtualTableDialog extends
 		}
 
 		DBAttribute addAttribute = new DBAttribute("", DataType.DATATYPE_CHAR,
-				newSchemaInfo.getClassname(), false, false, false, false, null, collation);
+				newSchemaInfo.getUniqueName(), false, false, false, false, null, collation);
 		ERTableColumn column = new ERTableColumn(newERTable, addAttribute, false);
 		column.setIsNew(true);
 		tempERColumnList.add(column);
@@ -2375,5 +2382,12 @@ public class EditVirtualTableDialog extends
 
 	public void setErSchema(ERSchema erSchema) {
 		this.erSchema = erSchema;
+	}
+	
+	private boolean isSupportUserSchema() {
+		if (database != null) {
+			return database.getDatabaseInfo().isSupportUserSchema();
+		}
+		return false;
 	}
 }

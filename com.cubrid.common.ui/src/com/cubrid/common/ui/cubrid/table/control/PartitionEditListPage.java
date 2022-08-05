@@ -437,7 +437,7 @@ public class PartitionEditListPage extends
 				dbInfo);
 		String expr = partitionExprText.getText();
 		String[] distinctValues = task.getDistinctValuesInAttribute(
-				schemaInfo.getClassname(), expr);
+				schemaInfo.getUniqueName(), expr);
 		if (distinctValues == null || distinctValues.length <= 0) {
 			return;
 		}

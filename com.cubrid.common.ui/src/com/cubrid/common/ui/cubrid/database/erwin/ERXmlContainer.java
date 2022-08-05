@@ -295,7 +295,7 @@ public class ERXmlContainer {
 		for (String tableName : tableSchemas.keySet()) {
 			ERWinSchemaInfo schemaInfo = new ERWinSchemaInfo();
 			schemaInfo.setType("user");
-			schemaInfo.setClassname(tableName);
+			schemaInfo.setUniqueName(tableName);
 			schemaInfos.put(tableName, schemaInfo);
 		}
 
@@ -329,7 +329,7 @@ public class ERXmlContainer {
 		Collection<ERWinSchemaInfo> erwinSchemas = schemaInfos.values();
 		for (ERWinSchemaInfo erwinSchema : erwinSchemas) {
 			SchemaInfo schemaInfo = (SchemaInfo) erwinSchema;
-			dbSchemaInfos.put(schemaInfo.getClassname(), schemaInfo);
+			dbSchemaInfos.put(schemaInfo.getUniqueName(), schemaInfo);
 		}
 		wrappedDatabaseInfo.addSchemaInfos(dbSchemaInfos);
 		wrappedDatabaseInfo.addTableSchemas(tableSchemas);
@@ -354,7 +354,7 @@ public class ERXmlContainer {
 	}
 
 	private String createViewSchema(SchemaInfo schemaInfo) {
-		ViewModel model = viewModelMap.get(schemaInfo.getClassname());
+		ViewModel model = viewModelMap.get(schemaInfo.getUniqueName());
 		if (model != null) {
 			return model.returnViewDDL();
 		}

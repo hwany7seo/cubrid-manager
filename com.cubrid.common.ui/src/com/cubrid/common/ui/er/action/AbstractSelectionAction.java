@@ -150,6 +150,7 @@ public abstract class AbstractSelectionAction extends SelectionAction implements
 		return getDataBaseNode().getDatabaseInfo();
 	}
 
+
 	public IStatus postTaskFinished(ITask task) {
 		return null;
 	}

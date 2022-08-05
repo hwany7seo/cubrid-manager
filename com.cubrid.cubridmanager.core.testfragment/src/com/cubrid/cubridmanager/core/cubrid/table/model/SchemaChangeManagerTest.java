@@ -87,6 +87,7 @@ public class SchemaChangeManagerTest extends
 
 		schema1.setClassname(tableName);
 		schema1.setOwner(owner);
+		schema1.setUniqueName(tableName);
 		schema1.setVirtual(virtual);
 		schema1.setType(type);
 

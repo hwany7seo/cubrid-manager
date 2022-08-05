@@ -44,7 +44,7 @@ import com.cubrid.common.core.util.LogUtil;
  */
 public class PartitionInfo implements Cloneable {
 	private static final Logger LOGGER = LogUtil.getLogger(PartitionInfo.class);
-	private String className = null;
+	private String tableName = null;
 	private String partitionName = null;
 	private String partitionClassName = null;
 	private PartitionType partitionType = null;
@@ -60,8 +60,8 @@ public class PartitionInfo implements Cloneable {
 	@Override
 	public String toString() { // FIXME ToStringBuilder
 		StringBuilder sb = new StringBuilder();
-		sb.append("PartitionInfo[className=").append(className);
 		sb.append(",partitionName=").append(partitionName);
+		sb.append("PartitionInfo[className=").append(tableName);
 		sb.append(",partitionClassName=").append(partitionClassName);
 		sb.append(",partitionType=").append(partitionType);
 		sb.append(",partitionExpr=").append(partitionExpr);
@@ -74,15 +74,15 @@ public class PartitionInfo implements Cloneable {
 		noOp();
 	}
 
-	public PartitionInfo(String className, PartitionType partitionType) {
-		this.className = className;
+	public PartitionInfo(String tableName, PartitionType partitionType) {
+		this.tableName = tableName;
 		this.partitionType = partitionType;
 	}
 
-	public PartitionInfo(String className, String partitionName,
+	public PartitionInfo(String tableName, String partitionName,
 			PartitionType partitionType, String partitionExpr,
 			List<String> partitionValues, int rows) {
-		this.className = className;
+		this.tableName = tableName;
 		this.partitionName = partitionName;
 		this.partitionType = partitionType;
 		this.partitionExpr = partitionExpr;
@@ -90,10 +90,10 @@ public class PartitionInfo implements Cloneable {
 		this.rows = rows;
 	}
 
-	public PartitionInfo(String className, String partitionName,
+	public PartitionInfo(String tableName, String partitionName,
 			String partitionClassName, PartitionType partitionType,
 			String partitionExpr, List<String> partitionValues, int rows) {
-		this.className = className;
+		this.tableName = tableName;
 		this.partitionName = partitionName;
 		this.partitionClassName = partitionClassName;
 		this.partitionType = partitionType;
@@ -102,12 +102,12 @@ public class PartitionInfo implements Cloneable {
 		this.rows = rows;
 	}
 
-	public String getClassName() {
-		return className;
+	public String getTableName() {
+		return tableName;
 	}
 
-	public void setClassName(String className) {
-		this.className = className;
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
 	}
 
 	public String getPartitionName() {
@@ -131,9 +131,9 @@ public class PartitionInfo implements Cloneable {
 	 */
 	public String getPartitionClassName() {
 		if (partitionClassName == null
-				|| !partitionClassName.equals(className + "__p__"
+				|| !partitionClassName.equals(tableName + "__p__"
 						+ partitionName)) {
-			partitionClassName = className + "__p__" + partitionName;
+			partitionClassName = tableName + "__p__" + partitionName;
 		}
 		return partitionClassName;
 	}
@@ -289,7 +289,7 @@ public class PartitionInfo implements Cloneable {
 		if (partitionInfo.partitionType != partitionType) {
 			return false;
 		}
-		if (!compareStr(partitionInfo.className, this.className)) {
+		if (!compareStr(partitionInfo.tableName, this.tableName)) {
 			return false;
 		}
 		if (!compareStr(partitionInfo.partitionName, this.partitionName)) {

@@ -124,7 +124,7 @@ public class AddQueryPlanAction extends SelectionAction {
 			QueryPlanInfoHelp queryPlanInfoHelp = editQueryPlanDlg.getQueryPlanInfo();
 			QueryPlanInfo queryPlanInfo = queryPlanInfoHelp.getQueryPlanInfo();
 			String newQueryId = queryPlanInfoHelp.getQuery_id();
-			newNode = new DefaultSchemaNode(newQueryId, newQueryId, ICON_PATH);
+			newNode = new DefaultSchemaNode(newQueryId, newQueryId, newQueryId, ICON_PATH);
 			newNode.setContainer(false);
 			newNode.setType(CubridNodeType.QUERY_PLAN);
 			newNode.setModelObj(queryPlanInfo);

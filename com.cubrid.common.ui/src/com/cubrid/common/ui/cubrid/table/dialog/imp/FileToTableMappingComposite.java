@@ -221,27 +221,47 @@ public class FileToTableMappingComposite extends Composite {
 						monitor.worked(1);
 
 						StringBuilder sql = new StringBuilder();
-						sql.append("SELECT c.class_name ");
-						sql.append("FROM db_class c, db_attribute a ");
-						sql.append("WHERE c.class_name = a.class_name AND c.is_system_class = 'NO' ");
-						sql.append("AND a.from_class_name IS NULL ");
-						sql.append("AND c.class_type = 'CLASS' ");
-						sql.append("GROUP BY c.class_name ");
-						sql.append("ORDER BY c.class_name");
+						
+						if (isSupportUserSchema()) {
+							sql.append("SELECT c.class_name, c.owner_name ");
+							sql.append("FROM db_class c, db_attribute a ");
+							sql.append("WHERE c.class_name = a.class_name AND c.is_system_class = 'NO' ");
+							sql.append("AND c.owner_name = a.owner_name ");
+							sql.append("AND a.from_class_name IS NULL ");
+							sql.append("AND c.class_type = 'CLASS' ");
+							sql.append("GROUP BY c.owner_name, c.class_name ");
+							sql.append("ORDER BY c.owner_name, c.class_name");
+						} else {
+							sql.append("SELECT c.class_name ");
+							sql.append("FROM db_class c, db_attribute a ");
+							sql.append("WHERE c.class_name = a.class_name AND c.is_system_class = 'NO' ");
+							sql.append("AND a.from_class_name IS NULL ");
+							sql.append("AND c.class_type = 'CLASS' ");
+							sql.append("GROUP BY c.class_name ");
+							sql.append("ORDER BY c.class_name");
+						}
 
 						conn = JDBCConnectionManager.getConnection(database.getDatabaseInfo(), true);
 						stmt = conn.createStatement();
 						rsTable = stmt.executeQuery(sql.toString());
 
 						while (rsTable.next()) {
-							String tableName = rsTable.getString(1); //$NON-NLS-1$
-							if (ConstantsUtil.isExtensionalSystemTable(tableName)) {
+							String className = rsTable.getString(1); //$NON-NLS-1$
+							String tableName;
+							
+							if (ConstantsUtil.isExtensionalSystemTable(className)) {
 								continue;
 							}
-
+							
+							if (isSupportUserSchema()) {
+								tableName = rsTable.getString(2) + "." + className; 
+							} else {
+								tableName = className;
+							}
+							
 							String iconPath = "icons/navigator/schema_table_item.png";
 
-							ICubridNode classNode = new DefaultSchemaNode(tableName, tableName, iconPath);
+							ICubridNode classNode = new DefaultSchemaNode(tableName, tableName, tableName, iconPath);
 							classNode.setContainer(true);
 							allTableList.add(classNode);
 						}
@@ -714,7 +734,7 @@ public class FileToTableMappingComposite extends Composite {
 			List<String> colNameList, List<String> colTypeList) { // FIXME move this logic to core module
 		int columnCount = firstRowColsLst.size();
 		String iconPath = "icons/navigator/schema_table_item.png";
-		ICubridNode classNode = new DefaultSchemaNode(tableName, tableName,
+		ICubridNode classNode = new DefaultSchemaNode(tableName, tableName, tableName,
 				iconPath);
 		classNode.setContainer(true);
 		List<String> columnNames;
@@ -872,5 +892,9 @@ public class FileToTableMappingComposite extends Composite {
 				fileColumnList.add("Column " + i); //$NON-NLS-1$
 			}
 		}
+	}
+	
+	private boolean isSupportUserSchema() {
+		return database.getDatabaseInfo().isSupportUserSchema();
 	}
 }

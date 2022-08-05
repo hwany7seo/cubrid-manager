@@ -27,6 +27,7 @@
  */
 package com.cubrid.common.ui.cubrid.trigger.dialog;
 
+import java.security.acl.Owner;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -301,6 +302,12 @@ public class CreateTriggerDialog extends
 		if (StringUtil.isEmpty(createSQL)) {
 			return;
 		}
+		if (null == trigger) {
+			ownerName = database.getDatabaseInfo().getAuthLoginedDbUserInfo().getName();
+		} else {
+			ownerName = trigger.getOwner();
+		}
+		triggerName = triggerNameText.getText();
 		String taskName = null;
 		String message = null;
 		if (buttonId == IDialogConstants.OK_ID) {
@@ -318,7 +325,12 @@ public class CreateTriggerDialog extends
 		taskExecutor.addTask(jdbcTask);
 		new ExecTaskWithProgress(taskExecutor).busyCursorWhile();
 		if (taskExecutor.isSuccess()) {
-			triggerName = triggerNameText.getText();
+			if(database.getDatabaseInfo().isSupportUserSchema()) {
+				triggerName = ownerName + "." + triggerNameText.getText();	
+			} else {
+				triggerName = triggerNameText.getText();
+			}
+			
 			setReturnCode(buttonId);
 			close();
 			CommonUITool.openInformationBox(Messages.msgInformation, message);
@@ -390,7 +402,11 @@ public class CreateTriggerDialog extends
 			AlterTriggerTask task = new AlterTriggerTask(
 					database.getServer().getServerInfo());
 			task.setDbName(database.getName());
-			task.setTriggerName(trigger.getName());
+			if (database.getDatabaseInfo().isSupportUserSchema()) {
+				task.setTriggerName(trigger.getOwner() + "." + trigger.getName());
+			} else {
+				task.setTriggerName(trigger.getName());	
+			}
 
 			String triggerStatus = this.getStatus();
 			task.setStatus(TriggerStatus.eval(triggerStatus));
@@ -399,7 +415,7 @@ public class CreateTriggerDialog extends
 			task.setPriority(strPriority);
 
 			taskName = Messages.bind(Messages.alterTriggerTaskName,
-					trigger.getName());
+					task.getTaskname());
 			message = Messages.alterTriggerSuccess;
 			executedTask = task;
 		}
@@ -472,7 +488,15 @@ public class CreateTriggerDialog extends
 		setMessage(Messages.triggerAlterMSG);
 		setTitle(Messages.triggerAlterMSGTitle);
 
+		if(database.getDatabaseInfo().isSupportUserSchema()) {
+			int idx = trigger.getName().indexOf(".");
+			if (idx > 0) {
+				trigger.setOwner(trigger.getName().substring(0, idx));
+				trigger.setName(trigger.getName().substring(idx +1));
+			}
+		}
 		triggerNameText.setText(trigger.getName());
+		ownerName = trigger.getOwner();
 		String table = trigger.getTarget_class();
 
 		if (null == table) {
@@ -680,6 +704,10 @@ public class CreateTriggerDialog extends
 	private Trigger getNewTrigger() { // FIXME move this logic to core module
 		Trigger newTrigger = new Trigger();
 		String triggerName = triggerNameText.getText();
+		String owner = null;
+		if (trigger != null) {
+			owner = trigger.getOwner();
+		}
 
 		String triggerEventTargetTable = triggerTargetTableCombo.getText().trim();
 		String triggerEventTargetColumn = triggerTargetColumnCombo.getText().trim();
@@ -701,6 +729,9 @@ public class CreateTriggerDialog extends
 		String strPriority = triggerPriorityText.getText();
 
 		newTrigger.setName(triggerName);
+		if (owner != null && !owner.isEmpty()) {
+			newTrigger.setOwner(owner);
+		} 
 		newTrigger.setEventType(eventType);
 		newTrigger.setTarget_class(triggerEventTargetTable);
 		newTrigger.setTarget_att(triggerEventTargetColumn);
@@ -901,7 +932,8 @@ public class CreateTriggerDialog extends
 			{Messages.triggerStatusInactive, "INACTIVE" }, };
 	private List<String> tableList;
 	private String triggerName;
-
+	private String ownerName;
+	
 	/**
 	 *
 	 * Get status
@@ -1393,5 +1425,5 @@ public class CreateTriggerDialog extends
 	public String getTriggerName() {
 		return triggerName;
 	}
-
+	
 }

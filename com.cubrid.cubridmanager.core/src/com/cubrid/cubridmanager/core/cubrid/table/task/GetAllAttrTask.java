@@ -78,16 +78,22 @@ public class GetAllAttrTask extends
 				errorMsg = Messages.error_getConnection;
 				return allAttrList;
 			}
-
-			String sql = "SELECT attr_name, def_order FROM db_attribute WHERE class_name=?"
+			
+			String sql; 
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT attr_name, def_order FROM db_attribute WHERE CONCAT(owner_name, '.', class_name)=?"
 					+ " ORDER BY def_order";
+			} else {
+				sql = "SELECT attr_name, def_order FROM db_attribute WHERE class_name=?"
+						+ " ORDER BY def_order";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
 
 			stmt = connection.prepareStatement(sql);
 			((PreparedStatement) stmt).setString(1,
-					className.toLowerCase(Locale.getDefault()));
+					className);
 			rs = ((PreparedStatement) stmt).executeQuery();
 			while (rs.next()) {
 				String attrName = rs.getString("attr_name");
@@ -116,16 +122,22 @@ public class GetAllAttrTask extends
 				errorMsg = Messages.error_getConnection;
 				return;
 			}
-
-			String sql = "SELECT * FROM db_attribute WHERE class_name=?"
+			
+			String sql;
+			if (databaseInfo.isSupportUserSchema()) {
+				sql = "SELECT * FROM db_attribute WHERE CONCAT(owner_name, '.', class_name)=?"
 					+ " ORDER BY def_order";
+			} else {
+				sql = "SELECT * FROM db_attribute WHERE class_name=?"
+						+ " ORDER BY def_order";
+			}
 
 			// [TOOLS-2425]Support shard broker
 			sql = databaseInfo.wrapShardQuery(sql);
 
 			stmt = connection.prepareStatement(sql);
 			((PreparedStatement) stmt).setString(1,
-					className.toLowerCase(Locale.getDefault()));
+					className);
 			rs = ((PreparedStatement) stmt).executeQuery();
 			while (rs.next()) {
 				DBAttribute dbAttribute = new DBAttribute();

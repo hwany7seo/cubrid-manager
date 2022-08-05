@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 
 import com.cubrid.common.core.task.ITask;
+import com.cubrid.common.core.util.CompatibleUtil;
 import com.cubrid.common.core.util.LogUtil;
 import com.cubrid.common.ui.spi.persist.QueryOptions;
 import com.cubrid.common.ui.spi.progress.TaskExecutor;
@@ -173,6 +174,7 @@ public class LoginDatabaseTaskExecutor extends
 				dbInfo.setLogined(true);
 				dbUserInfo.setNoEncryptPassword(dbPassword);
 				dbInfo.setAuthLoginedDbUserInfo(dbUserInfo);
+				dbInfo.setSupportUserSchema(CompatibleUtil.isAfter112(dbInfo));
 				
 			}
 			

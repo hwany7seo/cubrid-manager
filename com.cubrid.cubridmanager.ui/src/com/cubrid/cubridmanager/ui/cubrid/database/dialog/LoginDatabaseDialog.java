@@ -479,6 +479,9 @@ public class LoginDatabaseDialog extends CMTitleAreaDialog implements ModifyList
 		}
 		
 		if (taskExcutor.isSuccess()) {
+			if (CompatibleUtil.isAfter112(dbInfo.getServerInfo())) {
+				dbInfo.setSupportUserSchema(true);
+			}
 			saveBrokerInfo();
 		}
 
