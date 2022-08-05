@@ -29,6 +29,7 @@ package com.cubrid.cubridmanager.core.cubrid.trigger.task;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 
@@ -104,7 +105,7 @@ public class JDBCGetTriggerInfoTask extends JDBCTask {
 				trigger.setConditionTime(JDBCGetTriggerListTask.getConditionTime(rs.getInt("condition_time")));
 				trigger.setEventType(JDBCGetTriggerListTask.getEventType(rs.getInt("event")));
 				if (databaseInfo.isSupportUserSchema()) {
-					trigger.setTarget_class(rs.getString("target_owner_name") + "." + rs.getString("target_class_name"));
+					trigger.setTarget_class(rs.getString("target_owner_name").toLowerCase(Locale.getDefault()) + "." + rs.getString("target_class_name"));
 				} else {
 					trigger.setTarget_class(rs.getString("target_class_name"));
 				}
