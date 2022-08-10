@@ -1417,7 +1417,7 @@ public class CreateTriggerDialog extends
 			sql.append(StringUtil.NEWLINE);
 			sql.append(StringUtil.NEWLINE);
 			sql.append(StringUtil.NEWLINE);
-			sql.append(TriggerDDL.getAlterDDL(trigger, newTrigger));
+			sql.append(TriggerDDL.getAlterDDL(trigger, newTrigger, database.getDatabaseInfo().isSupportUserSchema()));
 		}
 		return sql;
 	}

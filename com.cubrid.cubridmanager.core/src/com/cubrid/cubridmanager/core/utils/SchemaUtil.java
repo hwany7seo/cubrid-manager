@@ -115,4 +115,20 @@ public class SchemaUtil {
 		
 		return columns;
 	}
+	
+	public static String getOwnerNameForUserSchema(String uniqueName) {
+		int idx = uniqueName.indexOf(".");
+		if (idx > 0) {
+			return uniqueName.substring(0, idx);
+		}
+		return "";
+	}
+	
+	public static String getClassNameForUserSchema(String uniqueName) {
+		int idx = uniqueName.indexOf(".");
+		if (idx > 0) {
+			return uniqueName.substring(idx + 1);
+		}
+		return "";
+	}
 }

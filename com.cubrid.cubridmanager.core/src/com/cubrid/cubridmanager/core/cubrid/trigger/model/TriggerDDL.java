@@ -32,7 +32,6 @@ import java.math.BigDecimal;
 import com.cubrid.common.core.common.model.Trigger;
 import com.cubrid.common.core.util.QuerySyntax;
 import com.cubrid.common.core.util.StringUtil;
-import com.cubrid.cubridmanager.core.cubrid.database.model.DatabaseInfo;
 
 /**
  * 
@@ -226,7 +225,11 @@ public final class TriggerDDL {
 					bf.append(QuerySyntax.escapeKeyword(triggerName));
 				}
 			} else {
-				bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+				if (isSupportUserSchema) {
+					bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+				} else {
+					bf.append(QuerySyntax.escapeKeyword(triggerName));
+				}
 			}
 		}
 		bf.append(newLine);
@@ -239,7 +242,7 @@ public final class TriggerDDL {
 	 * @param newTrigger Trigger
 	 * @return String
 	 */
-	public static String getAlterDDL(Trigger oldTrigger, Trigger newTrigger) {
+	public static String getAlterDDL(Trigger oldTrigger, Trigger newTrigger, boolean isSupportUserSchema) {
 		String triggerName = oldTrigger.getName();
 		String ownerName = oldTrigger.getOwner();
 		String oldPriority = oldTrigger.getPriority();
@@ -258,7 +261,11 @@ public final class TriggerDDL {
 			if (ownerName == null || ownerName.isEmpty()) {
 				bf.append(QuerySyntax.escapeKeyword(triggerName));
 			} else {
-				bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+				if (isSupportUserSchema) {
+					bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+				} else {
+					bf.append(QuerySyntax.escapeKeyword(triggerName));
+				}
 			}
 			bf.append(" STATUS ").append(newStatus);
 			bf.append(endLineChar);
@@ -274,7 +281,11 @@ public final class TriggerDDL {
 			if (ownerName == null || ownerName.isEmpty()) {
 				bf.append(QuerySyntax.escapeKeyword(triggerName));
 			} else {
-				bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+				if (isSupportUserSchema) {
+					bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+				} else {
+					bf.append(QuerySyntax.escapeKeyword(triggerName));
+				}
 			}
 			bf.append(" PRIORITY ").append(newPriority);
 			bf.append(endLineChar);
@@ -291,7 +302,11 @@ public final class TriggerDDL {
 			if (ownerName == null || ownerName.isEmpty()) {
 				bf.append(QuerySyntax.escapeKeyword(triggerName));
 			} else {
-				bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+				if (isSupportUserSchema) {
+					bf.append(QuerySyntax.escapeKeyword(ownerName) + "." + QuerySyntax.escapeKeyword(triggerName));
+				} else {
+					bf.append(QuerySyntax.escapeKeyword(triggerName));
+				}
 			}
 			newDescription = String.format("'%s'", newDescription);
 			bf.append(String.format(" COMMENT %s", StringUtil.escapeQuotes(newDescription)));

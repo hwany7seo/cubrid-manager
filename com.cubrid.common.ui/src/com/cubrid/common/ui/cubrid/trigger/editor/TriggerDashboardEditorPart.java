@@ -421,18 +421,19 @@ public class TriggerDashboardEditorPart extends CubridEditorPart {
 			if (element instanceof Trigger) {
 				Trigger trigger = (Trigger)element;
 				if (trigger != null) {
-					String owner;
+					String owner = "";
+					if (trigger.getOwner() != null) {
+						owner = trigger.getOwner().toUpperCase(Locale.getDefault());
+					}
 					String name = trigger.getName();
 					if (database.getDatabaseInfo().isSupportUserSchema()) {
 						int idx = name.indexOf(".");
 						if (idx > 0) {
-							owner = name.substring(0, idx).toUpperCase(Locale.getDefault());
+							if (owner == null || owner.isEmpty()) {
+								owner = name.substring(0, idx).toUpperCase(Locale.getDefault());
+							}
 							name = name.substring(idx + 1);
-						} else {
-							owner = "";
 						}
-					} else {
-						owner = "";
 					}
 					switch (columnIndex) {
 						case 0 : return owner;

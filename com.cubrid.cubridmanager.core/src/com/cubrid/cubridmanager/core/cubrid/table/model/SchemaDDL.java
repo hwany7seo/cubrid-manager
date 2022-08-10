@@ -97,8 +97,12 @@ public class SchemaDDL {
 		return getSchemaDDL(schemaInfo, true);
 	}
 
+	public String getSchemaDDLforErwin(SchemaInfo schemaInfo) {
+		return getSchemaDDL(schemaInfo, true, false, false, true);
+	}
+	
 	public String getSchemaDDLForExport(SchemaInfo schemaInfo, boolean isContainIndex) {
-		return getSchemaDDL(schemaInfo, isContainIndex, false, true);
+		return getSchemaDDL(schemaInfo, isContainIndex, false, true, false);
 	}
 	
 	/**
@@ -113,7 +117,7 @@ public class SchemaDDL {
 	}
 
 	public String getSchemaDDL(SchemaInfo schemaInfo, boolean isContainIndex, boolean isVirtual) {
-		return getSchemaDDL(schemaInfo, isContainIndex, isVirtual, false);
+		return getSchemaDDL(schemaInfo, isContainIndex, isVirtual, false, false);
 	}
 	
 	/**
@@ -124,7 +128,7 @@ public class SchemaDDL {
 	 * @param isVirtual boolean whether be a virtual table
 	 * @return String a string indicates a instance of SchemaInfo
 	 */
-	public String getSchemaDDL(SchemaInfo schemaInfo, boolean isContainIndex, boolean isVirtual, boolean isExport) {
+	public String getSchemaDDL(SchemaInfo schemaInfo, boolean isContainIndex, boolean isVirtual, boolean isExport, boolean isERwin) {
 		StringBuffer ddlBuffer = new StringBuffer();
 		ddlBuffer.append("CREATE TABLE ");
 		if (databaseInfo.isSupportUserSchema()) {
@@ -141,7 +145,29 @@ public class SchemaDDL {
 			}
 		} else {
 			final String className = schemaInfo.getClassname();
-			if (null == className || className.equals("")) {
+			if (isERwin) {
+				final String uniqueName = schemaInfo.getUniqueName();
+				if (null == uniqueName || uniqueName.isEmpty()) {
+					ddlBuffer.append("<class_name>");
+				} else {
+					int idx = uniqueName.indexOf(".");
+					boolean isSupportUserSchema = false;
+					for (int i = 0; i < idx; i++) {
+						char ch = uniqueName.charAt(i);
+						if (Character.isUpperCase(ch)){
+							isSupportUserSchema = true;
+							break;
+						}
+					}
+					if (isSupportUserSchema) {
+						ddlBuffer.append(QuerySyntax.escapeKeyword(uniqueName.substring(0, idx))
+								+ "." + QuerySyntax.escapeKeyword(uniqueName.substring(idx + 1)));
+					} else {
+						ddlBuffer.append(QuerySyntax.escapeKeyword(uniqueName));
+					}
+				}
+			}
+			else if (null == className || className.equals("")) {
 				ddlBuffer.append("<class_name>");
 			} else {
 				ddlBuffer.append(QuerySyntax.escapeKeyword(className));

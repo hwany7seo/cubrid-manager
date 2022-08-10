@@ -70,6 +70,10 @@ public class NodeUtil {
 		return NodeType.TRIGGER_FOLDER.equals(node.getType());
 	}
 	
+	public static boolean isSynonymFolderNode(ICubridNode node) {
+		return NodeType.SYNONYM_FOLDER.equals(node.getType());
+	}
+	
 	public static boolean isUserFolderNode(ICubridNode node) {
 		return NodeType.USER_FOLDER.equals(node.getType());
 	}

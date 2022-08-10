@@ -46,10 +46,14 @@ import com.cubrid.cubridmanager.core.cubrid.database.model.DatabaseInfo;
 public class CreateLikeTableTask extends JDBCTask {
 	private static final Logger LOGGER = LogUtil.getLogger(CreateLikeTableTask.class);
 	private String newTableName;
+	private String newOwnerName;
 	private String likeTableName;
+	private String likeOwnerName;
+	private DatabaseInfo databaseInfo;
 
 	public CreateLikeTableTask(DatabaseInfo dbInfo) {
 		super("CreateLikeTable", dbInfo);
+		databaseInfo = dbInfo;
 	}
 
 	public void execute() {
@@ -61,8 +65,16 @@ public class CreateLikeTableTask extends JDBCTask {
 				errorMsg = Messages.error_getConnection;
 				return;
 			}
-			String sql = "CREATE TABLE " + QuerySyntax.escapeKeyword(newTableName) + " LIKE "
-					+ QuerySyntax.escapeKeyword(likeTableName);
+			
+			String sql;
+			if (isSupportUserSchema()) {
+				sql = "CREATE TABLE " + QuerySyntax.escapeKeyword(newOwnerName) + "." + QuerySyntax.escapeKeyword(newTableName) + " LIKE "
+					+ QuerySyntax.escapeKeyword(likeOwnerName) + "." + QuerySyntax.escapeKeyword(likeTableName);
+			} else {
+				sql = "CREATE TABLE " + QuerySyntax.escapeKeyword(newTableName) + " LIKE "
+						+ QuerySyntax.escapeKeyword(likeTableName);
+			}
+			
 			stmt = connection.createStatement();
 			stmt.execute(sql);
 			connection.commit();
@@ -83,6 +95,10 @@ public class CreateLikeTableTask extends JDBCTask {
 		newTableName = tableName;
 	}
 
+	public void setOwnerName(String ownerName) {
+		newOwnerName = ownerName;
+	}
+	
 	/**
 	 * Set like table name
 	 * 
@@ -90,5 +106,16 @@ public class CreateLikeTableTask extends JDBCTask {
 	 */
 	public void setLikeTableName(String tableName) {
 		likeTableName = tableName;
+	}
+	
+	public void setLikeOwnerName(String ownerName) {
+		likeOwnerName = ownerName;
+	}
+	
+	private boolean isSupportUserSchema() {
+		if (databaseInfo != null) {
+			return databaseInfo.isSupportUserSchema();
+		} 
+		return false;
 	}
 }

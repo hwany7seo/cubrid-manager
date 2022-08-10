@@ -95,10 +95,12 @@ public class JDBCGetTriggerListTask extends JDBCTask {
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				Trigger trigger = new Trigger();
-				trigger.setName(rs.getString("name"));
 				if (databaseInfo.isSupportUserSchema()) {
+					trigger.setName(rs.getString("unique_name"));
 					//Data is LowerCase from CMS
 					trigger.setOwner(rs.getString("owner_name").toLowerCase(Locale.getDefault()));
+				} else {
+					trigger.setName(rs.getString("name"));
 				}
 				trigger.setConditionTime(getConditionTime(rs.getInt("condition_time")));
 				trigger.setEventType(getEventType(rs.getInt("event")));

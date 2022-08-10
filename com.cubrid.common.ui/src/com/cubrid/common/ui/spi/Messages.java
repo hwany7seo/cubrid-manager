@@ -71,6 +71,7 @@ public class Messages extends
 	public static String msgSystemViewFolderName;
 	public static String msgSpFolderName;
 	public static String msgTriggerFolderName;
+	public static String msgSynonymFolderName;
 	public static String msgSerialFolderName;
 	public static String msgFunctionFolderName;
 	public static String msgProcedureFolderName;
@@ -144,6 +145,11 @@ public class Messages extends
 	public static String dropTriggerActionName;
 	public static String newTriggerActionName;
 	public static String alterTriggerActionName;
+	
+	public static String dropSynonymActionName;
+	public static String newSynonymActionName;
+	public static String alterSynonymActionName;
+	
 	// serial
 	public static String deleteSerialActionName;
 	public static String createSerialActionName;

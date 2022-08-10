@@ -62,6 +62,7 @@ public class CMNavigatorViewSorter extends
 				|| NodeType.VIEW_FOLDER.equals(type)
 				|| NodeType.SERIAL_FOLDER.equals(type)
 				|| NodeType.TRIGGER_FOLDER.equals(type)
+				|| NodeType.SYNONYM_FOLDER.equals(type)
 				|| NodeType.STORED_PROCEDURE_FOLDER.equals(type)
 				|| CubridNodeType.USER_FOLDER.equals(type)
 				|| CubridNodeType.JOB_FOLDER.equals(type)

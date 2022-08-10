@@ -165,7 +165,8 @@ public class CubridDeferredTreeContentManager extends DeferredTreeContentManager
 				|| parentNode.getType().equals(NodeType.TABLE_FOLDER)
 				|| parentNode.getType().equals(NodeType.VIEW_FOLDER)
 				|| parentNode.getType().equals(NodeType.SERIAL_FOLDER)
-				|| parentNode.getType().equals(NodeType.TRIGGER_FOLDER));
+				|| parentNode.getType().equals(NodeType.TRIGGER_FOLDER)
+				|| parentNode.getType().equals(NodeType.SYNONYM_FOLDER));
 	}
 
 	/**
