@@ -559,7 +559,7 @@ public class ApplicationWorkbenchWindowAdvisor extends
 
 			if (item.getId().equals("org.eclipse.ui.edit.text.actionSet.annotationNavigation")
 					|| item.getId().equals("org.eclipse.ui.edit.text.actionSet.navigation")) {
-				cm.remove(item.getId());
+				cm.remove(item);
 				cm.update(true);
 			}
 		}
