@@ -29,12 +29,12 @@
         <module>../org.cubrid.cubridmanager.plugin.manager</module>
         <module>../org.cubrid.cubridquery.plugin.querybrowser</module>
         <!--site -->
-        <module>../com.cubrid.cubridmanager.app.update.site</module>
+        <!-- <module>../com.cubrid.cubridmanager.app.update.site</module> -->
     </modules>
   
     <properties>
-        <cubridtools-version>11.1.0.0001</dbeaver-version>
-        <cubridtools-product>Cubrid-Manager</dbeaver-product>
+        <cubridtools-version>11.1.0.0001</cubridtools-version>
+        <cubridtools-product>Cubrid-Manager</cubridtools-product>
         <tycho-version>2.7.4</tycho-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
