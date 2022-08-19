@@ -20,7 +20,6 @@
 	<property name="build.dir" value="${basedir}" />
 	<property name="deploy.home" value="${build.dir}/deploy" />
 	<property name="output.path" value="${build.dir}/out" />
-	<property name="product.linux.32" value="${deploy.home}/linux32/${archivePrefix}" />
 	<property name="product.linux.64" value="${deploy.home}/linux64/${archivePrefix}" />
 	<property name="product.win.32" value="${deploy.home}/win32/${archivePrefix}" />
 	<property name="product.win.64" value="${deploy.home}/win64/${archivePrefix}" />
@@ -28,7 +27,6 @@
 	<property name="product.macosx.carbon" value="${deploy.home}/carbon/${archivePrefix}" />
 	-->
 	<property name="product.macosx.cocoa" value="${deploy.home}/cocoa/${archivePrefix}" />
-	<property name="jre.linux.32" value="${eclipse.home}/jre/linux32.zip" />
 	<property name="jre.linux.64" value="${eclipse.home}/jre/linux64.zip" />
 	<property name="jre.win.32" value="${eclipse.home}/jre/win32.zip" />
 	<property name="jre.win.64" value="${eclipse.home}/jre/win64.zip" />
@@ -37,8 +35,8 @@
 	<property name="installer.linux" value="${build.dir}/installer/linux" />
 	-->
 	<property name="installer.mac" value="${build.dir}/installer/mac" />
-	<property name="update.configurator.match" value="org.eclipse.update.configurator,3.3.100.v20100512,plugins/org.eclipse.update.configurator_3.3.100.v20100512.jar,4,false" />
-	<property name="update.configurator.replace" value="org.eclipse.update.configurator,3.3.100.v20100512,plugins/org.eclipse.update.configurator_3.3.100.v20100512.jar,4,true" />
+	<property name="update.configurator.match" value="org.eclipse.update.configurator,3.4.800.v20210415-1314,plugins/org.eclipse.update.configurator_3.4.800.v20210415-1314.jar,4,false" />
+	<property name="update.configurator.replace" value="org.eclipse.update.configurator,3.4.800.v20210415-1314,plugins/org.eclipse.update.configurator_3.4.800.v20210415-1314.jar,4,true" />
 
 	<!--
 	Clean
@@ -171,46 +169,6 @@
 		  <path>
 		    <fileset dir="${product.win.64}/plugins" includes="com.cubrid.*.jar" />
 		  	<fileset dir="${product.win.64}/features" includes="com.cubrid.*.jar" />
-		  </path>
-		</signjar>
-
-		<!--
-		optimize linux32
-		-->
-		<unzip dest="${deploy.home}/linux32" overwrite="true">
-			<fileset dir="${buildDirectory}/${buildLabel}">
-				<include name="${buildId}-linux.gtk.x86.zip" />
-			</fileset>
-		</unzip>
-		<replaceregexp file="${product.linux.32}/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info"
-		               match="${update.configurator.match}"
-		               replace="${update.configurator.replace}"
-		               byline="true"
-		/>
-		<delete dir="${product.linux.32}/readme" />
-		<delete dir="${product.linux.32}/about_files" />
-		<delete>
-			<fileset dir="${product.linux.32}" includes="*.html" />
-			<fileset dir="${product.linux.32}" includes="*.xml" />
-			<fileset dir="${product.linux.32}" includes="*.eclipseproduct" />
-		</delete>
-		<copy todir="${product.linux.32}/driver">
-			<fileset dir="${jdbc.file}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-		<copy todir="${product.linux.32}/dropins">
-			<fileset dir="${builder}">
-				<include name="*.txt" />
-			</fileset>
-		</copy>
-		<unzip src="${jre.linux.32}" dest="${product.linux.32}" />
-		<chmod file="${product.linux.32}/jre/bin/**" perm="755" type="both" />
-		<signjar alias="${sign.alias}" keystore="${sign.keystore}"
-		    storepass="${sign.storepass}" keypass="${sign.keypass}">
-		  <path>
-		    <fileset dir="${product.linux.32}/plugins" includes="com.cubrid.*.jar" />
-		  	<fileset dir="${product.linux.32}/features" includes="com.cubrid.*.jar" />
 		  </path>
 		</signjar>
 
@@ -360,21 +318,6 @@
 	</target>
 
 	<!--
-	package linux32
-	-->
-	<target name="packagelinux32" depends="postbuild">
-		<tar destfile="${deploy.home}/${product.name}-${product.version}-linux-i386.tar">
-			<tarfileset dir="${product.linux.32}" prefix="cubridmanager" />
-			<tarfileset file="${product.linux.32}/${launcher.name}" filemode="755" prefix="cubridmanager" />
-			<tarfileset dir="${product.linux.32}/jre" prefix="cubridmanager/jre" >
-				<exclude name="**/bin/**" />
-			</tarfileset>
-			<tarfileset dir="${product.linux.32}/jre/bin" prefix="cubridmanager/jre/bin" filemode="755" />
-		</tar>
-		<gzip src="${deploy.home}/${product.name}-${product.version}-linux-i386.tar" destfile="${output.path}/${product.name}-${product.version}-linux-i386${debug}.tar.gz" />
-	</target>
-
-	<!--
 	package linux64
 	-->
 	<target name="packagelinux64" depends="postbuild">
@@ -488,19 +431,6 @@
 	</target>
 
 	<!--
-	Make linux32 installer for CUBRID Manager
-	-->
-	<!--
-	<target name="linux32installer" description="Make linux32 installer" depends="postbuild">
-		<exec dir="${installer.linux}" outputproperty="installer.output" errorproperty="redirector.err" executable="${installer.linux}/build.sh" failifexecutionfails="false">
-	  		<arg value="-v${product.version}" />
-	  		<arg value="-i${product.linux.32}" />
-	  		<arg value="-o${output.path}" />
-	  		<arg value="-plinux-i386" />
-		</exec>
-	</target>
-	-->
-	<!--
 	Make linux64 installer for CUBRID Manager
 	-->
 	<!--
@@ -528,7 +458,7 @@
 	</target>
 
 	<target depends="packagewin32,packagewin64,win32installer,win64installer" name="distwin" />
-	<target depends="packagelinux32,packagelinux64" name="distlinux" />
+	<target depends="packagelinux64" name="distlinux" />
 	<target depends="packagemac,macinstaller" name="distmac" />
 	<target depends="clean,distwin,distlinux,distmac,package_autoupdate" name="dist" />
 </project>

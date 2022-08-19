@@ -7,7 +7,8 @@ echo "JAVA HOME : ${JAVA_HOME}"
 
 PRODUCT_DIR=cubridmanager
 PRODUCT_NAME=CUBRIDManager
-ECLIPSE_HOME=/home/hwanyseo/eclipse_build/eclipse
+#ECLIPSE_HOME=/home/hwanyseo/eclipse_build/eclipse
+ECLIPSE_HOME=/home/hwanyseo/eclipse_build/2022-06_x86_64/eclipse
 BUILD_HOME=${WORKSPACE}
 BUILD_DIR=${BUILD_HOME}/../../com.cubrid.cubridmanager.build
 VERSION_DIR=${BUILD_HOME}/../../com.cubrid.cubridmanager.ui

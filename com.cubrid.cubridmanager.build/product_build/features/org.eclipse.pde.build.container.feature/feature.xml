@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature id="org.eclipse.pde.build.container.feature" version="1.0.0">
+	<includes id="com.cubrid.cubridmanager.app.product.root.feature" version="9.3.1.qualifier"/>
+	<includes id="com.cubrid.cubridmanager.app" version="9.3.1.qualifier"/>
+	<includes id="com.cubrid.cubridmanager.dependence" version="9.3.1.qualifier"/>
+	<includes id="com.cubrid.common.update" version="9.3.1.qualifier"/>
+</feature>
