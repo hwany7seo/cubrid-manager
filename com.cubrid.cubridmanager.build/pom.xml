@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.cubrid.cubridmanager</groupId>
+    <artifactId>cubridmanager</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    
+    <modules>
+        <!-- features -->
+        <module>../com.cubrid.common.update.feature</module>
+        <module>../com.cubrid.cubridmanager.app.feature</module>
+        <module>../com.cubrid.cubridmanager.dependence.feature</module>
+        <!-- bundles -->
+        <module>../com.cubrid.common.configuration</module>
+        <module>../com.cubrid.common.core</module>
+        <module>../com.cubrid.cubridmanager.core</module>
+        <module>../com.cubrid.cubridmanager.jdbc.proxy</module>
+        <!-- plugins -->
+        <module>../com.cubrid.common.ui</module>
+        <module>../com.cubrid.common.update</module>
+        <module>../com.cubrid.cubridmanager.app</module>
+        <module>../com.cubrid.cubridmanager.plugin</module>
+        <module>../com.cubrid.cubridmanager.ui</module>
+        <module>../com.cubrid.cubridquery.ui</module>
+        <module>../com.cubrid.tool.editor</module>
+        <module>../org.cubrid.cubridmanager.plugin.manager</module>
+        <module>../org.cubrid.cubridquery.plugin.querybrowser</module>
+        <!--site -->
+        <module>../com.cubrid.cubridmanager.app.update.site</module>
+    </modules>
+  
+    <properties>
+        <cubridtools-version>11.1.0.0001</dbeaver-version>
+        <cubridtools-product>Cubrid-Manager</dbeaver-product>
+        <tycho-version>2.7.4</tycho-version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+    </properties>
+  
+    <repositories>
+        <repository>
+            <id>eclipse-p2-repo</id>
+            <url>https://download.eclipse.org/releases/2022-06/</url>
+            <layout>p2</layout>
+        </repository>
+    </repositories>
+
+
+    <build>
+        <sourceDirectory>${project.basedir}/src</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/tests</testSourceDirectory>
+        <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-resources-plugin</artifactId>
+              <version>2.6</version>
+              <configuration>
+                  <resources>
+                  </resources>
+              </configuration>
+            </plugin>
+
+            <!-- Tycho build -->
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>target-platform-configuration</artifactId>
+                <version>${tycho-version}</version>
+                <configuration>
+                  <environments>
+                    <environment>
+                      <os>win32</os>
+                      <ws>win32</ws>
+                      <arch>x86_64</arch>
+                    </environment>
+                    <environment>
+                      <os>linux</os>
+                      <ws>gtk</ws>
+                      <arch>x86_64</arch>
+                    </environment>
+                    <environment>
+                      <os>macosx</os>
+                      <ws>cocoa</ws>
+                      <arch>x86_64</arch>
+                    </environment>
+                  </environments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-maven-plugin</artifactId>
+                <version>${tycho-version}</version>
+                <extensions>true</extensions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-compiler-plugin</artifactId>
+                <version>${tycho-version}</version>
+                <configuration>
+                    <useProjectSettings>false</useProjectSettings>
+                    <source>1.8</source>
+                    <target>11</target>
+                    <compilerVersion>1.8</compilerVersion>
+                    <compilerArgs>
+                        <!--
+                            Java 11-compatibility options.
+                            ignore.symbol.file is a legacy flag
+                        -->
+                        <compilerArg>-XDignore.symbol.file=true</compilerArg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <!-- Set Built-By info -->
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-packaging-plugin</artifactId>
+                <version>${tycho-version}</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Built-By>com.cubrid</Built-By>
+                            <Created-By>com.cubrid</Created-By>
+                            <Build-Time>${maven.build.timestamp}</Build-Time>
+                        </manifestEntries>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+      
+    <profiles>
+        <!-- Enables build for all platforms including ARM -->
+        <profile>
+            <id>all-platforms</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.tycho</groupId>
+                        <artifactId>target-platform-configuration</artifactId>
+                        <version>${tycho-version}</version>
+                        <configuration>
+                            <environments>
+                                <environment>
+                                    <os>win32</os>
+                                    <ws>win32</ws>
+                                    <arch>x86_64</arch>
+                                </environment>
+                                <environment>
+                                    <os>linux</os>
+                                    <ws>gtk</ws>
+                                    <arch>x86_64</arch>
+                                </environment>
+                                <environment>
+                                    <os>linux</os>
+                                    <ws>gtk</ws>
+                                    <arch>aarch64</arch>
+                                </environment>
+                                <environment>
+                                    <os>macosx</os>
+                                    <ws>cocoa</ws>
+                                    <arch>x86_64</arch>
+                                </environment>
+                                <environment>
+                                    <os>macosx</os>
+                                    <ws>cocoa</ws>
+                                    <arch>aarch64</arch>
+                                </environment>
+                            </environments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+     </profiles>
+</project>
