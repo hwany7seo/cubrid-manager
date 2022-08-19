@@ -9,10 +9,6 @@
     <packaging>pom</packaging>
     
     <modules>
-        <!-- features -->
-        <module>../com.cubrid.common.update.feature</module>
-        <module>../com.cubrid.cubridmanager.app.feature</module>
-        <module>../com.cubrid.cubridmanager.dependence.feature</module>
         <!-- bundles -->
         <module>../com.cubrid.common.configuration</module>
         <module>../com.cubrid.common.core</module>
@@ -28,6 +24,10 @@
         <module>../com.cubrid.tool.editor</module>
         <module>../org.cubrid.cubridmanager.plugin.manager</module>
         <module>../org.cubrid.cubridquery.plugin.querybrowser</module>
+        <!-- features -->
+        <module>../com.cubrid.common.update.feature</module>
+        <module>../com.cubrid.cubridmanager.app.feature</module>
+        <module>../com.cubrid.cubridmanager.dependence.feature</module>
         <!--site -->
         <!-- <module>../com.cubrid.cubridmanager.app.update.site</module> -->
     </modules>
@@ -47,6 +47,34 @@
             <layout>p2</layout>
         </repository>
     </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.equinox.security</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.eclipse.platform</groupId>
+          <artifactId>org.eclipse.equinox.p2.metadata</artifactId>
+          <version>2.3.100</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-embedder</artifactId>
+            <version>3.6.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>3.6.3</version>
+        </dependency>
+    </dependencies>
 
 
     <build>
