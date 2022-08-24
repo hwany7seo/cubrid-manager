@@ -1,0 +1,66 @@
+!SESSION 2022-08-24 09:30:02.045 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=11.0.11
+java.vendor=Red Hat, Inc.
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=ko_KR
+Framework arguments:  -eclipse.keyring /tmp/tycho16490403974084590825secure_storage
+Command-line arguments:  -eclipse.keyring /tmp/tycho16490403974084590825secure_storage
+
+!ENTRY org.eclipse.equinox.p2.director 0 0 2022-08-24 09:30:02.045
+!MESSAGE Overall install request is satisfiable
+!SUBENTRY 1 org.eclipse.equinox.p2.director 0 0 2022-08-24 09:30:02.045
+!MESSAGE Add request for CUBRID Manager 9.1.0.202208240029 (com.cubrid.cubridmanager.product 9.1.0.202208240029) is satisfiable
+
+!ENTRY org.eclipse.equinox.p2.director 0 0 2022-08-24 09:30:06.986
+!MESSAGE Overall install request is satisfiable
+!SUBENTRY 1 org.eclipse.equinox.p2.director 0 0 2022-08-24 09:30:06.986
+!MESSAGE Add request for CUBRID Manager 9.1.0.202208240029 (com.cubrid.cubridmanager.product 9.1.0.202208240029) is satisfiable
+
+!ENTRY org.eclipse.equinox.p2.director 0 0 2022-08-24 09:30:11.857
+!MESSAGE Overall install request is satisfiable
+!SUBENTRY 1 org.eclipse.equinox.p2.director 0 0 2022-08-24 09:30:11.857
+!MESSAGE Add request for CUBRID Manager 9.1.0.202208240029 (com.cubrid.cubridmanager.product 9.1.0.202208240029) is satisfiable
+!SESSION 2022-08-24 10:07:44.184 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=11.0.11
+java.vendor=Red Hat, Inc.
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=ko_KR
+Framework arguments:  -eclipse.keyring /tmp/tycho2421641350926340425secure_storage
+Command-line arguments:  -eclipse.keyring /tmp/tycho2421641350926340425secure_storage
+
+!ENTRY org.eclipse.equinox.p2.director 0 0 2022-08-24 10:07:44.184
+!MESSAGE Overall install request is satisfiable
+!SUBENTRY 1 org.eclipse.equinox.p2.director 0 0 2022-08-24 10:07:44.184
+!MESSAGE Add request for CUBRID Manager 9.1.0.202208240107 (com.cubrid.cubridmanager.product 9.1.0.202208240107) is satisfiable
+
+!ENTRY org.eclipse.equinox.p2.director 0 0 2022-08-24 10:07:49.326
+!MESSAGE Overall install request is satisfiable
+!SUBENTRY 1 org.eclipse.equinox.p2.director 0 0 2022-08-24 10:07:49.326
+!MESSAGE Add request for CUBRID Manager 9.1.0.202208240107 (com.cubrid.cubridmanager.product 9.1.0.202208240107) is satisfiable
+
+!ENTRY org.eclipse.equinox.p2.director 0 0 2022-08-24 10:07:54.438
+!MESSAGE Overall install request is satisfiable
+!SUBENTRY 1 org.eclipse.equinox.p2.director 0 0 2022-08-24 10:07:54.438
+!MESSAGE Add request for CUBRID Manager 9.1.0.202208240107 (com.cubrid.cubridmanager.product 9.1.0.202208240107) is satisfiable
+!SESSION 2022-08-24 10:45:51.228 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=11.0.11
+java.vendor=Red Hat, Inc.
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=ko_KR
+Framework arguments:  -eclipse.keyring /tmp/tycho17075622499758258175secure_storage
+Command-line arguments:  -eclipse.keyring /tmp/tycho17075622499758258175secure_storage
+
+!ENTRY org.eclipse.equinox.p2.director 0 0 2022-08-24 10:45:51.228
+!MESSAGE Overall install request is satisfiable
+!SUBENTRY 1 org.eclipse.equinox.p2.director 0 0 2022-08-24 10:45:51.228
+!MESSAGE Add request for CUBRID Manager 9.1.0.202208240145 (com.cubrid.cubridmanager.product 9.1.0.202208240145) is satisfiable
+
+!ENTRY org.eclipse.equinox.p2.director 0 0 2022-08-24 10:45:56.153
+!MESSAGE Overall install request is satisfiable
+!SUBENTRY 1 org.eclipse.equinox.p2.director 0 0 2022-08-24 10:45:56.153
+!MESSAGE Add request for CUBRID Manager 9.1.0.202208240145 (com.cubrid.cubridmanager.product 9.1.0.202208240145) is satisfiable
+
+!ENTRY org.eclipse.equinox.p2.director 0 0 2022-08-24 10:46:01.083
+!MESSAGE Overall install request is satisfiable
+!SUBENTRY 1 org.eclipse.equinox.p2.director 0 0 2022-08-24 10:46:01.083
+!MESSAGE Add request for CUBRID Manager 9.1.0.202208240145 (com.cubrid.cubridmanager.product 9.1.0.202208240145) is satisfiable

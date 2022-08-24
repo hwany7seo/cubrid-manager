@@ -25,9 +25,9 @@
         <module>../org.cubrid.cubridmanager.plugin.manager</module>
         <module>../org.cubrid.cubridquery.plugin.querybrowser</module>
         <!-- features -->
-        <module>../com.cubrid.common.update.feature</module>
         <module>../com.cubrid.cubridmanager.app.feature</module>
         <module>../com.cubrid.cubridmanager.dependence.feature</module>
+        <module>../com.cubrid.common.update.feature</module>
         <!--site -->
         <!-- <module>../com.cubrid.cubridmanager.app.update.site</module> -->
     </modules>
@@ -73,6 +73,11 @@
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-compat</artifactId>
             <version>3.6.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.12</version>
         </dependency>
     </dependencies>
 
@@ -163,6 +168,15 @@
     </build>
       
     <profiles>
+	<!-- desktop build: includes UI components and products -->
+        <profile>
+            <id>desktop</id>
+            <activation><property><name>!headless-platform</name></property></activation>
+            <modules>
+                <!-- Products -->
+                <module>../com.cubrid.cubridmanager.product</module>
+            </modules>
+        </profile>
         <!-- Enables build for all platforms including ARM -->
         <profile>
             <id>all-platforms</id>

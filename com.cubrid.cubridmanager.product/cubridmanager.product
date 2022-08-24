@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="CUBRID Manager" uid="com.cubrid.cubridmanager.product" id="com.cubrid.cubridmanager.product" application="com.cubrid.cubridmanager.app.application" version="9.1.0.qualifier" useFeatures="true" includeLaunchers="true">
+
+   <aboutInfo>
+      <image path="icons/cubridmanager16.gif"/>
+   </aboutInfo>
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgsMac>-vm ../Eclipse/jre/Contents/Home/bin/java</programArgsMac>
+      <vmArgs>-Xms400M
+-Xmx800M
+-XX:PermSize=64M
+-XX:MaxPermSize=256M
+-XX:+UnlockExperimentalVMOptions 
+-XX:+UseG1GC
+-XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM -Dosgi.requiredJavaVersion=11</vmArgs>
+      <vmArgsMac>-XstartOnFirstThread </vmArgsMac>
+   </launcherArgs>
+
+   <windowImages i16="icons/cubridmanager16.gif" i32="icons/cubridmanager32.gif" i48="icons/cubridmanager48.gif" i64="icons/cubridmanager64.gif"/>
+
+   <splash
+      location="com.cubrid.cubridmanager.product"
+      startupProgressRect="5,380,557,15"
+      startupMessageRect="230,280,557,15"
+      startupForegroundColor="C0C0C0" />
+   <launcher name="cubridmanager">
+      <linux icon="/icons/cubridmanager.xpm"/>
+      <macosx icon="/icons/cubridmanager.icns"/>
+      <solaris/>
+      <win useIco="true">
+         <ico path="/icons/cubridmanager.ico"/>
+         <bmp/>
+      </win>
+   </launcher>
+
+
+   <vm>
+   </vm>
+
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="com.cubrid.cubridmanager.app.feature" version="9.3.1.qualifier"/>
+      <feature id="com.cubrid.cubridmanager.dependence.feature" version="9.3.1.qualifier"/>
+      <feature id="com.cubrid.common.update.feature" version="9.3.1.qualifier"/>
+   </features>
+
+   <configurations>
+   <!--
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
+   -->
+        <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1"/>
+        <plugin id="org.apache.felix.scr" autoStart="true" startLevel="2"/>
+        <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1"/>
+        <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4"/>
+        <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2"/>
+        <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2"/>
+        <!-- This is important because simpleconfigurator conflicts with update.configurator -->
+        <plugin id="org.eclipse.update.configurator" autoStart="false" startLevel="10"/>
+   </configurations>
+
+</product>

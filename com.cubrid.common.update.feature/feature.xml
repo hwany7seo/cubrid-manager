@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="com.cubrid.common.update"
+      id="com.cubrid.common.update.feature"
       label="%featureName"
       version="9.3.1.qualifier"
       provider-name="%providerName"
@@ -27,8 +27,6 @@
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="com.ibm.icu"/>
-      <import plugin="org.eclipse.equinox.preferences"/>
-      <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.equinox.registry"/>
       <import plugin="org.eclipse.equinox.app"/>
       <import plugin="org.eclipse.osgi.services"/>

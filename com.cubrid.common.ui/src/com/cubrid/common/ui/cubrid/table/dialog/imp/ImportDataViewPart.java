@@ -91,7 +91,6 @@ import com.cubrid.common.ui.cubrid.table.dialog.imp.progress.ImportDataProgressM
 import com.cubrid.common.ui.spi.ResourceManager;
 import com.cubrid.common.ui.spi.model.CubridDatabase;
 import com.cubrid.common.ui.spi.util.CommonUITool;
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 /**
  * 
@@ -260,7 +259,7 @@ public class ImportDataViewPart extends
 	 * @param input editorInput
 	 * @throws PartInitException when error
 	 */
-	public void init(IEditorSite site, IEditorInput input) throws ParseException {
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		this.database = (CubridDatabase) input.getAdapter(CubridDatabase.class);
 		this.importConfig = (ImportConfig) input.getAdapter(ImportConfig.class);
 		this.input = input;
