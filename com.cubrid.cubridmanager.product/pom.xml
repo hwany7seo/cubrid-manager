@@ -38,7 +38,7 @@
                     <products>
                         <product>
                             <id>com.cubrid.cubridmanager.product</id>
-                            <archiveFileName>dbeaver-ce-${cubridtools-version}</archiveFileName>
+                            <archiveFileName>CUBRIDManager-${cubridtools-version}</archiveFileName>
                             <rootFolders>
                                 <!-- for MacOSX, make sure you use a folder ending with .app , see bug 463670 -->
                                 <macosx>Cubridmanager.app</macosx>
