@@ -77,6 +77,8 @@ public class LoadTableDetailInfoTask extends
 		if (StringUtil.isEmpty(tableName)) {
 			return;
 		}
+		
+		boolean isSupportUserSchema = database.getDatabaseInfo().isSupportUserSchema();
 
 		StringBuilder sql = new StringBuilder().append("SELECT \n").append(
 				"    c.class_name, \n").append(
@@ -129,10 +131,18 @@ public class LoadTableDetailInfoTask extends
 				"              \"data_type\" = 'BIT VARYING' THEN 1 \n").append(
 				"          ELSE 0 \n").append(
 				"    END ) AS size_over_column, \n").append(
-				"    c.class_type, \n").append("    c.partitioned \n").append(
-				"FROM \n").append("    db_class c, \n").append(
-				"    db_attribute a \n").append("WHERE \n").append(
-				"    c.class_name = ? \n").append("    AND \n").append(
+				"    c.class_type, \n").append("    c.partitioned \n");
+				if (isSupportUserSchema) {
+					sql.append("    ,c.owner_name\n");
+				}
+				sql.append("FROM \n").append("    db_class c, \n").append(
+				"    db_attribute a \n").append("WHERE \n");
+				if (isSupportUserSchema) {
+					sql.append("    CONCAT(c.owner_name, '.', c.class_name) = ? \n");
+				} else {
+					sql.append("    c.class_name = ? \n");
+				}
+				sql.append("    AND \n").append(
 				"    c.class_name = a.class_name \n").append("    AND \n").append(
 				"    c.is_system_class = 'NO' \n").append("    AND \n").append(
 				"    c.class_type = 'CLASS' \n").append("    AND \n").append(
@@ -158,10 +168,20 @@ public class LoadTableDetailInfoTask extends
 				"              i.is_unique = 'NO' \n").append(
 				"              AND \n").append(
 				"              i.is_primary_key = 'NO' THEN 1 \n").append(
-				"          ELSE 0 \n").append("    END ) AS count_index \n").append(
+				"          ELSE 0 \n").append("    END ) AS count_index \n");
+				if (isSupportUserSchema) {
+					sqlIndex.append("    ,c.owner_name\n");
+				}
+				sqlIndex.append(
 				"FROM \n").append("    db_class c, \n").append(
 				"    db_index_key k, \n").append("    db_index i \n").append(
-				"WHERE \n").append("    c.class_name = ? ").append("    AND \n").append(
+				"WHERE \n");
+				if (isSupportUserSchema) {
+					sqlIndex.append("    CONCAT(c.owner_name, '.', c.class_name) = ? ");
+				} else {
+					sqlIndex.append("    c.class_name = ? ");
+				}
+				sqlIndex.append("    AND \n").append(
 				"    c.class_name = k.class_name \n").append("    AND \n").append(
 				"    k.class_name = i.class_name \n").append("    AND \n").append(
 				"    k.index_name = i.index_name \n").append("    AND \n").append(
@@ -191,6 +211,9 @@ public class LoadTableDetailInfoTask extends
 				boolean columnOverSize = rs.getInt(4) > 0;
 				String classType = rs.getString(5);
 				String partitioned = rs.getString(6);
+				if (isSupportUserSchema) {
+					tableName = rs.getString(7) + "." + tableName;
+				}
 
 				tableInfo = new TableDetailInfo();
 				tableInfo.setTableName(tableName);
@@ -217,7 +240,10 @@ public class LoadTableDetailInfoTask extends
 					int pkCount = rs.getInt(3);
 					int fkCount = rs.getInt(4);
 					int indexCount = rs.getInt(5);
-
+					if (isSupportUserSchema) {
+						tableName = rs.getString(6) + "." + tableName;
+					}
+					
 					tableInfo.setTableName(tableName);
 					tableInfo.setUkCount(ukCount);
 					tableInfo.setPkCount(pkCount);
@@ -232,9 +258,11 @@ public class LoadTableDetailInfoTask extends
 		}
 		try{
 			Map<String, SchemaComment>  commentMap = SchemaCommentHandler.loadTableDescriptions(database.getDatabaseInfo(), connection, database.getDatabaseInfo().isSupportUserSchema());
-			SchemaComment schemaComment = SchemaCommentHandler.find(commentMap, tableInfo.getTableName(), null);
-			if(schemaComment != null) {
-				tableInfo.setTableDesc(schemaComment.getDescription());
+			if (commentMap != null && tableInfo != null) {
+				SchemaComment schemaComment = SchemaCommentHandler.find(commentMap, tableInfo.getTableName(), null);
+				if(schemaComment != null) {
+					tableInfo.setTableDesc(schemaComment.getDescription());
+				}
 			}
 		}catch(SQLException ex) {
 			LOGGER.error(ex.getMessage(), ex);
