@@ -270,6 +270,11 @@ public class SchemaDDL {
 		if (schemaInfo.isReuseOid()) {
 			ddlBuffer.append(" REUSE_OID ");
 		}
+		
+		String comment = schemaInfo.getDescription();
+		if (comment != null && !comment.isEmpty()) {
+			ddlBuffer.append(" COMMENT = '" + schemaInfo.getDescription() + "'");
+		}
 
 		String resolutionDDL = getResolutionsDDL(schemaInfo.getClassResolutions(),
 				schemaInfo.getResolutions());
@@ -2264,6 +2269,11 @@ public class SchemaDDL {
 			if (instanceAttr.isNotNull()) {
 				bf.append(" NOT NULL");
 			}
+		}
+		
+		String comment = instanceAttr.getDescription();
+		if (comment != null && !comment.isEmpty()) {
+			bf.append(" COMMENT '" + comment + "'");
 		}
 
 		return bf.toString();
