@@ -53,7 +53,14 @@ import org.slf4j.Logger;
  */
 public final class StringUtil {
 	private static final Logger LOGGER = LogUtil.getLogger(StringUtil.class);
+	public static final char cr = '\r';
+	public static final char lf = '\n';
+	public static final char[] crlf = {'\r', '\n'};
+
 	public static final String NEWLINE = System.getProperty("line.separator");
+	public static final String CRLF = String.valueOf(crlf);
+	public static final String CR = String.valueOf(cr);
+	public static final String LF = String.valueOf(lf);
 
 	private StringUtil() {
 	}
