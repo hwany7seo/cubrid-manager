@@ -95,9 +95,10 @@ public class ImportSettingTxtPage extends
 	private String[] columnDelimeterName = {Messages.lblNameComma,
 			Messages.lblNameTab, Messages.lblNameQuote };
 
-	private String[] rowDelimeter = {",", StringUtil.NEWLINE, "\t", "'" };
+	private String[] rowDelimeter = {",", "\t", "'" , "CR", "LF", "CR/LF"};
 	private String[] rowDelimeterName = {Messages.lblNameComma,
-			Messages.lblNameEnter, Messages.lblNameTab, Messages.lblNameQuote };
+			Messages.lblNameTab, Messages.lblNameQuote, 
+			Messages.lblNameCR, Messages.lblNameLF, Messages.lblNameCRLF};
 
 	/**
 	 * @param pageName

@@ -41,7 +41,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 
-import com.cubrid.common.core.reader.TxtReader;
+import com.cubrid.common.core.newreader.TxtReader;
 import com.cubrid.common.core.util.LogUtil;
 import com.cubrid.common.ui.cubrid.table.importhandler.ImportFileDescription;
 import com.cubrid.common.ui.cubrid.table.importhandler.ImportFileHandler;
