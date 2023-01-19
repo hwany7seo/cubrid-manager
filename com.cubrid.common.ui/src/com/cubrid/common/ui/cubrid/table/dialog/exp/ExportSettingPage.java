@@ -146,7 +146,7 @@ public class ExportSettingPage extends
 	private String[] columnDelimeter = {",", "\t", "'" };
 	private String[] columnDelimeterName = {Messages.lblNameComma, Messages.lblNameTab,
 			Messages.lblNameQuote };
-	private String[] rowDelimeter = {",", StringUtil.NEWLINE, "\t", "'" };
+	private String[] rowDelimeter = {",", StringUtil.CRLF, "\t", "'" };
 	private String[] rowDelimeterName = {Messages.lblNameComma, Messages.lblNameEnter,
 			Messages.lblNameTab, Messages.lblNameQuote };
 	private Map<String, List<TableColumn>> tableColumMap = new HashMap<String, List<TableColumn>>();
