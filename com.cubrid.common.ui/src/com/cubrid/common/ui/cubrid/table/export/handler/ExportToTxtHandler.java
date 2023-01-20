@@ -84,7 +84,7 @@ public class ExportToTxtHandler extends
 			columnSeprator = ",";
 		}
 		if (rowSeprator.equals("")) {
-			rowSeprator = StringUtil.NEWLINE;
+			rowSeprator = StringUtil.CRLF;
 		}
 	}
 
