@@ -667,6 +667,7 @@ public class Messages extends
 	public static String lblNameTab;
 	public static String lblNameQuote;
 	public static String lblNameEnter;
+	public static String lblNameCRLF;
 
 	public static String errNoConnected;
 	public static String btnBrowse;
