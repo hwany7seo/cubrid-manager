@@ -98,8 +98,8 @@ public class ExportQueryResultDialog extends
 	private String[] columnDelimeter = {",", "\t", "'" };
 	private String[] columnDelimeterName = {Messages.lblNameComma, Messages.lblNameTab,
 			Messages.lblNameQuote };
-	private String[] rowDelimeter = {",", StringUtil.NEWLINE, "\t", "'" };
-	private String[] rowDelimeterName = {Messages.lblNameComma, Messages.lblNameEnter,
+	private String[] rowDelimeter = {",", StringUtil.CRLF, "\t", "'" };
+	private String[] rowDelimeterName = {Messages.lblNameComma, Messages.lblNameCRLF,
 			Messages.lblNameTab, Messages.lblNameQuote };
 
 	private List<QueryExecuter> queryExecuterList;
@@ -402,21 +402,6 @@ public class ExportQueryResultDialog extends
 				1, -1, -1));
 		delimiterOptionGroup.setLayout(new GridLayout(2, false));
 
-		Label rowLabel = new Label(delimiterOptionGroup, SWT.None);
-		rowLabel.setLayoutData(CommonUITool.createGridData(GridData.HORIZONTAL_ALIGN_BEGINNING, 1,
-				1, -1, -1));
-		rowLabel.setText(Messages.lblRow);
-
-		rowDelimiterCombo = new Combo(delimiterOptionGroup, SWT.BORDER);
-		rowDelimiterCombo.setLayoutData(CommonUITool.createGridData(1, 1, -1, -1));
-		rowDelimiterCombo.setTextLimit(32);
-		rowDelimiterCombo.setItems(rowDelimeterName);
-		rowDelimiterCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				verify();
-			}
-		});
-
 		Label columnLabel = new Label(delimiterOptionGroup, SWT.None);
 		columnLabel.setLayoutData(CommonUITool.createGridData(GridData.HORIZONTAL_ALIGN_BEGINNING,
 				1, 1, -1, -1));
@@ -432,6 +417,21 @@ public class ExportQueryResultDialog extends
 			}
 		});
 
+		Label rowLabel = new Label(delimiterOptionGroup, SWT.None);
+		rowLabel.setLayoutData(CommonUITool.createGridData(GridData.HORIZONTAL_ALIGN_BEGINNING, 1,
+				1, -1, -1));
+		rowLabel.setText(Messages.lblRow);
+
+		rowDelimiterCombo = new Combo(delimiterOptionGroup, SWT.BORDER);
+		rowDelimiterCombo.setLayoutData(CommonUITool.createGridData(1, 1, -1, -1));
+		rowDelimiterCombo.setTextLimit(32);
+		rowDelimiterCombo.setItems(rowDelimeterName);
+		rowDelimiterCombo.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent event) {
+				verify();
+			}
+		});
+		
 		Group nullValueGroup = new Group(dataOptionGroup, SWT.None);
 		nullValueGroup.setText(Messages.grpNullOption);
 		nullValueGroup.setLayoutData(CommonUITool.createGridData(GridData.FILL_BOTH, 1, 1, -1, -1));
