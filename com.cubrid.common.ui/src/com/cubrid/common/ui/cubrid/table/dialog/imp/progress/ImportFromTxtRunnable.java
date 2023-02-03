@@ -40,7 +40,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
-import com.cubrid.common.core.reader.TxtReader;
+import com.cubrid.common.core.newreader.TxtReader;
 import com.cubrid.common.core.util.LogUtil;
 import com.cubrid.common.ui.cubrid.table.dialog.imp.ImportConfig;
 import com.cubrid.common.ui.cubrid.table.dialog.imp.event.ImportDataFailedEvent;
