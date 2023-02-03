@@ -59,8 +59,8 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.slf4j.Logger;
 
+import com.cubrid.common.core.newreader.TxtReader;
 import com.cubrid.common.core.reader.CSVReader;
-import com.cubrid.common.core.reader.TxtReader;
 import com.cubrid.common.core.task.AbstractTask;
 import com.cubrid.common.core.task.AbstractUITask;
 import com.cubrid.common.core.util.LogUtil;

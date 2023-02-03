@@ -837,6 +837,9 @@ public class Messages extends
 	public static String lblNameEnter;
 	public static String lblNameTab;
 	public static String lblNameQuote;
+	public static String lblNameCRLF;
+	public static String lblNameCR;
+	public static String lblNameLF;
 	
 	public static String grpLobOptions;
 	public static String btnImportClob;

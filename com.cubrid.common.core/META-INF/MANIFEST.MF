@@ -20,6 +20,7 @@ Bundle-ClassPath: .,
  lib/dom4j-1.6.1.jar
 Export-Package: com.cubrid.common.core,
  com.cubrid.common.core.common.model,
+ com.cubrid.common.core.newreader,
  com.cubrid.common.core.queryplan,
  com.cubrid.common.core.queryplan.model,
  com.cubrid.common.core.reader,
