@@ -759,6 +759,17 @@ public class SQLContentAssistProcessor implements IContentAssistProcessor {
 		loadAllTableColumnsMap();
 
 		String lowerTbl = tableName.toLowerCase();
+		if (databaseProvider.getDatabaseInfo().isSupportUserSchema()) {
+			int index = lowerTbl.indexOf(".");
+			if (index > -1) {
+				StringBuilder sb = new StringBuilder(lowerTbl);
+				for (int i=0; i<index; i++) {
+					sb.setCharAt(i, Character.toUpperCase(lowerTbl.charAt(i)));
+				}
+				lowerTbl = sb.toString();
+			}
+		}
+
 		if (columns != null && columns.containsKey(lowerTbl)) {
 			return columns.get(lowerTbl);
 		}
