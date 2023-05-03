@@ -236,7 +236,7 @@ public class AttributeCellModifier implements
 				CommonUITool.openErrorBox(Messages.errEmptyNameOnEditTableColumn);
 				return;
 			}
-			if (!StringUtil.isEmpty(newName) && !ValidateUtil.isValidIdentifier(newName)) {
+			if (!StringUtil.isEmpty(newName) && !ValidateUtil.isValidIdentifierExcludeSpace(newName)) {
 				CommonUITool.openErrorBox(Messages.errColumnName);
 				return;
 			}

@@ -163,7 +163,7 @@ public class AddColumnDialog extends
 				setErrorMessage(null);
 				getButton(IDialogConstants.OK_ID).setEnabled(false);
 				String newcolumn = newColumnText.getText();
-				if (!ValidateUtil.isValidIdentifier(newcolumn)) {
+				if (!ValidateUtil.isValidIdentifierExcludeSpace(newcolumn)) {
 					setErrorMessage(Messages.bind(Messages.errInvalidColumnName, tableOrViewKey,
 							newcolumn));
 					return;

@@ -305,6 +305,19 @@ public final class ValidateUtil {
 
 		return !matcher.find();
 	}
+	
+	public static boolean isValidIdentifierExcludeSpace(String identifier) {
+		if (StringUtil.isEmpty(identifier)) {
+			return false;
+		}
+
+		String regex = "[\\,\\/\\.\\~\\\\\"\\|\\]\\[\\}\\{\\)\\(\\=\\-\\+\\?\\<\\>:\\;\\!\\'@\\%\\$\\^\\&\\*`]";
+
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(identifier);
+
+		return !matcher.find();
+	}
 
 	/**
 	 * Check whether this database support multi bytes.

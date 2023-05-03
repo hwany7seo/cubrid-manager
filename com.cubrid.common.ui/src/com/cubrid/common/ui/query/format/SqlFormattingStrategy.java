@@ -88,6 +88,7 @@ public class SqlFormattingStrategy implements
 		boolean isLowerCase = QueryOptions.getKeywordLowercase(serverInfo);
 		SqlFormatOptions options = new SqlFormatOptions();
         options.setUpperCaseKeyword(!isLowerCase);
+
         
 		SqlFormatManager formattingManager = new SqlFormatManager();
 		return formattingManager.format(content, options);

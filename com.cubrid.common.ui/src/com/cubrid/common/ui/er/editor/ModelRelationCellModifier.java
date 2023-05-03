@@ -184,7 +184,7 @@ public class ModelRelationCellModifier implements
 			return false;
 		}
 		if (!mapType.equals(PhysicalLogicRelation.MapType.DATATYPE) && !isLogical
-				&& !ValidateUtil.isValidIdentifier(name)) {
+				&& !ValidateUtil.isValidIdentifierExcludeSpace(name)) {
 			CommonUITool.openErrorBox(Messages.bind(Messages.errColumnName, name));
 			return false;
 		}
