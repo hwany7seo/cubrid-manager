@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CUBRID SQL Formatter
+Bundle-SymbolicName: org.cubrid.sqlformatter;singleton:=true
+Bundle-Version: 9.3.1.qualifier
+Bundle-Activator: org.cubrid.sqlformatter.SqlFormatPlugin
+Bundle-Vendor: Search Solution Corporation
+Require-Bundle: org.eclipse.core.runtime
+Bundle-ActivationPolicy: lazy
+Export-Package: .,
+ org.cubrid.sqlformatter,
+ org.cubrid.sqlformatter.formatter,
+ org.cubrid.sqlformatter.lexer,
+ org.cubrid.sqlformatter.parser,
+ org.cubrid.sqlformatter.parser.constants,
+ org.cubrid.sqlformatter.parser.containers,
+ org.cubrid.sqlformatter.parser.handlers,
+ org.cubrid.sqlformatter.parser.mode,
+ org.cubrid.sqlformatter.parser.util,
+ org.cubrid.sqlformatter.preprocessor 
+Bundle-ClassPath: .,
+ lib/java-cup-11a-RELEASE170.jar,
+ lib/commons-lang-2.6.jar

@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.jface.text,
  com.cubrid.tool.editor,
  com.cubrid.common.configuration,
  com.cubrid.common.update,
- com.cubrid.cubridmanager.core
+ com.cubrid.cubridmanager.core,
+ org.cubrid.sqlformatter
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
@@ -42,7 +43,6 @@ Bundle-ClassPath: .,
  lib/commons-beanutils-1.7.0.jar,
  lib/commons-logging-1.1.1.jar,
  lib/jflex-1.5.1.jar,
- lib/sqlformatter-lib-1.0.0.0001.jar,
  lib/com.navercorp.dbtools.sqlmap.common.jar
 Export-Package: .,
  com.cubrid.common.ui,

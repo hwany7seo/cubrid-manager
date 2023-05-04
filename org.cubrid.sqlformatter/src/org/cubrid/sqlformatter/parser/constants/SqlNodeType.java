@@ -1,0 +1,5 @@
+package org.cubrid.sqlformatter.parser.constants;
+
+public enum SqlNodeType {
+  SqlRoot, DDLParens, DDLDetailParens, SelectionTargetParens, ExpressionParens, FunctionParens, InParens, PivotParens, InBraces, OpenBrace, CloseBrace, SqlStatement, SqlClause, DDLProcedureBlock, DDLOtherBlock, DDLAsBlock, DDLContentBlock, DDLItem, SetOperatorClause, AlphaOperator, And, Or, Between, LowerBound, UpperBound, SelectionTarget, JoinOn, OnCondition, CompoundKeyword, ContainerOpen, ContainerClose, ContainerContentBody, DataTypeKeyword, OtherKeyword, Number, String, DatetimeString, MonetaryValue, BinaryValue, WhiteSpace, Comment, Identifier, Comma, Dot, Semicolon, Asterisk, OtherOperator, PointTo, Other, SqlFunction, Case, Input, When, Then, Else, OpenBracket, CloseBracket, IndexHintList, IndexHint, MultipleInsertBlock, BranchContentBody, PartitionParen, PartitionParameter, ParameterParen, ControlFlowBlock, ControlFlowKeyword, ControlFlowStarter, ControlFlowEnd, ControlFlowIF, ControlFlowElse, ControlFlowClause, ControlFlowTryCatch, CursorDeclaration, CursorForBlock, CursorForOptions, SessionCommand;
+}

@@ -1,0 +1,161 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.cubrid.sqlformatter</groupId>
+	<artifactId>sqlformatter-lib</artifactId>
+	<version>1.0-SNAPSHOT</version>
+        <parent>
+                <groupId>org.cubrid.sqlformatter</groupId>
+                <artifactId>sqlformatter</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <relativePath>..</relativePath>
+        </parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>de.jflex</groupId>
+			<artifactId>jflex</artifactId>
+			<version>1.5.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty.non-maven</groupId>
+			<artifactId>java-cup</artifactId>
+			<version>11a</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+		</dependency>
+	</dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                project.properties['unixbasedir']=project.basedir.getAbsolutePath().replace('\\','/')
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>delete</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <delete file="${project.basedir}/src/main/java/org/cubrid/sqlformatter/lexer/SqlLexer.java" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>de.jflex</groupId>
+                <artifactId>jflex-maven-plugin</artifactId>
+                <version>1.5.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+                            <lexDefinitions>
+                                <lexDefinition>${project.basedir}/src/main/java/org/cubrid/sqlformatter/lexer/sql_lexer.flex</lexDefinition>
+                            </lexDefinitions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>replace</id>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <replace file="${project.basedir}/src/main/java/org/cubrid/sqlformatter/lexer/SqlLexer.java"
+                                         token="java.lang.reflect.Field [] classFields = sym.class.getFields();"
+                                         value="java.lang.reflect.Field [] classFields = ISqlTokenType.class.getFields();" />
+                                <replace file="${project.basedir}/src/main/java/org/cubrid/sqlformatter/lexer/SqlLexer.java"
+                                         token="${unixbasedir}/src/main/java/org/cubrid/sqlformatter/lexer/sql_lexer.flex"
+                                         value="sql_lexer.flex" />
+                                <replace file="${project.basedir}/src/main/java/org/cubrid/sqlformatter/lexer/SqlLexer.java"
+                                         token="System.out.print(yytext());"
+                                         value="return symbol(ISqlTokenType.OTHER, yytext());" />
+                                <replace file="${project.basedir}/src/main/java/org/cubrid/sqlformatter/lexer/SqlLexer.java">
+                                    <replacetoken><![CDATA[" --"+ yytext() + "--" + getTokenName(s.sym) + "--"]]></replacetoken>
+                                    <replacevalue><![CDATA[" --<" + s.value + ">--<" + getTokenName(s.sym) + ">--"]]></replacevalue>
+                                </replace>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.12.1</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>checkstyle</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.5.2</version>
+                <configuration>
+                    <formats>
+                        <format>html</format>
+                        <format>xml</format>
+                    </formats>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
+</project>
