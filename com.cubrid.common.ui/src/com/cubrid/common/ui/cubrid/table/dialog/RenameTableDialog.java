@@ -116,6 +116,7 @@ public class RenameTableDialog extends
 				return;
 			}
 			newName = newTableText.getText().trim();
+			newName = newName.toLowerCase();
 		}
 		super.buttonPressed(buttonId);
 	}
