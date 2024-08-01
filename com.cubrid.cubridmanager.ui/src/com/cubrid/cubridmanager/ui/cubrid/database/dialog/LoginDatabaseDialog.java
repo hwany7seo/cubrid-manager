@@ -192,7 +192,7 @@ public class LoginDatabaseDialog extends CMTitleAreaDialog implements ModifyList
         }
         selectColorCombo = new SelectColorCombo(composite, SWT.BORDER, selectedColor);
         selectColorCombo.setLayoutData(
-                CommonUITool.createGridData(GridData.HORIZONTAL_ALIGN_END, 2, 1, 110, -1));
+                CommonUITool.createGridData(GridData.HORIZONTAL_ALIGN_END, 2, 1, -1, -1));
 
         Label commentLabel = new Label(composite, SWT.None);
         commentLabel.setText(Messages.lblComment);
@@ -353,7 +353,7 @@ public class LoginDatabaseDialog extends CMTitleAreaDialog implements ModifyList
             Button btnAttr = new Button(advancedOptionGroup, SWT.NONE);
             {
                 btnAttr.setText(com.cubrid.common.ui.common.Messages.btnJdbcAttr);
-                btnAttr.setLayoutData(CommonUITool.createGridData(1, 1, 80, -1));
+                btnAttr.setLayoutData(CommonUITool.createGridData(1, 1, -1, -1));
                 btnAttr.addSelectionListener(
                         new SelectionAdapter() {
                             public void widgetSelected(SelectionEvent event) {

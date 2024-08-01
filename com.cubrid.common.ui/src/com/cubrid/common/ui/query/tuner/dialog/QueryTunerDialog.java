@@ -1730,7 +1730,7 @@ public class QueryTunerDialog extends TrayDialog
         if (GeneralPreference.isMaxQueryTunerWindow()) {
             getShell().setMaximized(true);
         } else {
-            getShell().setSize(900, 600);
+            getShell().setMinimumSize(900, 600);
             CommonUITool.centerShell(getShell());
         }
     }

@@ -200,7 +200,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
      */
     protected void fillCoolBar(ICoolBarManager coolBarManager) {
         ActionManager manager = ActionManager.getInstance();
-        coolBarManager.setLockLayout(true);
+        coolBarManager.setLockLayout(false);
         IToolBarManager toolbarManager = new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.BOTTOM);
         coolBarManager.add(new ToolBarContributionItem(toolbarManager, IActionConstants.TOOL_NEW1));
 

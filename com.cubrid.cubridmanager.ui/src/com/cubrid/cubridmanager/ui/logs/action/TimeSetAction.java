@@ -124,7 +124,7 @@ public class TimeSetAction extends SelectionAction {
 
         TimeSetDialog timeSetDialog = new TimeSetDialog(getShell());
         timeSetDialog.create();
-        timeSetDialog.getShell().setSize(580, 275);
+        timeSetDialog.getShell().setMinimumSize(580, 275);
         if (timeSetDialog.open() == Dialog.OK) {
             IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
             if (window == null) {

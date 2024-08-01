@@ -749,7 +749,7 @@ public class EditUserDialog extends CMTrayDialog {
     /** Constrain the shell size */
     protected void constrainShellSize() {
         super.constrainShellSize();
-        getShell().setSize(680, 650);
+        getShell().setMinimumSize(680, 650);
         CommonUITool.centerShell(getShell());
         if (isNewFlag()) {
             getShell().setText(Messages.msgAddUserDialog);

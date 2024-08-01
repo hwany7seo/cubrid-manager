@@ -110,7 +110,7 @@ public class LogPropertyAction extends SelectionAction {
         LogPropertyDialog logPropertyDialog = new LogPropertyDialog(getShell());
         logPropertyDialog.setLogInfo(logInfo, node);
         logPropertyDialog.create();
-        logPropertyDialog.getShell().setSize(580, 330);
+        logPropertyDialog.getShell().setMinimumSize(580, 330);
         logPropertyDialog.open();
     }
 }

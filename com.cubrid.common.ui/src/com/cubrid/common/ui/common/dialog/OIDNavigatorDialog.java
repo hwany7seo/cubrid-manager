@@ -123,7 +123,7 @@ public class OIDNavigatorDialog extends CMTitleAreaDialog implements ModifyListe
 
         findButton = new Button(composite, SWT.CENTER);
         findButton.setText(Messages.btnFind);
-        findButton.setLayoutData(CommonUITool.createGridData(1, 1, 60, -1));
+        findButton.setLayoutData(CommonUITool.createGridData(1, 1, -1, -1));
         if (oidStr == null || oidStr.trim().length() <= 0) {
             findButton.setEnabled(false);
         }
