@@ -15,6 +15,6 @@ if [ -z "$MVN" ]; then
     echo maven not found.
   exit 1
 else
-    $MVN -Dtycho.debug.resolver=true -X -f ./com.cubrid.cubridmanager.build/pom.xml clean package
-    #$MVN ./com.cubrid.cubridmanager.build/pom.xml clean package
+    #$MVN -Dtycho.debug.resolver=true -X -f ./com.cubrid.cubridmanager.build/pom.xml clean package
+    $MVN -f ./com.cubrid.cubridmanager.build/pom.xml clean package
 fi
