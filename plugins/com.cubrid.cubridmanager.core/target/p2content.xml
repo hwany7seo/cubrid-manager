@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<units size='1'>
+  <unit id='com.cubrid.cubridmanager.core' version='9.3.1.202408050719' singleton='false' generation='2'>
+    <update id='com.cubrid.cubridmanager.core' range='[0.0.0,9.3.1.202408050719)' severity='0'/>
+    <properties size='6'>
+      <property name='org.eclipse.equinox.p2.name' value='CUBRID Manager Core'/>
+      <property name='org.eclipse.equinox.p2.provider' value='Search Solution Corporation'/>
+      <property name='maven-groupId' value='com.cubrid.cubridmanager'/>
+      <property name='maven-artifactId' value='com.cubrid.cubridmanager.core'/>
+      <property name='maven-version' value='9.3.1-SNAPSHOT'/>
+      <property name='maven-type' value='eclipse-plugin'/>
+    </properties>
+    <provides size='51'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='com.cubrid.cubridmanager.core' version='9.3.1.202408050719'/>
+      <provided namespace='osgi.bundle' name='com.cubrid.cubridmanager.core' version='9.3.1.202408050719'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.broker.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.broker.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.common' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.common.jdbc' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.common.loader' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.common.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.common.socket' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.common.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.common.xml' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.database.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.database.model.lock' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.database.model.transaction' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.database.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.dbspace.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.dbspace.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.jobauto.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.jobauto.model.errlog' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.jobauto.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.serial.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.service.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.service.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.sp.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.sp.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.synonym' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.table' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.table.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.table.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.trigger.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.trigger.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.user.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.cubrid.user.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.logs.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.logs.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.mondashboard.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.mondashboard.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.monitoring.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.monitoring.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.monstatistic.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.monstatistic.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.replication.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.replication.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.shard.model' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.shard.task' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.cubridmanager.core.utils' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.jdbc.proxy.driver' version='0.0.0'/>
+      <provided namespace='java.package' name='com.cubrid.jdbc.proxy.manage' version='0.0.0'/>
+      <provided namespace='osgi.identity' name='com.cubrid.cubridmanager.core' version='9.3.1.202408050719'>
+        <properties size='1'>
+          <property name='type' value='osgi.bundle'/>
+        </properties>
+      </provided>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+    </provides>
+    <requires size='5'>
+      <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.apache.log4j' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='com.cubrid.common.core' range='0.0.0'/>
+      <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=17))'>
+        <description>
+          com.cubrid.cubridmanager.core
+        </description>
+      </requiredProperties>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.cubrid.cubridmanager.core.source' range='[9.3.1.202408050719,9.3.1.202408050719]' optional='true'>
+        <filter>
+          (org.eclipse.update.install.sources=true)
+        </filter>
+      </required>
+    </requires>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='com.cubrid.cubridmanager.core' version='9.3.1.202408050719'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: com.cubrid.cubridmanager.core&#xA;Bundle-Version: 9.3.1.202408050719&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+</units>

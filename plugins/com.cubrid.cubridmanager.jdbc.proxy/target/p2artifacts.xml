@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?artifactRepository version='1.1.0'?>
+<artifacts size='1'>
+  <artifact classifier='osgi.bundle' id='com.cubrid.cubridmanager.jdbc.proxy' version='9.3.1.202408050719'>
+    <properties size='9'>
+      <property name='artifact.size' value='43356'/>
+      <property name='download.size' value='43356'/>
+      <property name='download.checksum.sha-512' value='5416e4e342204423d6737ee8828b334e497d85392dbfeeb5fe8623fa93dd7c4aa799ef963742bb3d936a6134e15dc4a00d50cb2afacc1fa77b2b365e60ec674b'/>
+      <property name='download.checksum.sha-1' value='f63df425b4decbe8fa19a2c22c15fc4d05223844'/>
+      <property name='download.checksum.sha-256' value='770354d6cdebac677e9cd6b2e652463077c831022131da4fa5e3c7a95dcef5bd'/>
+      <property name='maven-groupId' value='com.cubrid.cubridmanager'/>
+      <property name='maven-artifactId' value='com.cubrid.cubridmanager.jdbc.proxy'/>
+      <property name='maven-version' value='9.3.1-SNAPSHOT'/>
+      <property name='maven-type' value='eclipse-plugin'/>
+    </properties>
+  </artifact>
+</artifacts>

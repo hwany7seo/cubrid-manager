@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CUBRID Manager Application
+Bundle-SymbolicName: com.cubrid.cubridmanager.jdbc.proxy;singleton:=true
+Bundle-Version: 9.3.1.202408050719
+Bundle-Activator: com.cubrid.jdbc.proxy.manage.CubridManagerJdbcProxyPlu
+ gin
+Bundle-Vendor: CUBRID
+Export-Package: com.cubrid.jdbc.proxy.driver,com.cubrid.jdbc.proxy.manag
+ e
+Require-Bundle: org.eclipse.core.runtime
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=17))"
+
