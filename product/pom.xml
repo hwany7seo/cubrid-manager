@@ -7,7 +7,7 @@
         <groupId>com.cubrid.cubridmanager</groupId>
         <artifactId>cubridmanager</artifactId>
         <version>9.3.1-SNAPSHOT</version>
-        <relativePath>../../build/com.cubrid.cubridmanager.build</relativePath>
+        <relativePath>../build</relativePath>
     </parent>
     <version>9.3.1-SNAPSHOT</version>
     <artifactId>com.cubrid.cubridmanager.product</artifactId>
