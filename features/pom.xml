@@ -7,7 +7,7 @@
       <groupId>com.cubrid.cubridmanager</groupId>
       <artifactId>cubridmanager</artifactId>
       <version>9.3.1-SNAPSHOT</version>
-      <relativePath>../build/com.cubrid.cubridmanager.build/pom.xml</relativePath>
+      <relativePath>../build</relativePath>
     </parent>
     <artifactId>features</artifactId>
     <packaging>pom</packaging>

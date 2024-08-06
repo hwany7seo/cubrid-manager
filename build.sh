@@ -16,5 +16,5 @@ if [ -z "$MVN" ]; then
   exit 1
 else
     #$MVN -Dtycho.debug.resolver=true -X -f ./com.cubrid.cubridmanager.build/pom.xml clean package
-    $MVN -f ./build/com.cubrid.cubridmanager.build/pom.xml clean package
+    $MVN -f ./build/pom.xml clean package
 fi
