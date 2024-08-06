@@ -349,7 +349,7 @@ public class SchemaDiagramPart extends AbstractBasicPart {
 
 	@Override
 	protected void handleViewModelChange(PropertyChangeEvent evt) {
-		List<EditPart> children = getChildren();
+		List<EditPart> children = (List<EditPart>)getChildren();
 		for(EditPart part : children){
 			if(part instanceof TablePart){
 				TablePart tablePart = (TablePart)part;
@@ -363,7 +363,7 @@ public class SchemaDiagramPart extends AbstractBasicPart {
 	 */
 	@Override
 	protected void handleRelationMapChange(PropertyChangeEvent evt) {
-		List<EditPart> children = getChildren();
+		List<EditPart> children = (List<EditPart>)getChildren();
 		for (EditPart part : children) {
 			if (part instanceof TablePart) {
 				TablePart tablePart = (TablePart) part;

@@ -27,7 +27,6 @@
  */
 package com.cubrid.common.ui.cubrid.trigger.dialog;
 
-import java.security.acl.Owner;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;

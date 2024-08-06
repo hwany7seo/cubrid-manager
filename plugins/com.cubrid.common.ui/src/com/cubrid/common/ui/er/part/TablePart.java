@@ -335,7 +335,7 @@ public class TablePart extends
 	 * @return
 	 */
 	private boolean hasChildPartSelected(EditPart parent) {
-		List<EditPart> children = parent.getChildren();
+		List<EditPart> children = (List<EditPart>)parent.getChildren();
 		for (EditPart child : children) {
 			if (child.getSelected() != EditPart.SELECTED_NONE) {
 				return true;
@@ -506,7 +506,7 @@ public class TablePart extends
 			setName(table.getName());
 		}
 
-		List<EditPart> children = getChildren();
+		List<EditPart> children = (List<EditPart>)getChildren();
 		for (EditPart part : children) {
 			if (part instanceof ColumnPart) {
 				ColumnPart columnPart = (ColumnPart) part;
@@ -521,7 +521,7 @@ public class TablePart extends
 	 */
 	@Override
 	protected void handleRelationMapChange(PropertyChangeEvent evt) {
-		List<EditPart> children = getChildren();
+		List<EditPart> children = (List<EditPart>)getChildren();
 		for (EditPart part : children) {
 			if (part instanceof ColumnPart) {
 				ColumnPart columnPart = (ColumnPart) part;

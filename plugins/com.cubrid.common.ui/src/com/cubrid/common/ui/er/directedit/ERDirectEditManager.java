@@ -58,7 +58,7 @@ public class ERDirectEditManager extends DirectEditManager {
 	private boolean isCommitting = false;
 
 	public ERDirectEditManager(Label label, ICellEditorValidator validator,
-			GraphicalEditPart source, Class<?> editorType,
+			GraphicalEditPart source, Class<? extends CellEditor> editorType,
 			CellEditorLocator locator) {
 		super(source, editorType, locator);
 		this.label = label;

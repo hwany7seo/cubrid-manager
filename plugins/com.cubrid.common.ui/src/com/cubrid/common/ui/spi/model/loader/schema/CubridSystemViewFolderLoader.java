@@ -27,7 +27,6 @@
  */
 package com.cubrid.common.ui.spi.model.loader.schema;
 
-import java.security.acl.Owner;
 import java.util.Collections;
 import java.util.List;
 
