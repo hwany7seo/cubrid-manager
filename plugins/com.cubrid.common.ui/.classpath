@@ -7,6 +7,7 @@
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-api-2.2.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
@@ -16,9 +17,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.6-20091214.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-schemas-3.6-20091214.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-scratchpad-3.6-20091214.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/dom4j-1.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/org.apache.xerces_2.9.0.v200909240008.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-net-3.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/rome-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdom.jar"/>

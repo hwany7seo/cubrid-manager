@@ -31,9 +31,7 @@ Bundle-ClassPath: .,
  lib/poi-ooxml-3.6-20091214.jar,
  lib/poi-ooxml-schemas-3.6-20091214.jar,
  lib/poi-scratchpad-3.6-20091214.jar,
- lib/xmlbeans-2.3.0.jar,
  lib/dom4j-1.6.1.jar,
- lib/org.apache.xerces_2.9.0.v200909240008.jar,
  lib/commons-net-3.0.1.jar,
  lib/antlr-3.3-complete.jar,
  lib/com.cubrid.common.external.jar,
@@ -43,7 +41,8 @@ Bundle-ClassPath: .,
  lib/commons-logging-1.1.1.jar,
  lib/jflex-1.5.1.jar,
  lib/sqlformatter-lib-1.0.0.0001.jar,
- lib/com.navercorp.dbtools.sqlmap.common.jar
+ lib/com.navercorp.dbtools.sqlmap.common.jar,
+ lib/jaxb-api-2.2.1.jar
 Export-Package: .,
  com.cubrid.common.ui,
  com.cubrid.common.ui.common,
@@ -170,4 +169,4 @@ Import-Package: org.eclipse.ui.forms,
  org.eclipse.ui.forms.editor,
  org.eclipse.ui.forms.events,
  org.eclipse.ui.forms.widgets
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-17

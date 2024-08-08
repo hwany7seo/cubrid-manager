@@ -17,7 +17,8 @@ Bundle-ClassPath: .,
  lib/commons-lang-2.6.jar,
  lib/com.cubrid.common.core.reader.jar,
  lib/commons-beanutils-1.7.0.jar,
- lib/dom4j-1.6.1.jar
+ lib/dom4j-1.6.1.jar,
+ lib/jaxb-api-2.2.1.jar
 Export-Package: com.cubrid.common.core,
  com.cubrid.common.core.common.model,
  com.cubrid.common.core.newreader,
