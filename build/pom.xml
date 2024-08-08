@@ -10,6 +10,7 @@
     
     <modules>
         <module>../plugins</module>
+        <module>../testfragment</module>
         <module>../features</module>
         <module>../product</module>
     </modules>
@@ -31,7 +32,7 @@
         <repository>
             <id>manager-gef</id>
             <layout>p2</layout>
-            <url>https://download.eclipse.org/tools/gef/updates/legacy/releases/</url>
+            <url>https://download.eclipse.org/tools/gef/updates/legacy/releases/3.7.2</url>
         </repository>
         <repository>
             <id>jboss-repo</id>

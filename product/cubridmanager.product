@@ -18,7 +18,7 @@
 -XX:MaxPermSize=256M
 -XX:+UnlockExperimentalVMOptions 
 -XX:+UseG1GC
--XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM -Dosgi.requiredJavaVersion=11</vmArgs>
+-XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM -Dosgi.requiredJavaVersion=17</vmArgs>
       <vmArgsMac>-XstartOnFirstThread </vmArgsMac>
    </launcherArgs>
 
