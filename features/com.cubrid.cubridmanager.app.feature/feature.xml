@@ -24,7 +24,6 @@
 
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.apache.log4j"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui"/>

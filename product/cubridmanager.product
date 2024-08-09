@@ -35,13 +35,6 @@
       <solaris/>
       <win useIco="true">
          <ico path="/icons/cubridmanager.ico"/>
-         <bmp
-            winSmallHigh="/icons/cubridmanager_32_16.bmp"
-            winSmallLow="/icons/cubridmanager_8_16.bmp"
-            winMediumHigh="/icons/cubridmanager_32_32.bmp"
-            winMediumLow="/icons/cubridmanager_8_32.bmp"
-            winLargeHigh="/icons/cubridmanager_32_48.bmp"
-            winLargeLow="/icons/cubridmanager_8_48.bmp"/>
       </win>
    </launcher>
 
