@@ -117,9 +117,19 @@
                       <arch>x86_64</arch>
                     </environment>
                     <environment>
+                      <os>linux</os>
+                      <ws>gtk</ws>
+                      <arch>aarch64</arch>
+                    </environment>
+                    <environment>
                       <os>macosx</os>
                       <ws>cocoa</ws>
                       <arch>x86_64</arch>
+                    </environment>
+                    <environment>
+                      <os>macosx</os>
+                      <ws>cocoa</ws>
+                      <arch>aarch64</arch>
                     </environment>
                   </environments>
                 </configuration>
@@ -163,16 +173,13 @@
     </build>
       
     <profiles>
-	<!-- desktop build: includes UI components and products -->
         <profile>
             <id>desktop</id>
             <activation><property><name>!headless-platform</name></property></activation>
             <modules>
-                <!-- Products -->
                 <module>../product</module>
             </modules>
         </profile>
-        <!-- Enables build for all platforms including ARM -->
         <profile>
             <id>all-platforms</id>
             <activation>
@@ -185,7 +192,7 @@
                         <artifactId>target-platform-configuration</artifactId>
                         <version>${tycho-version}</version>
                         <configuration>
-                            <environments>
+                          <environments>
                                 <environment>
                                     <os>win32</os>
                                     <ws>win32</ws>
