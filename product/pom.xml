@@ -33,18 +33,15 @@
                         <win32>zip</win32>
                         <linux>tar.gz</linux>
                         <macosx>tar.gz</macosx>
-                        <solaris>tar.gz</solaris>
                     </formats>
                     <products>
                         <product>
                             <id>com.cubrid.cubridmanager.product</id>
                             <archiveFileName>CUBRIDManager-${cubridtools-version}</archiveFileName>
                             <rootFolders>
-                                <!-- for MacOSX, make sure you use a folder ending with .app , see bug 463670 -->
                                 <macosx>Cubridmanager.app</macosx>
                                 <win32>cubridmanager</win32>
                                 <linux>cubridmanager</linux>
-                                <solaris>cubridmanager</solaris>
                             </rootFolders>
                         </product>
                     </products>
@@ -59,29 +56,11 @@
                     <execution>
                         <id>archive-products</id>
                         <goals>
-                            <!--<goal>archive-products</goal>-->
+                            <goal>archive-products</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-<!--
-            <plugin>
-                <groupId>org.eclipse.tycho</groupId>
-                <artifactId>target-platform-configuration</artifactId>
-                <version>${tycho-version}</version>
-                <configuration>
-                    <filters>
-                        <filter>
-                            <type>eclipse-plugin</type>
-                            <id>org.apache.ant</id>
-                            <restrictTo>
-                                <version>1.10.12</version>
-                            </restrictTo>
-                        </filter>
-                    </filters>
-                </configuration>
-            </plugin>
--->
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-p2-repository-plugin</artifactId>
