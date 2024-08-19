@@ -1355,7 +1355,7 @@ public class PstmtSQLDialog extends CMTitleAreaDialog implements ITaskExecutorIn
                 Point dateTimeComponentSize = dateTimeComponent.componentSize();
                 int dateTimeComponentWidth = dateTimeComponentSize.x;
                 int dateTimeComponentHeight = dateTimeComponentSize.y;
-                shell.setSize(dateTimeComponentWidth, dateTimeComponentHeight);
+                shell.setMinimumSize(dateTimeComponentWidth, dateTimeComponentHeight);
 
                 // compute location
                 Point p = Display.getDefault().getCursorLocation();

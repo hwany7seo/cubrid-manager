@@ -28,7 +28,7 @@ public class TuneModeResultWindow {
         shell.setLayoutData(new GridData(GridData.FILL_BOTH));
         shell.setText(Messages.lblTuneModeResult);
         shell.setImage(CommonUIPlugin.getImage("icons/queryeditor/tune_mode.png"));
-        shell.setSize(800, 600);
+        shell.setMinimumSize(800, 600);
         shell.setMaximized(true);
 
         tuneModeResult = new TuneModeResultComposite(shell, SWT.NONE);

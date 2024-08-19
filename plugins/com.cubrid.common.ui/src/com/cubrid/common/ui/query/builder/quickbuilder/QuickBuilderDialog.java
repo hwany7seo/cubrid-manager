@@ -175,7 +175,7 @@ public final class QuickBuilderDialog extends Dialog {
             gl.numColumns = 1;
             shell.setLayout(gl);
         }
-        shell.setSize(450, 300);
+        shell.setMinimumSize(450, 300);
         shell.setText(Messages.quickQueryBuilderTitle);
 
         final Composite composite = new Composite(shell, SWT.NONE);

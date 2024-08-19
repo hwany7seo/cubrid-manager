@@ -138,7 +138,7 @@ public class InputMethodAction extends FocusAction {
         Point dateTimeComponentSize = dateTimeComponent.componentSize();
         dateTimeComponentWidth = dateTimeComponentSize.x;
         dateTimeComponentHeight = dateTimeComponentSize.y;
-        shell.setSize(dateTimeComponentWidth, dateTimeComponentHeight);
+        shell.setMinimumSize(dateTimeComponentWidth, dateTimeComponentHeight);
 
         Point p = Display.getDefault().getCursorLocation();
         Rectangle screenSize = Display.getDefault().getClientArea();

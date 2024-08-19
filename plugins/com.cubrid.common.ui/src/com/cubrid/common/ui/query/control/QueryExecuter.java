@@ -3343,7 +3343,7 @@ public class QueryExecuter
             Point dateTimeComponentSize = dateTimeComponent.componentSize();
             dateTimeComponentWidth = dateTimeComponentSize.x;
             dateTimeComponentHeight = dateTimeComponentSize.y;
-            shell.setSize(dateTimeComponentWidth, dateTimeComponentHeight);
+            shell.setMinimumSize(dateTimeComponentWidth, dateTimeComponentHeight);
         }
 
         /**

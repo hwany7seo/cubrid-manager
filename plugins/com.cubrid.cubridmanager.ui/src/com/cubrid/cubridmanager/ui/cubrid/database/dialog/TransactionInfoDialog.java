@@ -190,7 +190,7 @@ public class TransactionInfoDialog extends CMTitleAreaDialog {
     protected void constrainShellSize() {
         super.constrainShellSize();
         CommonUITool.centerShell(getShell());
-        // getShell().setSize(550, 530);
+        // getShell().setMinimumSize(550, 530);
         getShell().setText(Messages.titleTransactionDialog);
     }
 

@@ -118,7 +118,7 @@ public final class ReformatColumnsAliasDialog extends Dialog {
         final GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 2;
         shell.setLayout(gridLayout);
-        shell.setSize(450, 100);
+        shell.setMinimumSize(450, 100);
         shell.setText(Messages.reformatTableAliasTitle);
 
         final Composite composite = new Composite(shell, SWT.NONE);

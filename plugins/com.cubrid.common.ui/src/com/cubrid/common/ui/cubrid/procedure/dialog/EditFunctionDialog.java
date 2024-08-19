@@ -404,7 +404,7 @@ public class EditFunctionDialog extends CMTitleAreaDialog {
     /** Constrain the shell size */
     protected void constrainShellSize() {
         super.constrainShellSize();
-        // getShell().setSize(500, 550);
+        // getShell().setMinimumSize(500, 550);
         CommonUITool.centerShell(getShell());
         if (isNewFlag()) {
             getShell().setText(Messages.titleAddFunctionDialog);
