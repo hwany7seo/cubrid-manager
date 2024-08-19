@@ -651,7 +651,7 @@ public class ERMinJoinDirectedGraphLayout implements Comparable {
                         .stream()
                         .filter(e -> e instanceof ERTableNode)
                         .map(e -> (ERTableNode) e)
-                        .collect(Collectors.toList());
+                        .toList();
         return retList;
     }
 }
