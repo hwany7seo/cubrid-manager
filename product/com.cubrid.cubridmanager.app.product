@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="CUBRID Manager" uid="com.cubrid.cubridmanager.product" id="com.cubrid.cubridmanager.product" application="com.cubrid.cubridmanager.app.application" version="9.1.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="CUBRID Manager" uid="com.cubrid.cubridmanager.app.product" id="com.cubrid.cubridmanager.app.product" application="com.cubrid.cubridmanager.app.application" version="9.1.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="icons/cubridmanager16.gif"/>
@@ -25,7 +25,7 @@
    <windowImages i16="icons/cubridmanager16.gif" i32="icons/cubridmanager32.gif" i48="icons/cubridmanager48.gif" i64="icons/cubridmanager64.gif"/>
 
    <splash
-      location="com.cubrid.cubridmanager.product"
+      location="com.cubrid.cubridmanager.app.product"
       startupProgressRect="5,380,557,15"
       startupMessageRect="230,280,557,15"
       startupForegroundColor="C0C0C0" />

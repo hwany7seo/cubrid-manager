@@ -10,7 +10,7 @@
         <relativePath>../build</relativePath>
     </parent>
     <version>9.3.1-SNAPSHOT</version>
-    <artifactId>com.cubrid.cubridmanager.product</artifactId>
+    <artifactId>com.cubrid.cubridmanager.app.product</artifactId>
     <packaging>eclipse-repository</packaging>
     <name>CubridManager Product</name>
 
@@ -36,7 +36,7 @@
                     </formats>
                     <products>
                         <product>
-                            <id>com.cubrid.cubridmanager.product</id>
+                            <id>com.cubrid.cubridmanager.app.product</id>
                             <archiveFileName>CUBRIDManager-${cubridtools-version}</archiveFileName>
                             <rootFolders>
                                 <macosx>Cubridmanager.app</macosx>
