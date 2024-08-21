@@ -37,7 +37,6 @@ import com.cubrid.common.ui.common.action.HelpDocumentAction;
 import com.cubrid.common.ui.common.action.NewFeaturesAction;
 import com.cubrid.common.ui.common.action.OpenPreferenceAction;
 import com.cubrid.common.ui.common.action.ReportBugAction;
-import com.cubrid.common.ui.common.control.SearchContributionComposite;
 import com.cubrid.common.ui.external.action.InstallMigrationToolkitAction;
 import com.cubrid.common.ui.perspective.IPerspectiveConstance;
 import com.cubrid.common.ui.perspective.OpenCMPerspectiveAction;
@@ -45,14 +44,14 @@ import com.cubrid.common.ui.perspective.OpenCQBPerspectiveAction;
 import com.cubrid.common.ui.spi.action.ActionManager;
 import com.cubrid.common.ui.spi.action.IActionConstants;
 import com.cubrid.cubridmanager.ui.CubridManagerUIPlugin;
-import com.cubrid.cubridmanager.ui.common.action.QuitAction;
 import com.cubrid.cubridmanager.ui.host.action.ViewServerVersionAction;
 import com.cubrid.cubridmanager.ui.service.action.ServiceDashboardAction;
 import com.cubrid.cubridmanager.ui.spi.Version;
 import com.cubrid.cubridmanager.ui.spi.action.CubridActionBuilder;
+
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ICoolBarManager;
@@ -64,12 +63,13 @@ import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
+import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 
@@ -84,7 +84,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private static final Logger LOGGER = LogUtil.getLogger(ApplicationActionBarAdvisor.class);
     // common actions
     private IAction preferenceAction = null;
-    private IAction quitAction = null;
+    // private IAction quitAction = null;
     // private IAction checkNewVersionAction = null;
     private IAction cubridOnlineForumAction = null;
     private IAction cubridProjectSiteAction = null;
@@ -106,6 +106,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
      * @param window the window containing the action bars
      */
     protected void makeActions(IWorkbenchWindow window) {
+        removeUnWantedActions();
+
         ActionManager manager = ActionManager.getInstance();
         CubridActionBuilder.init();
 
@@ -125,10 +127,10 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         register(preferenceAction);
         preferenceAction.setId(
                 "preferences"); // It must be needed to use a Preferences Menu of an Application
-                                // Menu on Mac.
+        // Menu on Mac.
         manager.registerAction(preferenceAction);
 
-        quitAction = new QuitAction(Messages.exitActionName);
+        // quitAction = new QuitAction(Messages.exitActionName);
 
         cubridOnlineForumAction = new CubridOnlineForumAction(Messages.cubridOnlineForumActionName);
         cubridProjectSiteAction = new CubridProjectSiteAction(Messages.cubridProjectSiteActionName);
@@ -202,7 +204,10 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         ActionManager manager = ActionManager.getInstance();
         coolBarManager.setLockLayout(true);
         IToolBarManager toolbarManager = new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.BOTTOM);
-        coolBarManager.add(new ToolBarContributionItem(toolbarManager, IActionConstants.TOOL_NEW1));
+        ToolBarContributionItem toolbarItem =
+                new ToolBarContributionItem(toolbarManager, IActionConstants.TOOL_NEW1);
+        toolbarItem.setMinimumItemsToShow(ToolBarContributionItem.SHOW_ALL_ITEMS);
+        coolBarManager.add(toolbarItem);
 
         Bundle cqbBundle = Platform.getBundle(ApplicationUtil.CQB_PLUGIN_ID);
         /* Active the CQB plugin */
@@ -244,7 +249,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
             toolbarManager.add(new Separator());
         }
 
-        /*TOOLS-3988 There still is the install option after installing cmt plugin.*/
+        /* TOOLS-3988 There still is the install option after installing cmt plugin. */
         Bundle bundle = Platform.getBundle(ApplicationUtil.CMT_PLUGIN_ID);
         if (bundle == null) {
             toolbarManager.add(new Separator());
@@ -257,7 +262,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
                 item.setId(IPerspectiveConstance.MIGRATION_ACTION_CONTRIBUTION_ID);
             }
         } else {
-            /*Active the CMT plugin */
+            /* Active the CMT plugin */
             try {
                 bundle.start();
             } catch (Exception e) {
@@ -290,15 +295,16 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         helpItems.setId(IPerspectiveConstance.HELP_ACTION_CONTRIBUTION_ID);
         toolbarManager.add(helpItems);
 
-        ControlContribution searchContribution =
-                new ControlContribution(SearchContributionComposite.class.getName()) {
-                    protected Control createControl(Composite parent) {
-                        return new SearchContributionComposite(parent, SWT.None);
-                    }
-                };
-        searchContribution.setId(IPerspectiveConstance.SEARCH_ACTION_CONTRIBUTION_ID);
-        toolbarManager.add(new Separator());
-        toolbarManager.add(searchContribution);
+        // The 'cubrid.org' homepage does not support the feature, so we will remove it.
+        //        ControlContribution searchContribution =
+        //                new ControlContribution(SearchContributionComposite.class.getName()) {
+        //                    protected Control createControl(Composite parent) {
+        //                        return new SearchContributionComposite(parent, SWT.None);
+        //                    }
+        //                };
+        //        searchContribution.setId(IPerspectiveConstance.SEARCH_ACTION_CONTRIBUTION_ID);
+        //        toolbarManager.add(new Separator());
+        //        toolbarManager.add(searchContribution);
     }
 
     /**
@@ -317,5 +323,18 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         ActionContributionItem item = new ActionContributionItem(action);
         item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
         return item;
+    }
+
+    private void removeUnWantedActions() {
+        ActionSetRegistry asr = WorkbenchPlugin.getDefault().getActionSetRegistry();
+        IActionSetDescriptor[] actionSets = asr.getActionSets();
+
+        for (IActionSetDescriptor actionSet : actionSets) {
+            if ("org.eclipse.ui.edit.text.actionSet.annotationNavigation".equals(actionSet.getId())
+                    || "org.eclipse.ui.edit.text.actionSet.navigation".equals(actionSet.getId())) {
+                IExtension ext = actionSet.getConfigurationElement().getDeclaringExtension();
+                asr.removeExtension(ext, new Object[] {actionSet});
+            }
+        }
     }
 }

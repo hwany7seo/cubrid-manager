@@ -66,9 +66,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
+
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -567,20 +567,24 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                 }
             }
         }
-
-        // remove some tool bar items
-        ICoolBarManager cm = getWindowConfigurer().getActionBarConfigurer().getCoolBarManager();
-        for (IContributionItem item : cm.getItems()) {
-            if (item == null || item.getId() == null) {
-                continue;
-            }
-
-            if (item.getId().equals("org.eclipse.ui.edit.text.actionSet.annotationNavigation")
-                    || item.getId().equals("org.eclipse.ui.edit.text.actionSet.navigation")) {
-                cm.remove(item.getId());
-                cm.update(true);
-            }
-        }
+        // It's not worked in Eclipse 2024-06 so code is deleted.
+        //        // remove some tool bar items
+        //        ICoolBarManager cm =
+        // getWindowConfigurer().getActionBarConfigurer().getCoolBarManager();
+        //        for (IContributionItem item : cm.getItems()) {
+        //            if (item == null || item.getId() == null) {
+        //                continue;
+        //            }
+        //
+        //            if
+        // (item.getId().equals("org.eclipse.ui.edit.text.actionSet.annotationNavigation")
+        //                    ||
+        // item.getId().equals("org.eclipse.ui.edit.text.actionSet.navigation")) {
+        //            	item.setVisible(false);
+        //                //cm.remove(item.getId());
+        //                //cm.update(true);
+        //            }
+        //        }
 
         // remove some preference items
         PreferenceManager pm =
