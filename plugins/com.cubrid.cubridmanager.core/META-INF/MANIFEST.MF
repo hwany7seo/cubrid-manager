@@ -68,3 +68,4 @@ Export-Package: com.cubrid.cubridmanager.core,
  com.cubrid.cubridmanager.core.utils,
  com.cubrid.jdbc.proxy.driver,
  com.cubrid.jdbc.proxy.manage
+Automatic-Module-Name: com.cubrid.cubridmanager.core

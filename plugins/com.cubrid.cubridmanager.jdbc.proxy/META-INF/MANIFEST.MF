@@ -9,4 +9,5 @@ Export-Package:
  com.cubrid.jdbc.proxy.driver,
  com.cubrid.jdbc.proxy.manage
 Require-Bundle: org.eclipse.core.runtime
+Automatic-Module-Name: com.cubrid.cubridmanager.jdbc.proxy
 

@@ -15,3 +15,5 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
+Automatic-Module-Name: com.cubrid.cubridmanager.plugin
+

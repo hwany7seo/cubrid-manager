@@ -13,3 +13,4 @@ Export-Package: com.cubrid.common.configuration.classloader,
  com.cubrid.common.configuration
 Bundle-ClassPath: .,
  lib/commons-lang-2.6.jar
+Automatic-Module-Name: com.cubrid.common.configuration

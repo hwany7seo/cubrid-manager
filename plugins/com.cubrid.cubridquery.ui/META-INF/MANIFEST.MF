@@ -33,3 +33,4 @@ Bundle-ClassPath: .,
 Import-Package: com.cubrid.cubridmanager.ui.spi.model.loader,
  com.cubrid.cubridmanager.ui.spi.persist,
  com.cubrid.cubridmanager.ui.spi.util
+Automatic-Module-Name: com.cubrid.cubridquery.ui

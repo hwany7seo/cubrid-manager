@@ -59,3 +59,4 @@ Export-Package: com.cubrid.cubridmanager.ui,
  com.cubrid.cubridmanager.ui.spi.util,
  com.cubrid.cubridmanager.ui.workspace.dialog
 Import-Package: jxl
+Automatic-Module-Name: com.cubrid.cubridmanager.ui

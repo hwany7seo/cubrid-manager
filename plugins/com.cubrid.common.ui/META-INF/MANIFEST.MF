@@ -170,3 +170,4 @@ Import-Package: org.eclipse.ui.forms,
  org.eclipse.ui.forms.events,
  org.eclipse.ui.forms.widgets
 Bundle-RequiredExecutionEnvironment: JavaSE-17
+Automatic-Module-Name: com.cubrid.common.ui

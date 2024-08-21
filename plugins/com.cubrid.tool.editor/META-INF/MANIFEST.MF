@@ -16,3 +16,4 @@ Export-Package: com.cubrid.tool.editor,
 Bundle-ClassPath: .,
  lib/dom4j-1.6.1.jar,
  lib/commons-lang-2.6.jar
+Automatic-Module-Name: com.cubrid.tool.editor
