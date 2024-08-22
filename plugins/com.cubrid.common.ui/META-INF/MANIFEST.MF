@@ -12,13 +12,14 @@ Require-Bundle: org.eclipse.jface.text,
  org.eclipse.compare,
  org.eclipse.core.resources,
  org.eclipse.zest.core,
- com.cubrid.common.core,
  org.eclipse.zest.layouts,
  org.eclipse.gef,
  com.cubrid.tool.editor,
  com.cubrid.common.configuration,
  com.cubrid.common.update,
- com.cubrid.cubridmanager.core
+ com.cubrid.common.core,
+ com.cubrid.cubridmanager.core,
+ slf4j.api
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
