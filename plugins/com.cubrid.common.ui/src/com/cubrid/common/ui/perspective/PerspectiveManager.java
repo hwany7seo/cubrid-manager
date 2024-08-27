@@ -32,7 +32,6 @@ package com.cubrid.common.ui.perspective;
 import com.cubrid.common.core.util.ApplicationType;
 import com.cubrid.common.core.util.ApplicationUtil;
 import com.cubrid.common.ui.CommonUIPlugin;
-import com.cubrid.common.ui.CommonUIPreference;
 import com.cubrid.common.ui.spi.persist.PersistUtils;
 import java.util.HashMap;
 import java.util.Map;
