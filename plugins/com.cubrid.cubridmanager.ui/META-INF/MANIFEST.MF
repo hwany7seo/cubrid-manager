@@ -15,9 +15,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  com.cubrid.common.configuration,
  com.cubrid.common.core,
- com.cubrid.common.ui,
  com.cubrid.cubridmanager.core,
- com.cubrid.tool.editor
+ com.cubrid.common.ui,
+ com.cubrid.tool.editor,
+ slf4j.api
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy

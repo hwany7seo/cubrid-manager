@@ -15,10 +15,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gef,
  org.eclipse.ui.views,
  org.eclipse.ui.ide,
+ com.cubrid.common.configuration,
  com.cubrid.common.core,
  com.cubrid.cubridmanager.core,
- com.cubrid.common.ui,
- com.cubrid.common.configuration
+ com.cubrid.common.ui
 Bundle-ActivationPolicy: lazy
 Export-Package: com.cubrid.cubridquery.ui,
  com.cubrid.cubridquery.ui.common.action,
