@@ -2,3 +2,7 @@
 **/bin/*
 com.cubrid.cubridmanager.build/product_build
 **/target/*
+
+.project
+.classpath
+.settings/
