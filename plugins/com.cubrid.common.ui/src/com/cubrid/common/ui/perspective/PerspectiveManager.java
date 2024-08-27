@@ -32,6 +32,7 @@ package com.cubrid.common.ui.perspective;
 import com.cubrid.common.core.util.ApplicationType;
 import com.cubrid.common.core.util.ApplicationUtil;
 import com.cubrid.common.ui.CommonUIPlugin;
+import com.cubrid.common.ui.CommonUIPreference;
 import com.cubrid.common.ui.spi.persist.PersistUtils;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,10 +46,13 @@ import org.eclipse.ui.WorkbenchException;
  * @version 1.0 - 2014-4-18 created by Kevin.Wang
  */
 public class PerspectiveManager {
+    public static final String KEY_SELECTED_PERSPECTIVE = "selected_perspective";
+
     private static final Map<String, IPerspectiveChangedListener> listenerMap =
             new HashMap<String, IPerspectiveChangedListener>();
     private static PerspectiveManager instance = null;
     private String activePerspectiveId;
+    private boolean isInitial = false;
 
     private PerspectiveManager() {}
 
@@ -75,7 +79,9 @@ public class PerspectiveManager {
     }
 
     public synchronized void firePerspectiveChanged(String sourceId, String targetId) {
-        if (!sourceId.equals(targetId)) {
+        if (!isInitial || !sourceId.equals(targetId)) {
+            isInitial = true;
+
             PerspectiveChangeEvent event = new PerspectiveChangeEvent(sourceId, targetId);
 
             IPerspectiveChangedListener listenrHide = listenerMap.get(sourceId);
@@ -113,7 +119,7 @@ public class PerspectiveManager {
 
     public synchronized void openPerspective(String perspectiveId) {
         try {
-            if (activePerspectiveId == null) {
+            if (activePerspectiveId == null || activePerspectiveId.isEmpty()) {
                 activePerspectiveId = PerspectiveManager.getInstance().getCurrentPerspectiveId();
             }
             String oldPerspectiveId = activePerspectiveId;
@@ -145,10 +151,11 @@ public class PerspectiveManager {
 
     public String getSelectedPerspective() {
         return PersistUtils.getGlobalPreferenceValue(
-                CommonUIPlugin.PLUGIN_ID, "selected_perspective");
+                CommonUIPlugin.PLUGIN_ID, KEY_SELECTED_PERSPECTIVE);
     }
 
     public void setSelectedPerspective(String id) {
-        PersistUtils.setGlobalPreferenceValue(CommonUIPlugin.PLUGIN_ID, "selected_perspective", id);
+        PersistUtils.setGlobalPreferenceValue(
+                CommonUIPlugin.PLUGIN_ID, KEY_SELECTED_PERSPECTIVE, id);
     }
 }

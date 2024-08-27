@@ -396,7 +396,7 @@ public class Messages extends NLS {
     public static String exportTableDefinitionMessage;
     public static String exportTableDefinitionExcelPathLabel;
     public static String exportTableDefinitionExcelNameLabel;
-    public static String exportTableDefinitionExcelFullNameLabel;
+    //public static String exportTableDefinitionExcelFullNameLabel;
     public static String exportTableDefinitionExcelFileCharsetLabel;
     public static String exportTableDefinitionExcelLayoutTypeLabel;
     public static String exportTableDefinitionExportSuccess;
@@ -458,7 +458,7 @@ public class Messages extends NLS {
     public static String msgGenerateInfo;
     public static String msgExportSuccess;
     public static String msgImportSchemaFromERwin;
-    public static String msgAll;
+    //public static String msgAll;
     public static String errExportFailed;
     public static String errFileCannotRead;
     public static String errInvalidFile;
