@@ -14,16 +14,122 @@
     <packaging>eclipse-repository</packaging>
     <name>CubridManager Product</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
-            <version>1.10.12</version>
-        </dependency>
-    </dependencies>
+    <properties>
+        <jre.download.url>https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.6%2B10</jre.download.url>
+        <jre.folder.name>jdk-17.0.6+10-jre</jre.folder.name>
+        <product.output.folder>${project.build.directory}/products/${project.artifactId}</product.output.folder>
+    </properties>
 
+    <repositories>
+        <repository>
+            <id>cubrid</id>
+            <url>https://maven.cubrid.org/</url>
+        </repository>   
+    </repositories> 
     <build>
         <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <version>3.5.0</version>
+              <executions>
+                <execution>
+                    <id>get-latest-jar</id>
+                    <goals>
+                        <goal>get</goal>
+                    </goals>
+                    <configuration>
+                        <artifact>cubrid:cubrid-jdbc:LATEST</artifact>
+                        <transitive>false</transitive>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>copy-latest-jar</id>
+                    <goals>
+                        <goal>copy</goal>
+                    </goals>
+                    <configuration>
+                        <artifactItems>
+                            <artifactItem>
+                                <groupId>cubrid</groupId>
+                                <artifactId>cubrid-jdbc</artifactId>
+                                <version>LATEST</version>
+                                <outputDirectory>${project.build.directory}/driver</outputDirectory>
+                            </artifactItem>
+                        </artifactItems>
+                    </configuration>
+                </execution>
+              </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                  <execution>
+                    <id>jre-download-jdbc-copy</id>
+                    <phase>package</phase>
+                    <goals>
+                      <goal>run</goal>
+                    </goals>
+                    <configuration>
+                      <target>
+                        <mkdir dir="${project.build.directory}/jre/win-x64-jre/"/>
+                        <mkdir dir="${project.build.directory}/jre/linux-x64-jre/"/>
+                        <mkdir dir="${project.build.directory}/jre/mac-x64-jre/"/>
+                        <mkdir dir="${project.build.directory}/jre/win-aarch64-jre/"/>
+                        <mkdir dir="${project.build.directory}/jre/linux-aarch64-jre/"/>
+                        <get src="${jre.download.url}/OpenJDK17U-jre_x64_windows_hotspot_17.0.6_10.zip"
+                             dest="${project.build.directory}/jre/win-x64-jre.zip"/>
+                        <get src="${jre.download.url}/OpenJDK17U-jre_x64_linux_hotspot_17.0.6_10.tar.gz"
+                             dest="${project.build.directory}/jre/linux-x64-jre.tar.gz"/>
+                        <get src="${jre.download.url}/OpenJDK17U-jre_aarch64_linux_hotspot_17.0.6_10.tar.gz"
+                             dest="${project.build.directory}/jre/linux-aarch64-jre.tar.gz"/>
+                        <get src="${jre.download.url}/OpenJDK17U-jre_x64_mac_hotspot_17.0.6_10.tar.gz"
+                             dest="${project.build.directory}/jre/mac-x64-jre.tar.gz"/>
+                        <get src="${jre.download.url}/OpenJDK17U-jre_aarch64_mac_hotspot_17.0.6_10.tar.gz"
+                             dest="${project.build.directory}/jre/mac-aarch64-jre.tar.gz"/>
+
+                        <echo message="Unzipping jre files" />
+                        <unzip src="${project.build.directory}/jre/win-x64-jre.zip"
+                               dest="${project.build.directory}/jre/win-x64-jre/" />
+                        <untar src="${project.build.directory}/jre/linux-x64-jre.tar.gz" compression="gzip"
+                               dest="${project.build.directory}/jre/linux-x64-jre/" />
+                        <untar src="${project.build.directory}/jre/linux-aarch64-jre.tar.gz" compression="gzip"
+                               dest="${project.build.directory}/jre/linux-aarch64-jre/" />
+                        <untar src="${project.build.directory}/jre/mac-x64-jre.tar.gz" compression="gzip"
+                               dest="${project.build.directory}/jre/mac-x64-jre/" />
+                        <untar src="${project.build.directory}/jre/mac-aarch64-jre.tar.gz" compression="gzip"
+                               dest="${project.build.directory}/jre/mac-aarch64-jre/" />
+
+                        <echo message="Move jre files to output product" />
+                        <move todir="${product.output.folder}/win32/win32/x86_64/cubridmanager/jre">
+                              <fileset dir="${project.build.directory}/jre/win-x64-jre/${jre.folder.name}/" /> </move>
+                        <move todir="${product.output.folder}/linux/gtk/x86_64/cubridmanager/jre">
+                              <fileset dir="${project.build.directory}/jre/linux-x64-jre/${jre.folder.name}/" /> </move>
+                        <move todir="${product.output.folder}/linux/gtk/aarch64/cubridmanager/jre">
+                              <fileset dir="${project.build.directory}/jre/linux-aarch64-jre/${jre.folder.name}/" /> </move>
+                        <move todir="${product.output.folder}/macosx/cocoa/x86_64/Cubridmanager.app/Contents/Eclipse/jre">
+                              <fileset dir="${project.build.directory}/jre/mac-x64-jre/${jre.folder.name}/" /> </move>
+                        <move todir="${product.output.folder}/macosx/cocoa/aarch64/Cubridmanager.app/Contents/Eclipse/jre">
+                              <fileset dir="${project.build.directory}/jre/mac-aarch64-jre/${jre.folder.name}/" /> </move>     
+
+                        <echo message="Copy jdbc driver to output product" />
+                        <copy todir="${product.output.folder}/win32/win32/x86_64/cubridmanager/driver">
+                              <fileset dir="${project.build.directory}/driver" /> </copy>
+                        <copy todir="${product.output.folder}/linux/gtk/x86_64/cubridmanager/driver">
+                              <fileset dir="${project.build.directory}/driver" /> </copy>
+                        <copy todir="${product.output.folder}/linux/gtk/aarch64/cubridmanager/driver">
+                              <fileset dir="${project.build.directory}/driver" /> </copy>
+                        <copy todir="${product.output.folder}/macosx/cocoa/x86_64/Cubridmanager.app/Contents/Eclipse/driver">
+                              <fileset dir="${project.build.directory}/driver" /> </copy>
+                        <copy todir="${product.output.folder}/macosx/cocoa/aarch64/Cubridmanager.app/Contents/Eclipse/driver">
+                              <fileset dir="${project.build.directory}/driver" /> </copy>
+                      </target>
+                    </configuration>
+                  </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-p2-director-plugin</artifactId>

@@ -11,7 +11,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgsMac>-vm ../Eclipse/jre/Contents/Home/bin/java</programArgsMac>
+      <programArgsMac>-vm ../Eclipse/jre/Contents/Home/lib/libjli.dylib</programArgsMac>
       <vmArgs>-Xms400M
 -Xmx800M
 -XX:PermSize=64M
@@ -29,6 +29,7 @@
       startupProgressRect="5,380,557,15"
       startupMessageRect="230,280,557,15"
       startupForegroundColor="C0C0C0" />
+
    <launcher name="cubridmanager">
       <linux icon="/icons/cubridmanager.xpm"/>
       <macosx icon="/icons/cubridmanager.icns"/>
