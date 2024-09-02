@@ -284,7 +284,11 @@ public class SelectWorkspaceDialog extends CMTitleAreaDialog {
             boolean isOk = false;
             try {
                 Location instanceLoc = Platform.getInstanceLocation();
-                isOk = instanceLoc.set(new URL("file", null, workspacePath), true);
+                if (instanceLoc.isSet()) {
+                  isOk = true;
+                } else {
+                  isOk = instanceLoc.set(new URL("file", null, workspacePath), true);
+                }
             } catch (IllegalStateException e) {
                 isOk = false;
             } catch (MalformedURLException e) {
