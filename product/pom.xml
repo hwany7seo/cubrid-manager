@@ -64,7 +64,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.0.0</version>
                 <executions>
                   <execution>
                     <id>jre-download-jdbc-copy</id>
@@ -76,9 +76,9 @@
                       <target>
                         <mkdir dir="${project.build.directory}/jre/win-x64-jre/"/>
                         <mkdir dir="${project.build.directory}/jre/linux-x64-jre/"/>
-                        <mkdir dir="${project.build.directory}/jre/mac-x64-jre/"/>
-                        <mkdir dir="${project.build.directory}/jre/win-aarch64-jre/"/>
                         <mkdir dir="${project.build.directory}/jre/linux-aarch64-jre/"/>
+                        <mkdir dir="${project.build.directory}/jre/mac-x64-jre/"/>
+                        <mkdir dir="${project.build.directory}/jre/mac-aarch64-jre/"/>
                         <get src="${jre.download.url}/OpenJDK17U-jre_x64_windows_hotspot_17.0.6_10.zip"
                              dest="${project.build.directory}/jre/win-x64-jre.zip"/>
                         <get src="${jre.download.url}/OpenJDK17U-jre_x64_linux_hotspot_17.0.6_10.tar.gz"
@@ -101,18 +101,18 @@
                                dest="${project.build.directory}/jre/mac-x64-jre/" />
                         <untar src="${project.build.directory}/jre/mac-aarch64-jre.tar.gz" compression="gzip"
                                dest="${project.build.directory}/jre/mac-aarch64-jre/" />
-
+                        
                         <echo message="Move jre files to output product" />
-                        <move todir="${product.output.folder}/win32/win32/x86_64/cubridmanager/jre">
-                              <fileset dir="${project.build.directory}/jre/win-x64-jre/${jre.folder.name}/" /> </move>
-                        <move todir="${product.output.folder}/linux/gtk/x86_64/cubridmanager/jre">
-                              <fileset dir="${project.build.directory}/jre/linux-x64-jre/${jre.folder.name}/" /> </move>
-                        <move todir="${product.output.folder}/linux/gtk/aarch64/cubridmanager/jre">
-                              <fileset dir="${project.build.directory}/jre/linux-aarch64-jre/${jre.folder.name}/" /> </move>
-                        <move todir="${product.output.folder}/macosx/cocoa/x86_64/Cubridmanager.app/Contents/Eclipse/jre">
-                              <fileset dir="${project.build.directory}/jre/mac-x64-jre/${jre.folder.name}/" /> </move>
-                        <move todir="${product.output.folder}/macosx/cocoa/aarch64/Cubridmanager.app/Contents/Eclipse/jre">
-                              <fileset dir="${project.build.directory}/jre/mac-aarch64-jre/${jre.folder.name}/" /> </move>     
+                        <copy todir="${product.output.folder}/win32/win32/x86_64/cubridmanager/jre">
+                              <fileset dir="${project.build.directory}/jre/win-x64-jre/${jre.folder.name}/" /> </copy>
+                        <copy todir="${product.output.folder}/linux/gtk/x86_64/cubridmanager/jre">
+                              <fileset dir="${project.build.directory}/jre/linux-x64-jre/${jre.folder.name}/" /> </copy>
+                        <copy todir="${product.output.folder}/linux/gtk/aarch64/cubridmanager/jre">
+                              <fileset dir="${project.build.directory}/jre/linux-aarch64-jre/${jre.folder.name}/" /> </copy>
+                        <copy todir="${product.output.folder}/macosx/cocoa/x86_64/Cubridmanager.app/Contents/Eclipse/jre">
+                              <fileset dir="${project.build.directory}/jre/mac-x64-jre/${jre.folder.name}/" /> </copy>
+                        <copy todir="${product.output.folder}/macosx/cocoa/aarch64/Cubridmanager.app/Contents/Eclipse/jre">
+                              <fileset dir="${project.build.directory}/jre/mac-aarch64-jre/${jre.folder.name}/" /> </copy>
 
                         <echo message="Copy jdbc driver to output product" />
                         <copy todir="${product.output.folder}/win32/win32/x86_64/cubridmanager/driver">
@@ -125,6 +125,21 @@
                               <fileset dir="${project.build.directory}/driver" /> </copy>
                         <copy todir="${product.output.folder}/macosx/cocoa/aarch64/Cubridmanager.app/Contents/Eclipse/driver">
                               <fileset dir="${project.build.directory}/driver" /> </copy>
+                        <echo message="Change permission" />
+                        <chmod perm="755">
+                          <fileset dir="${product.output.folder}/linux/gtk/x86_64/cubridmanager/jre">
+                            <include name="**/*"/>
+                          </fileset>
+                          <fileset dir="${product.output.folder}/linux/gtk/aarch64/cubridmanager/jre">
+                            <include name="**/*"/>
+                          </fileset>
+                          <fileset dir="${product.output.folder}/macosx/cocoa/x86_64/Cubridmanager.app/Contents/Eclipse/jre">
+                            <include name="**/*"/>
+                          </fileset>
+                          <fileset dir="${product.output.folder}/macosx/cocoa/aarch64/Cubridmanager.app/Contents/Eclipse/jre">
+                            <include name="**/*"/>
+                          </fileset>
+                        </chmod>
                       </target>
                     </configuration>
                   </execution>
