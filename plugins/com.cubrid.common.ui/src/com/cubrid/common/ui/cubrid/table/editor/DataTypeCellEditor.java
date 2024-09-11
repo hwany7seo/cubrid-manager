@@ -163,7 +163,7 @@ public final class DataTypeCellEditor extends CellEditor {
 
     protected void doSetFocus() {
         if (comboBox != null) {
-            comboBox.setFocus();
+            //comboBox.setFocus();
             showDataTypeAdvisor();
         }
     }
