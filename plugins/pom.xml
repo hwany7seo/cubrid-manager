@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     
     <modules>
+        <module>com.cubrid.common.log</module>
         <module>com.cubrid.common.configuration</module>
         <module>com.cubrid.common.core</module>
         <module>com.cubrid.cubridmanager.core</module>

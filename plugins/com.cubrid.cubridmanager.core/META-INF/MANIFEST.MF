@@ -6,7 +6,6 @@ Bundle-Version: 9.3.1.qualifier
 Bundle-Activator: com.cubrid.cubridmanager.core.CubridManagerCorePlugin
 Bundle-Vendor: Search Solution Corporation
 Require-Bundle: org.eclipse.core.runtime,
- org.apache.log4j,
  com.cubrid.common.core,
  slf4j.api
 Eclipse-LazyStart: true

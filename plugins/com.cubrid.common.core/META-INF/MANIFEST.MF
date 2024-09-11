@@ -6,12 +6,13 @@ Bundle-Version: 9.3.1.qualifier
 Bundle-Activator: com.cubrid.common.core.CubridCommonCorePlugin
 Bundle-Vendor: Search Solution Corporation
 Require-Bundle: org.eclipse.core.runtime,
- log4j,
  org.apache.ant,
- slf4j.api,
  jakarta.xml.bind-api,
  com.sun.xml.bind.jaxb-impl,
- org.glassfish.hk2.osgi-resource-locator
+ org.glassfish.hk2.osgi-resource-locator,
+ ch.qos.logback.classic,
+ ch.qos.logback.core,
+ slf4j.api
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,

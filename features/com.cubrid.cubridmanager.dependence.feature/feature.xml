@@ -66,14 +66,14 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
+<!--
    <plugin
          id="org.apache.log4j"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
+-->
    <plugin
          id="org.eclipse.jface.text"
          download-size="0"
@@ -233,6 +233,19 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+         
+   <plugin
+         id="ch.qos.logback.classic"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="ch.qos.logback.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 <!--
    <plugin
          id="slf4j.log4j12"
@@ -241,7 +254,7 @@
          version="0.0.0"
          fragment="true"
          unpack="false"/>
--->
+
    <plugin
          id="slf4j.reload4j"
          download-size="0"
@@ -249,6 +262,7 @@
          version="0.0.0"
          fragment="true"
          unpack="false"/>
+-->         
    <plugin
          id="org.eclipse.zest.core"
          download-size="0"

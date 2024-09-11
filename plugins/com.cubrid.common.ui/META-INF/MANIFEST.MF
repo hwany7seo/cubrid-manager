@@ -6,7 +6,6 @@ Bundle-Version: 9.3.1.qualifier
 Bundle-Activator: com.cubrid.common.ui.CommonUIPlugin
 Bundle-Vendor: Search Solution Corporation
 Require-Bundle: org.eclipse.jface.text,
- log4j,
  org.eclipse.ui.views,
  org.eclipse.help.ui,
  org.eclipse.compare,
@@ -17,13 +16,13 @@ Require-Bundle: org.eclipse.jface.text,
  org.eclipse.ui.workbench,
  com.cubrid.common.configuration,
  com.cubrid.common.core,
- com.cubrid.common.update,
  com.cubrid.cubridmanager.core,
+ com.cubrid.common.update,
  com.cubrid.tool.editor,
- slf4j.api,
  jakarta.xml.bind-api,
  com.sun.xml.bind.jaxb-impl,
- org.glassfish.hk2.osgi-resource-locator
+ org.glassfish.hk2.osgi-resource-locator,
+ slf4j.api
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy

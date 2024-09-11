@@ -24,7 +24,9 @@
 
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.apache.log4j"/>
+      <import plugin="ch.qos.logback.classic"/>
+      <import plugin="ch.qos.logback.core"/>
+      <import plugin="slf4j.api"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.help.ui"/>
@@ -36,6 +38,7 @@
       <import plugin="org.eclipse.zest.layouts"/>
       <import plugin="org.eclipse.gef"/>
       <import plugin="com.cubrid.tool.editor"/>
+      <import plugin="com.cubrid.common.log"/>
       <import plugin="com.cubrid.common.configuration"/>
       <import plugin="com.cubrid.common.update"/>
       <import plugin="com.cubrid.cubridmanager.core"/>

@@ -7,11 +7,11 @@ Bundle-Activator: org.cubrid.cubridmanager.plugin.manager.Activator
 Bundle-Vendor: CUBRID
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- com.cubrid.common.core;bundle-version="9.3.1",
- com.cubrid.cubridmanager.core;bundle-version="9.3.1",
- com.cubrid.common.ui;bundle-version="9.3.1",
- com.cubrid.cubridmanager.ui;bundle-version="9.3.1",
- com.cubrid.common.configuration;bundle-version="9.3.1"
+ com.cubrid.common.core,
+ com.cubrid.cubridmanager.core,
+ com.cubrid.common.ui,
+ com.cubrid.cubridmanager.ui,
+ com.cubrid.common.configuration
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.cubrid.cubridmanager.plugin.manager

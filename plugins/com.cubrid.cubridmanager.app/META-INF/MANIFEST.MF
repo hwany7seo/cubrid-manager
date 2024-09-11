@@ -7,7 +7,9 @@ Bundle-Activator: com.cubrid.cubridmanager.app.CubridManagerAppPlugin
 Bundle-Vendor: Search Solution Corporation
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.apache.log4j,
+ slf4j.api,
+ ch.qos.logback.classic,
+ ch.qos.logback.core,
  com.cubrid.common.update,
  com.cubrid.common.core,
  com.cubrid.common.ui,

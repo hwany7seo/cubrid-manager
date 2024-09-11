@@ -33,6 +33,7 @@ import com.cubrid.common.core.util.LogUtil;
 import com.cubrid.common.ui.common.dialog.SelectWorkspaceDialog;
 import com.cubrid.common.ui.spi.util.CommonUITool;
 import com.cubrid.cubridmanager.ui.spi.Version;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -74,8 +75,9 @@ public class Application implements IApplication {
             }
 
             String workspace = SelectWorkspaceDialog.getLastSetWorkspaceDirectory();
-            LogUtil.configLogger(null, workspace);
-
+            LogUtil.configLogger(workspace);
+            
+            System.out.println("Application start");
             int returnCode =
                     PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
             if (returnCode == PlatformUI.RETURN_RESTART) {
