@@ -202,12 +202,16 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
      */
     protected void fillCoolBar(ICoolBarManager coolBarManager) {
         ActionManager manager = ActionManager.getInstance();
-        coolBarManager.setLockLayout(true);
-        IToolBarManager toolbarManager = new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.BOTTOM);
-        ToolBarContributionItem toolbarItem =
-                new ToolBarContributionItem(toolbarManager, IActionConstants.TOOL_NEW1);
-        toolbarItem.setMinimumItemsToShow(ToolBarContributionItem.SHOW_ALL_ITEMS);
-        coolBarManager.add(toolbarItem);
+        IToolBarManager toolbarManager = new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.RIGHT);
+
+        coolBarManager.add(new ToolBarContributionItem(
+        		new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_1));
+        coolBarManager.add(new ToolBarContributionItem(
+        		new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_2));
+        coolBarManager.add(new ToolBarContributionItem(
+        		new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_3));
+        coolBarManager.add(new ToolBarContributionItem(
+        		toolbarManager, IActionConstants.TOOLBAR_4));
 
         Bundle cqbBundle = Platform.getBundle(ApplicationUtil.CQB_PLUGIN_ID);
         /* Active the CQB plugin */
@@ -246,13 +250,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
             viewItems.setMode(ActionContributionItem.MODE_FORCE_TEXT);
             viewItems.setId(IPerspectiveConstance.PERSPECTIVE_ACTION_CONTRIBUTION_ID);
             toolbarManager.add(viewItems);
-            toolbarManager.add(new Separator());
         }
 
         /* TOOLS-3988 There still is the install option after installing cmt plugin. */
         Bundle bundle = Platform.getBundle(ApplicationUtil.CMT_PLUGIN_ID);
         if (bundle == null) {
-            toolbarManager.add(new Separator());
             IAction action =
                     ActionManager.getInstance().getAction(InstallMigrationToolkitAction.ID);
             if (action != null) {
@@ -271,7 +273,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         }
 
         // Help
-        toolbarManager.add(new Separator());
         DropDownAction helpDropAction =
                 new DropDownAction(
                         Messages.helpActionNameBig,
