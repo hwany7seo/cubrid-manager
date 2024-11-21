@@ -323,7 +323,7 @@ public class AddFuncParamsDialog extends CMTitleAreaDialog {
     /** Constrain the shell size */
     protected void constrainShellSize() {
         super.constrainShellSize();
-        // getShell().setSize(400, 420);
+        // getShell().setMinimumSize(400, 420);
         CommonUITool.centerShell(getShell());
         if (newFlag) {
             getShell().setText(Messages.titleAddFuncParamDialog);
