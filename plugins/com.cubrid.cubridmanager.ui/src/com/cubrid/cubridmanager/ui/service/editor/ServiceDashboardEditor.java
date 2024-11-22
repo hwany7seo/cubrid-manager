@@ -909,6 +909,12 @@ public class ServiceDashboardEditor extends CubridEditorPart {
                     } else if (type.equals(VolumeType.GENERIC.getText())) {
                         totalPageGeneric += spaceInfo.getTotalpage();
                         freePageGeneric += spaceInfo.getFreepage();
+                    } else if (type.equals(VolumeType.PERMANENT.getText())) {
+                        totalPageGeneric += spaceInfo.getTotalpage();
+                        freePageGeneric += spaceInfo.getFreepage();
+                    } else if (type.equals(VolumeType.TEMPORARY.getText())) {
+                        totalPageTemp += spaceInfo.getTotalpage();
+                        freePageTemp += spaceInfo.getFreepage();
                     }
                 }
             }
