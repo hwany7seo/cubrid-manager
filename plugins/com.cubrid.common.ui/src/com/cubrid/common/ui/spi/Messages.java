@@ -267,4 +267,6 @@ public class Messages extends NLS {
     public static String msgConfirmDeleteConnwithJob;
 
     public static String moreNodeLabel;
+    
+    public static String launchMigrationToolkitActionName;
 }

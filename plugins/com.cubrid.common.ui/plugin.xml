@@ -174,9 +174,9 @@
     <extension
           point="org.eclipse.ui.preferencePages">
        <page
-             class="com.cubrid.common.ui.common.control.NullCategoryPreferencePage"
+             class="com.cubrid.common.ui.common.preference.NullCategoryPreferencePage"
              id="com.cubrid.common.ui.preference.category"
-             name="%preferencePageCategory">
+             name="%viewCategory">
        </page>
        <page
              class="com.cubrid.common.ui.query.preference.QueryOptionPreferencePage"
