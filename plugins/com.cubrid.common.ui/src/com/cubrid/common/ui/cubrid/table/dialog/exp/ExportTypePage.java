@@ -298,8 +298,9 @@ public class ExportTypePage extends ExportWizardPage {
 
         Label loadDBLabel = new Label(loadDBLabelGroup, SWT.WRAP);
         loadDBLabel.setText(Messages.exportWizardTypeDescription2);
+        
     }
-
+    
     @Override
     protected void afterShowCurrentPage(PageChangedEvent event) {
         fileButton.setSelection(true);
@@ -309,6 +310,8 @@ public class ExportTypePage extends ExportWizardPage {
         historyCombo.setEnabled(false);
         renameButton.setEnabled(false);
         deleteButton.setEnabled(false);
+        
+        getShell().setMinimumSize(800, 600);
     }
 
     /**
