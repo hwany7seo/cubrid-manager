@@ -1768,7 +1768,7 @@ class DBSpaceLabelProvider implements ITableLabelProvider, ITableColorProvider {
         List<DbSpaceInfo> dbSpaceInfoList = volumeSpaceInfo.getVolumeSpaceInfo(type);
         if (dbSpaceInfoList != null) {
             for (DbSpaceInfo dbSpaceInfo : dbSpaceInfoList) {
-                if (purpose != null && dbSpaceInfo.getPurpose().equals(purpose)) {
+                if (purpose == null || dbSpaceInfo.getPurpose().equals(purpose)) {
                     totalPage += dbSpaceInfo.getTotalpage();
                     freePage += dbSpaceInfo.getFreepage();
                 }
