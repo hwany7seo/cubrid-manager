@@ -47,6 +47,11 @@ then
 	echo "ERROR ${OUTPUT_PATH} is not a directory"
 	exit
 fi
+echo "hwanyseo PACKAGE_NAME :  ${PACKAGE_NAME}"
+echo "${OUTPUT_PATH}/${PACKAGE_NAME}-${PACKAGE_VERSION}-macosx-cocoa.dmg"
+echo "hwanyseo INPUT_PATH : ${INPUT_PATH}"
+
+
 genisoimage -V ${PACKAGE_NAME} -D -R -apple -no-pad -o ${OUTPUT_PATH}/${PACKAGE_NAME}-${PACKAGE_VERSION}-macosx-cocoa.dmg ${INPUT_PATH}
 
 if [ ! -e ${OUTPUT_PATH}/${PACKAGE_NAME}-${PACKAGE_VERSION}-macosx-cocoa.dmg ];
