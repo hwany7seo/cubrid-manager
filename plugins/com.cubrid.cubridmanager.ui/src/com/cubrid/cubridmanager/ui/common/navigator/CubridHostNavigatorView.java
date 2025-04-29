@@ -71,6 +71,7 @@ import com.cubrid.cubridmanager.ui.spi.persist.CMHostNodePersistManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
@@ -243,9 +244,11 @@ public class CubridHostNavigatorView extends CubridNavigatorView {
                 (RefreshAction) ActionManager.getInstance().getAction(RefreshAction.ID);
         toolBarManager.add(refreshAction);
 
-        OpenTargetAction openObjectTabAction =
-                (OpenTargetAction) manager.getAction(OpenTargetAction.ID);
-        toolBarManager.add(openObjectTabAction);
+        if (!Util.isWindows()) {
+	        OpenTargetAction openObjectTabAction =
+	                (OpenTargetAction) manager.getAction(OpenTargetAction.ID);
+	        toolBarManager.add(openObjectTabAction);
+        }
 
         SwitchGroupModeAction grpSwitchAction =
                 (SwitchGroupModeAction) manager.getAction(SwitchGroupModeAction.ID);

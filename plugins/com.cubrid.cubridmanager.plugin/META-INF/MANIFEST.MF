@@ -8,8 +8,8 @@ Bundle-Vendor: Search Solution Corporation
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.cubrid.common.core,
- com.cubrid.common.ui,
  com.cubrid.cubridmanager.core,
+ com.cubrid.common.ui,
  com.cubrid.cubridmanager.ui,
  slf4j.api
 Eclipse-LazyStart: true
