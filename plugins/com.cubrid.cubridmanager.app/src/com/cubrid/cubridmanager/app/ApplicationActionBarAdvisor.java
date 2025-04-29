@@ -235,24 +235,23 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
         // Change view actions
         if (cqbBundle != null) {
-            DropDownAction viewAction =
-                    new DropDownAction(
-                            Messages.modeActionBig,
-                            IAction.AS_DROP_DOWN_MENU,
-                            CubridManagerAppPlugin.getImageDescriptor("icons/cubridmanager32.gif"));
-            viewAction.setDisabledImageDescriptor(
-                    CubridManagerAppPlugin.getImageDescriptor("icons/cubridmanager32.gif"));
-            MenuManager viewActionManager = viewAction.getMenuManager();
-            viewActionManager.add(manager.getAction(OpenCMPerspectiveAction.ID));
-
-            if (!Util.isWindows()) {
-                viewActionManager.add(manager.getAction(OpenCQBPerspectiveAction.ID));
-            }
-
-            ActionContributionItem viewItems = new ActionContributionItem(viewAction);
-            viewItems.setMode(ActionContributionItem.MODE_FORCE_TEXT);
-            viewItems.setId(IPerspectiveConstance.PERSPECTIVE_ACTION_CONTRIBUTION_ID);
-            toolbarManager.add(viewItems);
+        	if (!Util.isWindows()) {
+	            DropDownAction viewAction =
+	                    new DropDownAction(
+	                            Messages.modeActionBig,
+	                            IAction.AS_DROP_DOWN_MENU,
+	                            CubridManagerAppPlugin.getImageDescriptor("icons/cubridmanager32.gif"));
+	            viewAction.setDisabledImageDescriptor(
+	                    CubridManagerAppPlugin.getImageDescriptor("icons/cubridmanager32.gif"));
+	            MenuManager viewActionManager = viewAction.getMenuManager();
+	            viewActionManager.add(manager.getAction(OpenCMPerspectiveAction.ID));
+	            viewActionManager.add(manager.getAction(OpenCQBPerspectiveAction.ID));
+	
+	            ActionContributionItem viewItems = new ActionContributionItem(viewAction);
+	            viewItems.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+	            viewItems.setId(IPerspectiveConstance.PERSPECTIVE_ACTION_CONTRIBUTION_ID);
+	            toolbarManager.add(viewItems);
+        	}
         }
 
         /*TOOLS-3988 There still is the install option after installing cmt plugin.*/
