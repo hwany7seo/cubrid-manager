@@ -106,17 +106,25 @@ public class HostDialog extends CMTitleAreaDialog implements ModifyListener {
     private String[] soTimeOutMsgs = {
         Messages.lbl10Second, Messages.lbl30Second, Messages.lbl60Second, Messages.lblNoLimit
     };
+    
+    private final String hostName;
 
     /**
      * The constructor
      *
      * @param parentShell
      * @param isNewHost
+     * @param HostName
      */
-    public HostDialog(Shell parentShell, boolean isNewHost, boolean actionIsConnect) {
+    public HostDialog(Shell parentShell, boolean isNewHost, boolean actionIsConnect, String hostName) {
         super(parentShell);
         this.isNewHost = isNewHost;
         this.actionIsConnect = actionIsConnect;
+        this.hostName = hostName;
+    }
+    
+    public HostDialog(Shell parentShell, boolean isNewHost, boolean actionIsConnect) {
+        this(parentShell, isNewHost, isNewHost, null);
     }
 
     /**
@@ -145,6 +153,8 @@ public class HostDialog extends CMTitleAreaDialog implements ModifyListener {
         hostNameText.setTextLimit(ValidateUtil.MAX_NAME_LENGTH);
         if (server != null) {
             hostNameText.setText(server.getLabel());
+        } else if (hostName != null) {
+            hostNameText.setText(hostName);
         }
         hostNameText.setLayoutData(
                 CommonUITool.createGridData(GridData.FILL_HORIZONTAL, 2, 1, -1, -1));
