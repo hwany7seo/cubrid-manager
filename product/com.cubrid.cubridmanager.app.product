@@ -30,7 +30,7 @@
       startupMessageRect="230,280,557,15"
       startupForegroundColor="C0C0C0" />
 
-   <launcher name="cubridmanager">
+   <launcher name="cubridadmin">
       <linux icon="/icons/cubridmanager.xpm"/>
       <macosx icon="/icons/cubridmanager.icns"/>
       <solaris/>

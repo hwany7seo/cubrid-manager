@@ -17,6 +17,7 @@
     </modules>
   
     <properties>
+        <tools-name>cubridadmin</tools-name>
         <cubridtools-product>Cubrid-Manager</cubridtools-product>
         <tycho-version>4.0.8</tycho-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
