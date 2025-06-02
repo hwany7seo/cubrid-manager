@@ -15,7 +15,7 @@
     <name>CubridManager Product</name>
 
     <properties>
-        <jre.download.url>https://github.com/adoptium/temurin21-binaries/releases/tag/jdk-21.0.7%2B6</jre.download.url>
+        <jre.download.url>https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.7%2B6</jre.download.url>
         <jre.folder.name>jdk-21.0.7+6-jre</jre.folder.name>
         <product.output.folder>${project.build.directory}/products/${project.artifactId}</product.output.folder>
     </properties>

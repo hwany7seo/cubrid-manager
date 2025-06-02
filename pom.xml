@@ -19,7 +19,7 @@
     <properties>
         <tools-name>cubridadmin</tools-name>
         <cubridtools-product>Cubrid-Manager</cubridtools-product>
-        <tycho-version>4.0.8</tycho-version>
+        <tycho-version>4.0.9</tycho-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
     </properties>
