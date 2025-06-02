@@ -187,7 +187,6 @@ public abstract class SocketTask extends AbstractTask {
             return;
         }
         String message = getMessage();
-
         clientService.setUsingSpecialDelimiter(isUsingSpecialDelimiter);
         clientService.sendRequest(message);
         if (!isNeedMultiSend) {

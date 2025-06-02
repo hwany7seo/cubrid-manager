@@ -141,7 +141,15 @@ public class GeneralInfoPage extends WizardPage implements ModifyListener {
 
         setControl(composite);
     }
-
+    
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (visible) {
+            getShell().setMinimumSize(600, 800);
+        }
+    }
+    
     /**
      * Create database name group
      *

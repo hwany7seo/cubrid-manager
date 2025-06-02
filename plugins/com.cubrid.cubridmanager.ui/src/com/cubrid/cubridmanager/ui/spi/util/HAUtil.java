@@ -49,6 +49,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 
@@ -394,6 +396,28 @@ public final class HAUtil {
         return null;
     }
 
+    public static HADatabaseStatusInfo getDatabaseStatusInfoFromHostName(
+            List<HAHostStatusInfo> haHostStatusInfoList, String hostName, String dbName) {
+        if (haHostStatusInfoList == null) {
+            return null;
+        }
+
+        for (int i = 0; i < haHostStatusInfoList.size(); i++) {
+            HAHostStatusInfo hostStatusInfo = haHostStatusInfoList.get(i);
+            if (Objects.equals(hostName, hostStatusInfo.getHostName())) {
+                List<HADatabaseStatusInfo> dbStatusInfoList = hostStatusInfo.getDbStatusList();
+                for (int j = 0; j < dbStatusInfoList.size(); j++) {
+                    HADatabaseStatusInfo dbStatusInfo = dbStatusInfoList.get(j);
+                    if (dbStatusInfo.getDbName().equals(dbName)) {
+                        return dbStatusInfo;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    
     /**
      * Get database status information
      *
