@@ -15,8 +15,8 @@
     <name>CubridManager Product</name>
 
     <properties>
-        <jre.download.url>https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.6%2B10</jre.download.url>
-        <jre.folder.name>jdk-17.0.6+10-jre</jre.folder.name>
+        <jre.download.url>https://github.com/adoptium/temurin21-binaries/releases/tag/jdk-21.0.7%2B6</jre.download.url>
+        <jre.folder.name>jdk-21.0.7+6-jre</jre.folder.name>
         <product.output.folder>${project.build.directory}/products/${project.artifactId}</product.output.folder>
     </properties>
 
@@ -79,15 +79,15 @@
                         <mkdir dir="${project.build.directory}/jre/linux-aarch64-jre/"/>
                         <mkdir dir="${project.build.directory}/jre/mac-x64-jre/"/>
                         <mkdir dir="${project.build.directory}/jre/mac-aarch64-jre/"/>
-                        <get src="${jre.download.url}/OpenJDK17U-jre_x64_windows_hotspot_17.0.6_10.zip"
+                        <get src="${jre.download.url}/OpenJDK21U-jre_x64_windows_hotspot_21.0.7_6.zip"
                              dest="${project.build.directory}/jre/win-x64-jre.zip"/>
-                        <get src="${jre.download.url}/OpenJDK17U-jre_x64_linux_hotspot_17.0.6_10.tar.gz"
+                        <get src="${jre.download.url}/OpenJDK21U-jre_x64_linux_hotspot_21.0.7_6.tar.gz"
                              dest="${project.build.directory}/jre/linux-x64-jre.tar.gz"/>
-                        <get src="${jre.download.url}/OpenJDK17U-jre_aarch64_linux_hotspot_17.0.6_10.tar.gz"
+                        <get src="${jre.download.url}/OpenJDK21U-jre_aarch64_linux_hotspot_21.0.7_6.tar.gz"
                              dest="${project.build.directory}/jre/linux-aarch64-jre.tar.gz"/>
-                        <get src="${jre.download.url}/OpenJDK17U-jre_x64_mac_hotspot_17.0.6_10.tar.gz"
+                        <get src="${jre.download.url}/OpenJDK21U-jre_x64_mac_hotspot_21.0.7_6.tar.gz"
                              dest="${project.build.directory}/jre/mac-x64-jre.tar.gz"/>
-                        <get src="${jre.download.url}/OpenJDK17U-jre_aarch64_mac_hotspot_17.0.6_10.tar.gz"
+                        <get src="${jre.download.url}/OpenJDK21U-jre_aarch64_mac_hotspot_21.0.7_6.tar.gz"
                              dest="${project.build.directory}/jre/mac-aarch64-jre.tar.gz"/>
 
                         <echo message="Unzipping jre files" />
@@ -124,41 +124,41 @@
                         </replace>
 
                         <echo message="Move jre files to output product" />
-                        <copy todir="${product.output.folder}/win32/win32/x86_64/cubridmanager/jre">
+                        <copy todir="${product.output.folder}/win32/win32/x86_64/${tools-name}/jre">
                               <fileset dir="${project.build.directory}/jre/win-x64-jre/${jre.folder.name}/" /> </copy>
-                        <copy todir="${product.output.folder}/linux/gtk/x86_64/cubridmanager/jre">
+                        <copy todir="${product.output.folder}/linux/gtk/x86_64/${tools-name}/jre">
                               <fileset dir="${project.build.directory}/jre/linux-x64-jre/${jre.folder.name}/" /> </copy>
-                        <copy todir="${product.output.folder}/linux/gtk/aarch64/cubridmanager/jre">
+                        <copy todir="${product.output.folder}/linux/gtk/aarch64/${tools-name}/jre">
                               <fileset dir="${project.build.directory}/jre/linux-aarch64-jre/${jre.folder.name}/" /> </copy>
-                        <copy todir="${product.output.folder}/macosx/cocoa/x86_64/Cubridmanager.app/Contents/Eclipse/jre">
+                        <copy todir="${product.output.folder}/macosx/cocoa/x86_64/${tools-name}.app/Contents/Eclipse/jre">
                               <fileset dir="${project.build.directory}/jre/mac-x64-jre/${jre.folder.name}/" /> </copy>
-                        <copy todir="${product.output.folder}/macosx/cocoa/aarch64/Cubridmanager.app/Contents/Eclipse/jre">
+                        <copy todir="${product.output.folder}/macosx/cocoa/aarch64/${tools-name}.app/Contents/Eclipse/jre">
                               <fileset dir="${project.build.directory}/jre/mac-aarch64-jre/${jre.folder.name}/" /> </copy>
 
                         <echo message="Copy jdbc driver to output product" />
-                        <copy todir="${product.output.folder}/win32/win32/x86_64/cubridmanager/driver">
+                        <copy todir="${product.output.folder}/win32/win32/x86_64/${tools-name}/driver">
                               <fileset dir="${project.build.directory}/driver" /> </copy>
-                        <copy todir="${product.output.folder}/linux/gtk/x86_64/cubridmanager/driver">
+                        <copy todir="${product.output.folder}/linux/gtk/x86_64/${tools-name}/driver">
                               <fileset dir="${project.build.directory}/driver" /> </copy>
-                        <copy todir="${product.output.folder}/linux/gtk/aarch64/cubridmanager/driver">
+                        <copy todir="${product.output.folder}/linux/gtk/aarch64/${tools-name}/driver">
                               <fileset dir="${project.build.directory}/driver" /> </copy>
-                        <copy todir="${product.output.folder}/macosx/cocoa/x86_64/Cubridmanager.app/Contents/Eclipse/driver">
+                        <copy todir="${product.output.folder}/macosx/cocoa/x86_64/${tools-name}.app/Contents/Eclipse/driver">
                               <fileset dir="${project.build.directory}/driver" /> </copy>
-                        <copy todir="${product.output.folder}/macosx/cocoa/aarch64/Cubridmanager.app/Contents/Eclipse/driver">
+                        <copy todir="${product.output.folder}/macosx/cocoa/aarch64/${tools-name}.app/Contents/Eclipse/driver">
                               <fileset dir="${project.build.directory}/driver" /> </copy>
 
                         <echo message="Change permission" />
                         <chmod perm="755">
-                          <fileset dir="${product.output.folder}/linux/gtk/x86_64/cubridmanager/jre">
+                          <fileset dir="${product.output.folder}/linux/gtk/x86_64/${tools-name}/jre">
                             <include name="**/*"/>
                           </fileset>
-                          <fileset dir="${product.output.folder}/linux/gtk/aarch64/cubridmanager/jre">
+                          <fileset dir="${product.output.folder}/linux/gtk/aarch64/${tools-name}/jre">
                             <include name="**/*"/>
                           </fileset>
-                          <fileset dir="${product.output.folder}/macosx/cocoa/x86_64/Cubridmanager.app/Contents/Eclipse/jre">
+                          <fileset dir="${product.output.folder}/macosx/cocoa/x86_64/${tools-name}.app/Contents/Eclipse/jre">
                             <include name="**/*"/>
                           </fileset>
-                          <fileset dir="${product.output.folder}/macosx/cocoa/aarch64/Cubridmanager.app/Contents/Eclipse/jre">
+                          <fileset dir="${product.output.folder}/macosx/cocoa/aarch64/${tools-name}.app/Contents/Eclipse/jre">
                             <include name="**/*"/>
                           </fileset>
                         </chmod>

@@ -16,10 +16,10 @@
         <module>com.cubrid.common.log</module>
         <module>com.cubrid.common.configuration</module>
         <module>com.cubrid.common.core</module>
-        <module>com.cubrid.cubridmanager.core</module>
-        <module>com.cubrid.cubridmanager.jdbc.proxy</module>
         <module>com.cubrid.common.ui</module>
         <module>com.cubrid.common.update</module>
+        <module>com.cubrid.cubridmanager.core</module>
+        <module>com.cubrid.cubridmanager.jdbc.proxy</module>
         <module>com.cubrid.cubridmanager.app</module>
         <module>com.cubrid.cubridmanager.plugin</module>
         <module>com.cubrid.cubridmanager.ui</module>

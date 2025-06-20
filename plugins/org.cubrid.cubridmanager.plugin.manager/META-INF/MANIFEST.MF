@@ -8,10 +8,10 @@ Bundle-Vendor: CUBRID
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.cubrid.common.core,
- com.cubrid.cubridmanager.core,
  com.cubrid.common.ui,
- com.cubrid.cubridmanager.ui,
- com.cubrid.common.configuration
+ com.cubrid.common.configuration,
+ com.cubrid.cubridmanager.core,
+ com.cubrid.cubridmanager.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.cubrid.cubridmanager.plugin.manager

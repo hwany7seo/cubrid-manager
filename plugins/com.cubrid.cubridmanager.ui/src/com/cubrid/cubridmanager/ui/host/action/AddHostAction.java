@@ -167,7 +167,12 @@ public class AddHostAction extends SelectionAction {
                     HAHostStatusInfo haHostStatusInfo = server.getServerInfo().getHaHostStatusInfo();
                     if (haHostStatusInfo != null) {
                         HostStatusType type = haHostStatusInfo.getStatusType();
-                        HAHostStatusInfo masterInfo = haHostStatusInfo.getMasterHostStatusInfo();
+                        HAHostStatusInfo masterInfo;
+                        if (type == HostStatusType.MASTER) {
+                        	masterInfo = haHostStatusInfo;
+                        } else {
+                        	masterInfo = haHostStatusInfo.getMasterHostStatusInfo();
+                        }
                         List<HAHostStatusInfo> listInfo = masterInfo.getSlaveHostStatusInfoList();
                         List<HAHostStatusInfo> addList = new ArrayList<HAHostStatusInfo>();
                         for (HAHostStatusInfo info : listInfo) {
