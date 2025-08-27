@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.cubrid.cubridmanager.plugin;singleton:=true
 Bundle-Version: 9.3.1.qualifier
 Bundle-Activator: com.cubrid.cubridmanager.plugin.CubridManagerPlugin
 Bundle-Vendor: Search Solution Corporation
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.cubrid.common.core,

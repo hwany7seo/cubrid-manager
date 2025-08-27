@@ -749,7 +749,6 @@ public class EditUserDialog extends CMTrayDialog {
     /** Constrain the shell size */
     protected void constrainShellSize() {
         super.constrainShellSize();
-        getShell().setSize(680, 650);
         getShell().setMinimumSize(730, 700);
         CommonUITool.centerShell(getShell());
         if (isNewFlag()) {
@@ -1043,7 +1042,7 @@ public class EditUserDialog extends CMTrayDialog {
                     continue;
                 }
                 Map<String, String> map = new HashMap<String, String>();
-                map.put("0", bean.getUniqueName());
+                map.put("0", bean.getClassName());
                 map.put("1", Messages.msgUserSchema);
                 map.put("2", bean.getOwnerName());
                 map.put(

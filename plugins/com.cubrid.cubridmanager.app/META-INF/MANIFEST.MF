@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.cubrid.cubridmanager.app;singleton:=true
 Bundle-Version: 9.3.1.qualifier
 Bundle-Activator: com.cubrid.cubridmanager.app.CubridManagerAppPlugin
 Bundle-Vendor: Search Solution Corporation
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  slf4j.api,
@@ -21,7 +22,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: com.cubrid.cubridmanager.app
 Automatic-Module-Name: com.cubrid.cubridmanager.app
 

@@ -19,7 +19,7 @@
     <properties>
         <tools-name>cubridadmin</tools-name>
         <cubridtools-product>Cubrid-Manager</cubridtools-product>
-        <tycho-version>4.0.8</tycho-version>
+        <tycho-version>4.0.13</tycho-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
     </properties>
@@ -37,7 +37,7 @@
         </repository>
         <repository>
             <id>manager-local-p2</id>
-            <url>https://web.buabu.duckdns.org/cubrid/manager/p2-site/</url>
+            <url>https://ftp.cubrid.org/CUBRID_Tools/Dev/sites/rcp/cubridmanager/p2-site/</url>
             <layout>p2</layout>
         </repository>
     </repositories>

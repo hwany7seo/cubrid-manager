@@ -5,6 +5,7 @@ Bundle-SymbolicName: org.cubrid.cubridquery.plugin.querybrowser;singleton:=true
 Bundle-Version: 9.3.1.qualifier
 Bundle-Activator: org.cubrid.cubridquery.plugin.querybrowser.Activator
 Bundle-Vendor: CUBRID
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Localization: plugin 
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -14,7 +15,6 @@ Require-Bundle: org.eclipse.ui,
  com.cubrid.cubridquery.ui,
  com.cubrid.common.configuration,
  com.cubrid.cubridmanager.core
-Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.cubrid.cubridquery.plugin.querybrowser
 

@@ -5,6 +5,7 @@ Bundle-SymbolicName: org.cubrid.cubridmanager.plugin.manager;singleton:=true
 Bundle-Version: 9.3.1.qualifier
 Bundle-Activator: org.cubrid.cubridmanager.plugin.manager.Activator
 Bundle-Vendor: CUBRID
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.cubrid.common.core,
@@ -12,6 +13,5 @@ Require-Bundle: org.eclipse.ui,
  com.cubrid.common.configuration,
  com.cubrid.cubridmanager.core,
  com.cubrid.cubridmanager.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.cubrid.cubridmanager.plugin.manager

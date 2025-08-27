@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.cubrid.cubridquery.ui;singleton:=true
 Bundle-Version: 9.3.1.qualifier
 Bundle-Activator: com.cubrid.cubridquery.ui.CubridQueryUIPlugin
 Bundle-Vendor: Search Solution Corporation
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -33,5 +34,6 @@ Bundle-ClassPath: .,
  lib/commons-lang-2.6.jar
 Import-Package: com.cubrid.cubridmanager.ui.spi.model.loader,
  com.cubrid.cubridmanager.ui.spi.persist,
- com.cubrid.cubridmanager.ui.spi.util
+ com.cubrid.cubridmanager.ui.spi.util,
+ com.cubrid.cubridmanager.ui.cubrid.user.editor
 Automatic-Module-Name: com.cubrid.cubridquery.ui

@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.cubrid.common.ui;singleton:=true
 Bundle-Version: 9.3.1.qualifier
 Bundle-Activator: com.cubrid.common.ui.CommonUIPlugin
 Bundle-Vendor: Search Solution Corporation
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.jface.text,
  org.eclipse.ui.views,
  org.eclipse.help.ui,
@@ -173,5 +174,4 @@ Import-Package: org.eclipse.ui.forms,
  org.eclipse.ui.forms.editor,
  org.eclipse.ui.forms.events,
  org.eclipse.ui.forms.widgets
-Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: com.cubrid.common.ui

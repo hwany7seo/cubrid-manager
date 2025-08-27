@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.cubrid.cubridmanager.ui;singleton:=true
 Bundle-Version: 9.3.1.qualifier
 Bundle-Activator: com.cubrid.cubridmanager.ui.CubridManagerUIPlugin
 Bundle-Vendor: Search Solution Corporation
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jface.text,
@@ -29,6 +30,7 @@ Bundle-ClassPath: .,
  lib/jcommon-1.0.16.jar,
  lib/commons-lang-2.6.jar
 Export-Package: com.cubrid.cubridmanager.ui,
+ com.cubrid.cubridmanager.ui.cubrid.user.editor,
  com.cubrid.cubridmanager.ui.broker.action,
  com.cubrid.cubridmanager.ui.broker.editor,
  com.cubrid.cubridmanager.ui.broker.editor.internal,
