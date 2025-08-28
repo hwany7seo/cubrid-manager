@@ -170,6 +170,11 @@ public class FKTableViewerLabelProvider implements ITableLabelProvider {
                     return null;
                 }
                 SchemaInfo refSchema = getRefedTable(refTable);
+                
+                if (null == refSchema) {
+                	return null;
+                }
+                
                 List<SchemaInfo> refSupers = getRefedSupper(refSchema);
                 Constraint refPK = refSchema.getPK(refSupers);
                 if (refPK == null) {
