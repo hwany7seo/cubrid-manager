@@ -176,7 +176,7 @@
        <page
              class="com.cubrid.common.ui.common.preference.NullCategoryPreferencePage"
              id="com.cubrid.common.ui.preference.category"
-             name="%viewCategory">
+             name="%preferenceName">
        </page>
        <page
              class="com.cubrid.common.ui.query.preference.QueryOptionPreferencePage"

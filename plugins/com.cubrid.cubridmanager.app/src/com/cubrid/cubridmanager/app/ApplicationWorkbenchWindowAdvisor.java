@@ -583,24 +583,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                 }
             }
         }
-        // It's not worked in Eclipse 2024-06 so code is deleted.
-        //        // remove some tool bar items
-        //        ICoolBarManager cm =
-        // getWindowConfigurer().getActionBarConfigurer().getCoolBarManager();
-        //        for (IContributionItem item : cm.getItems()) {
-        //            if (item == null || item.getId() == null) {
-        //                continue;
-        //            }
-        //
-        //            if
-        // (item.getId().equals("org.eclipse.ui.edit.text.actionSet.annotationNavigation")
-        //                    ||
-        // item.getId().equals("org.eclipse.ui.edit.text.actionSet.navigation")) {
-        //            	item.setVisible(false);
-        //                //cm.remove(item.getId());
-        //                //cm.update(true);
-        //            }
-        //        }
 
         // remove some preference items
         PreferenceManager pm =

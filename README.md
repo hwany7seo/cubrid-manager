@@ -1,9 +1,11 @@
-# CUBRID Manager
-[CUBRID Manager](https://github.com/CUBRID/cubrid-manager) is a [CUBRID](https://github.com/CUBRID/cubrid) database management tool that provides CUBRID functions for database management and executing query in GUI environment. The management function of the CUBRID Manager can be easily performed by using the GUI. In addition, the query function of the CUBRID Manager provides a query editor tool for application development.
+# CUBRID Admin
+[CUBRID Admin](https://github.com/CUBRID/cubrid-manager) is a version of CUBRID Manager that removes the CUBRID Query Editor feature. It no longer supports the Query feature. It has been replaced by [DBeaver](https://github.com/dbeaver/dbeaver).
 
-The management function of CUBRID Manager can only be used in the environment where the [CUBRID Manager server](https://github.com/CUBRID/cubrid-manager-server) running on the server on which the CUBRID DBMS is installed, but the query function can be executed without running the CUBRID Manager server.
+CUBRID Admin(CA) is a [CUBRID](https://github.com/CUBRID/cubrid) database management tool that provides CUBRID functions for database management and executing query in GUI environment. The management function of the CUBRID Admin can be easily performed by using the GUI.
 
-The CUBRID Manager is a Java application based on [Eclipse RCP](https://wiki.eclipse.org/Rich_Client_Platform) that runs only on JRE or JDK 1.6 or later, and the recommended JRE version is 1.7.
+The management function of CUBRID Admin can only be used in the environment where the [CUBRID Manager server](https://github.com/CUBRID/cubrid-manager-server) running on the server on which the CUBRID DBMS is installed.
+
+The CUBRID Admin is a Java application based on [Eclipse RCP](https://wiki.eclipse.org/Rich_Client_Platform) that runs only on JRE or JDK 21 or later, and the recommended JRE version is 21.
 
 ## MAJOR REFERENCES
 
@@ -13,8 +15,7 @@ CUBRID Official Site: http://www.cubrid.org and http://www.cubrid.com
 
 CM can be found here:
 
-- http://www.cubrid.org/downloads/os-select/64-bit/tools/manager
-- http://ftp.cubrid.org/CUBRID_Tools/CUBRID_Manager/
+- https://ftp.cubrid.org/CUBRID_Tools/CUBRID_Admin/
 
 ## How to run CUBRID Manager on Eclipse
 

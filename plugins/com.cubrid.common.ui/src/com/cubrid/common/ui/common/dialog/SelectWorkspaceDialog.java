@@ -287,7 +287,8 @@ public class SelectWorkspaceDialog extends CMTitleAreaDialog {
                 if (instanceLoc.isSet()) {
                   isOk = true;
                 } else {
-                  isOk = instanceLoc.set(new URL("file", null, workspacePath), true);
+                  URI uri = new URI("file", null, workspacePath);
+                  isOk = instanceLoc.set(uri.toURL(), true);
                 }
             } catch (IllegalStateException e) {
                 isOk = false;
@@ -295,7 +296,9 @@ public class SelectWorkspaceDialog extends CMTitleAreaDialog {
                 isOk = false;
             } catch (IOException e) {
                 isOk = false;
-            }
+            } catch (URISyntaxException e) {
+				isOk = false;
+			}
             if (!isOk) {
                 setErrorMessage(Messages.errWorkspaceUsed);
                 return;

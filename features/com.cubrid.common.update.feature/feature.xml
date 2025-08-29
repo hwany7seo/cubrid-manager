@@ -29,9 +29,6 @@
       <import plugin="org.eclipse.osgi" version="3.4.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.registry" version="3.4.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.app"/>
-<!--
-      <import plugin="org.eclipse.equinox.p2.iu"/>
--->      
       <import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.eclipse.equinox.security.ui" version="1.0.0" match="compatible"/>
       <import plugin="org.eclipse.equinox.security" version="1.0.0" match="compatible"/>
@@ -229,31 +226,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-<!--
-   <plugin
-         id="org.eclipse.ecf.ssl"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
 
-   <plugin
-         id="org.eclipse.ecf.provider.filetransfer.ssl"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.security.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
--->
    <plugin
          id="org.eclipse.equinox.p2.reconciler.dropins"
          download-size="0"
@@ -288,28 +261,14 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-<!--
-   <plugin
-         id="org.eclipse.equinox.p2.metadata.generator"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
--->
+
    <plugin
          id="org.eclipse.equinox.p2.publisher"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-<!--
-   <plugin
-         id="org.eclipse.equinox.p2.ql"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
--->
+
    <plugin
          id="org.eclipse.equinox.p2.director.app"
          download-size="0"
@@ -344,230 +303,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-<!--
-   <plugin
-         id="org.eclipse.equinox.p2.iu"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-   <plugin
-         id="org.eclipse.equinox.p2.artifact.repository.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
 
-   <plugin
-         id="org.eclipse.equinox.p2.console.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.core.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.director.app.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.director.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.directorywatcher.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.discovery.compatibility.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.discovery.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.engine.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.extensionlocation.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.garbagecollector.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.jarprocessor.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.metadata.generator.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.metadata.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.metadata.repository.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.operations.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.publisher.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.ql.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.reconciler.dropins.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.repository.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.repository.tools.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.touchpoint.eclipse.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.touchpoint.natives.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.ui.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.updatechecker.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.p2.updatesite.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.equinox.security.ui.nl_ko"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
--->
    <plugin
          id="org.eclipse.equinox.security.ui"
          download-size="0"
@@ -581,15 +317,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-<!--
-   <plugin
-         id="org.eclipse.ecf.provider.filetransfer.httpclient.ssl"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
--->
    <plugin
          id="org.apache.commons.httpclient"
          download-size="0"
