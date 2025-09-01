@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 SHELL_DIR="$( cd "$( dirname "$0" )" && pwd -P )"
+JAVA_EXECUTABLE=$(which java)
 
 VERSION_FILE_PATH=${SHELL_DIR}/VERSION
 RELEASE_VERSION_FILE_PATH=${SHELL_DIR}/plugins/com.cubrid.cubridmanager.ui/version.properties
@@ -41,12 +42,20 @@ function update_build_version ()
   echo "RELEASE_VERSION=" $RELEASE_VERSION
 }
 
-
-if [ ! -z "${JAVA_17_HOME}" ]; then
-  echo JAVA_17_HOME: ${JAVA_17_HOME}
-  JAVA_HOME=${JAVA_17_HOME}
+if [ -z "$JAVA_EXECUTABLE" ]; then
+  echo "JAVA_EXECUTABLE not found"
+  exit 1
 fi
 
+JAVA_VERSION=$($JAVA_EXECUTABLE -version 2>&1 | awk -F '"' '/version/ {print $2}')
+JAVA_MAJOR_VERSION=$(echo ${JAVA_VERSION} | cut -d '.' -f 1)
+
+if [ $JAVA_MAJOR_VERSION -lt 21 ]; then
+  echo "JAVA_MAJOR_VERSION is less than 21"
+  exit 1
+fi
+
+echo "JAVA_MAJOR_VERSION=" $JAVA_MAJOR_VERSION
 MVN="`which mvn`"
 if [ ! -z "${MAVEN_HOME}" ]; then
   echo MAVEN_HOME: ${MAVEN_HOME}
