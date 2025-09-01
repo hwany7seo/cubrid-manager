@@ -10,10 +10,10 @@ Export-Package: com.cubrid.cubridmanager.core,
  com.cubrid.cubridmanager.core.cubrid.database.task,
  com.cubrid.cubridmanager.core.cubrid.jobauto.task,
  com.cubrid.cubridmanager.core.cubrid.table.task,
- com.cubrid.cubridmanager.core.cubrid.table.task.attribute,
  com.cubrid.cubridmanager.core.cubrid.trigger.task,
  com.cubrid.cubridmanager.core.monitoring.task
 Require-Bundle: org.junit;bundle-version="3.8.2",
  com.cubrid.common.core
 Bundle-ClassPath: .
 Import-Package: com.cubrid.cubridmanager.ui
+Automatic-Module-Name: com.cubrid.cubridmanager.core.testfragment
