@@ -68,7 +68,6 @@ import java.util.Map;
 import java.util.Timer;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -169,7 +168,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                                 if (editorList != null) {
                                     for (IEditorReference reference : editorList) {
                                         if (!NoticeDashboardEditor.ID.equals(reference.getId())) {
-                                            page.showEditor(reference);
+                                            if (reference.getPart(false) != null) {
+                                                page.showEditor(reference);
+                                            }
                                         }
                                     }
                                     // Send the last active editor to the top
@@ -226,6 +227,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         LayoutManager.getInstance().setStatusLineContrItem(new CubridStatusLineContrItem());
         LayoutManager.getInstance().setTitleLineContrItem(new CubridTitleLineContrItem());
         LayoutManager.getInstance().setWorkbenchContrItem(new CubridWorkbenchContrItem());
+        configurer.getWindow().getShell().setMinimumSize(600, 400);
+        configurer.getWindow().getShell().setMinimized(true);
     }
 
     /** Performs arbitrary actions after the window is created. */
@@ -565,20 +568,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                         mm.update(true);
                     }
                 }
-            }
-        }
-
-        // remove some tool bar items
-        ICoolBarManager cm = getWindowConfigurer().getActionBarConfigurer().getCoolBarManager();
-        for (IContributionItem item : cm.getItems()) {
-            if (item == null || item.getId() == null) {
-                continue;
-            }
-
-            if (item.getId().equals("org.eclipse.ui.edit.text.actionSet.annotationNavigation")
-                    || item.getId().equals("org.eclipse.ui.edit.text.actionSet.navigation")) {
-                cm.remove(item.getId());
-                cm.update(true);
             }
         }
 
