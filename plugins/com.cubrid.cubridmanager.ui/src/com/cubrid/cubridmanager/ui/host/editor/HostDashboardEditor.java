@@ -558,17 +558,17 @@ public class HostDashboardEditor extends CubridEditorPart {
         if (finishedCount >= TOTAL_TASK_COUNT) {
             isAvailable = true;
         }
-        
+
         if (refreshItem != null && !refreshItem.isDisposed()) {
-        	refreshItem.setEnabled(isAvailable);
+            refreshItem.setEnabled(isAvailable);
         }
-        
+
         if (exportItem != null  && !exportItem.isDisposed()) {
-        	exportItem.setEnabled(isAvailable);
+            exportItem.setEnabled(isAvailable);
         }
 
         if (saveItem != null  && !saveItem.isDisposed()) {
-        	saveItem.setEnabled(isDirty);
+            saveItem.setEnabled(isDirty);
         }
     }
 
@@ -1607,12 +1607,12 @@ class ServerStatusLabelProvider implements ITableLabelProvider {
                 case 1:
                     return formater.format(
                                     StringUtil.convertToG(
-                                            new Double(hostStatus.getMemoryUsed()).longValue()
+                                            Double.valueOf(hostStatus.getMemoryUsed()).longValue()
                                                     * 1024))
                             + "GB / "
                             + formater.format(
                                     StringUtil.convertToG(
-                                            new Double(hostStatus.getMemoryPhy()).longValue()
+                                            Double.valueOf(hostStatus.getMemoryPhy()).longValue()
                                                     * 1024))
                             + "GB";
                 case 2:
@@ -1760,7 +1760,7 @@ class DBSpaceLabelProvider implements ITableLabelProvider, ITableColorProvider {
     }
     
     private String getVolumeString(
-            DBVolumeSpaceInfo volumeSpaceInfo, String type, String purpose) { // FIXME extract
+            DBVolumeSpaceInfo volumeSpaceInfo, String type, String purpose) {
         long totalPage = 0;
         long freePage = 0;
 
@@ -1779,7 +1779,7 @@ class DBSpaceLabelProvider implements ITableLabelProvider, ITableColorProvider {
             sb.append(getSpaceDesc((totalPage - freePage) * volumeSpaceInfo.getPageSize()))
                     .append(" / ");
             sb.append(getSpaceDesc(totalPage * volumeSpaceInfo.getPageSize())).append(" / ");
-            sb.append(new Double(freePage * 100.0d / totalPage).intValue()).append("%");
+            sb.append(Double.valueOf(freePage * 100.0d / totalPage).intValue()).append("%");
         } else {
             sb.append("-");
         }

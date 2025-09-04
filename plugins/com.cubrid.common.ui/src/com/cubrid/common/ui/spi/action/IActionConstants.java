@@ -62,7 +62,7 @@ public final class IActionConstants {
     public static final String TOOLBAR_2 = "toolbar_2";
     public static final String TOOLBAR_3 = "toolbar_3";
     public static final String TOOLBAR_4 = "toolbar_4";
-    
+
     // group
     public static final String GROUP_HOST = "host";
 }

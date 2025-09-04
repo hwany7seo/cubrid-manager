@@ -84,7 +84,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     private static final Logger LOGGER = LogUtil.getLogger(ApplicationActionBarAdvisor.class);
     // common actions
     private IAction preferenceAction = null;
-    // private IAction quitAction = null;
     // private IAction checkNewVersionAction = null;
     private IAction cubridOnlineForumAction = null;
     private IAction cubridProjectSiteAction = null;
@@ -129,8 +128,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
                 "preferences"); // It must be needed to use a Preferences Menu of an Application
         // Menu on Mac.
         manager.registerAction(preferenceAction);
-
-        // quitAction = new QuitAction(Messages.exitActionName);
 
         cubridOnlineForumAction = new CubridOnlineForumAction(Messages.cubridOnlineForumActionName);
         cubridProjectSiteAction = new CubridProjectSiteAction(Messages.cubridProjectSiteActionName);
@@ -205,13 +202,13 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         IToolBarManager toolbarManager = new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.RIGHT);
 
         coolBarManager.add(new ToolBarContributionItem(
-        		new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_1));
+                new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_1));
         coolBarManager.add(new ToolBarContributionItem(
-        		new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_2));
+                new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_2));
         coolBarManager.add(new ToolBarContributionItem(
-        		new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_3));
+                new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_3));
         coolBarManager.add(new ToolBarContributionItem(
-        		toolbarManager, IActionConstants.TOOLBAR_4));
+                toolbarManager, IActionConstants.TOOLBAR_4));
 
         Bundle cqbBundle = Platform.getBundle(ApplicationUtil.CQB_PLUGIN_ID);
         /* Active the CQB plugin */

@@ -464,7 +464,7 @@ public class DatabaseDashboardEditor extends CubridEditorPart {
             columnPurpose.getColumn().setText(Messages.volumnTableVolumnPerposeColumnLabel);
             columnPurpose.getColumn().setToolTipText(Messages.volumnTableVolumnPerposeColumnLabel);
         }
-        
+
         final TableViewerColumn columnFreeSize =
                 new TableViewerColumn(volumnInfoTableViewer, SWT.RIGHT);
         columnFreeSize.getColumn().setWidth(90);
@@ -648,7 +648,7 @@ public class DatabaseDashboardEditor extends CubridEditorPart {
 
         tableViewOnBarIndexMap.put(volumnPurposeInfoTableViewer, index);
     }
-    
+
     /**
      * craete broker composite
      *
@@ -1056,7 +1056,7 @@ public class DatabaseDashboardEditor extends CubridEditorPart {
                             }
                         });
     }
-    
+
     private void setBrokerInfoData() {
         Display.getDefault()
                 .syncExec(
@@ -1349,7 +1349,7 @@ public class DatabaseDashboardEditor extends CubridEditorPart {
                                         if (serverInfo.isIntegratedVolume()) {
                                             volumnMap.put(String.valueOf(index++), dbSpaceInfo.getPurpose());
                                         }
-                                        
+
                                         String freeSize =
                                                 getSpaceDesc(
                                                         Long.valueOf(dbSpaceInfo.getFreepage())
@@ -1391,13 +1391,13 @@ public class DatabaseDashboardEditor extends CubridEditorPart {
                                 }
 
                                 setVolumnInfoData();
-                                
+
                                 if (serverInfo.isIntegratedVolume()) {
                                     DbSpaceInfoListNew newList = (DbSpaceInfoListNew) dbSpaceInfoList;
                                     newList.createFileSpaceDescriptionData(volumnfileSpaceData);
                                     setVolumnFileInfoData();
                                 }
-                                
+
                                 loadVolumnTask.finish();
                             }
                         })
