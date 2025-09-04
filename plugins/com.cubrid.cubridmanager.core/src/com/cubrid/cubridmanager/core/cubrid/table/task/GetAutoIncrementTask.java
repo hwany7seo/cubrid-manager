@@ -91,9 +91,9 @@ public class GetAutoIncrementTask extends JDBCTask {
                 String className = rs.getString("class_name");
                 String attrName;
                 if (CompatibleUtil.isAfter114(databaseInfo)) {
-                	attrName = rs.getString("attr_name");
+                    attrName = rs.getString("attr_name");
                 } else {
-                	attrName = rs.getString("att_name");
+                    attrName = rs.getString("att_name");
                 }
                 String cacheCount = null;
                 if (isSupportCache) {
