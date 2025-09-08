@@ -174,11 +174,20 @@ public class TableSchemaCompareRunner extends Thread {
                     }
 
                     if ("YES".equals(info.getPartitioned())) {
-                        String sql =
+                        String sql;
+                        if (db.getDatabaseInfo().isSupportUserSchema()) {
+                            sql =
                                 "SELECT b.* FROM db_partition a, db_class b "
-                                        + "WHERE a.class_name='"
-                                        + tableName.toLowerCase(Locale.getDefault())
+                                        + "WHERE CONCAT(a.owner_name, '.' ,a.class_name)='"
+                                        + tableName
                                         + "' AND LOWER(b.class_name)=LOWER(a.partition_class_name)";
+                        } else {
+                            sql =
+                                    "SELECT b.* FROM db_partition a, db_class b "
+                                            + "WHERE a.class_name='"
+                                            + tableName.toLowerCase(Locale.getDefault())
+                                            + "' AND LOWER(b.class_name)=LOWER(a.partition_class_name)";
+                        }
                         stmt = conn.createStatement();
                         rs = stmt.executeQuery(sql);
                         while (rs.next()) {
