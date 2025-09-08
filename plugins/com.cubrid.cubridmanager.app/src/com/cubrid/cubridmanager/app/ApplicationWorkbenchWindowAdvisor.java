@@ -171,9 +171,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                                 if (editorList != null) {
                                     for (IEditorReference reference : editorList) {
                                         if (!NoticeDashboardEditor.ID.equals(reference.getId())) {
-                                        	if (reference.getPart(false) != null) { 
-                                        		page.showEditor(reference);
-                                        	}
+                                            if (reference.getPart(false) != null) {
+                                                page.showEditor(reference);
+                                            }
                                         }
                                     }
                                     // Send the last active editor to the top
