@@ -166,8 +166,8 @@ public class TableSchemaCompareRunner extends Thread {
                 Collections.sort(tableNames);
                 List<String> partitionClasses = new ArrayList<String>();
 
-                for (String tableName : tableNames) {
-                    TableDetailInfo info = map.get(tableName);
+                for (String uniqueName : tableNames) {
+                    TableDetailInfo info = map.get(uniqueName);
 
                     if (dialog.isCanceled()) {
                         return null;
@@ -179,13 +179,13 @@ public class TableSchemaCompareRunner extends Thread {
                             sql =
                                 "SELECT b.* FROM db_partition a, db_class b "
                                         + "WHERE CONCAT(a.owner_name, '.' ,a.class_name)='"
-                                        + tableName
+                                        + uniqueName
                                         + "' AND LOWER(b.class_name)=LOWER(a.partition_class_name)";
                         } else {
                             sql =
                                     "SELECT b.* FROM db_partition a, db_class b "
                                             + "WHERE a.class_name='"
-                                            + tableName.toLowerCase(Locale.getDefault())
+                                            + uniqueName.toLowerCase(Locale.getDefault())
                                             + "' AND LOWER(b.class_name)=LOWER(a.partition_class_name)";
                         }
                         stmt = conn.createStatement();
@@ -200,6 +200,18 @@ public class TableSchemaCompareRunner extends Thread {
                         }
 
                         QueryUtil.freeQuery(stmt, rs);
+                    }
+
+                    String tableName;
+                    if (db.getDatabaseInfo().isSupportUserSchema()) {
+                        int index = uniqueName.indexOf(".");
+                        if (index > 0) {
+                            tableName = uniqueName.substring(index + 1);
+                        } else {
+                            tableName = uniqueName;
+                        }
+                    } else {
+                        tableName = uniqueName;
                     }
 
                     if ("CLASS".equals(info.getClassType())
