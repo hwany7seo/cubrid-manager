@@ -169,9 +169,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
                 new MenuManager(Messages.mnu_helpMneuName, IWorkbenchActionConstants.M_HELP);
         helpMenu.add(manager.getAction(HelpDocumentAction.ID));
         // fill in help menu
-        if ("ko".equals(Messages.language)) {
-            helpMenu.add(newFeatureAction);
-        }
+        helpMenu.add(newFeatureAction);
         helpMenu.add(new Separator());
         helpMenu.add(reportBugAction);
         helpMenu.add(new Separator());
@@ -295,16 +293,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         helpItems.setId(IPerspectiveConstance.HELP_ACTION_CONTRIBUTION_ID);
         toolbarManager.add(helpItems);
 
-        // The 'cubrid.org' homepage does not support the feature, so we will remove it.
-        //        ControlContribution searchContribution =
-        //                new ControlContribution(SearchContributionComposite.class.getName()) {
-        //                    protected Control createControl(Composite parent) {
-        //                        return new SearchContributionComposite(parent, SWT.None);
-        //                    }
-        //                };
-        //        searchContribution.setId(IPerspectiveConstance.SEARCH_ACTION_CONTRIBUTION_ID);
-        //        toolbarManager.add(new Separator());
-        //        toolbarManager.add(searchContribution);
     }
 
     /**

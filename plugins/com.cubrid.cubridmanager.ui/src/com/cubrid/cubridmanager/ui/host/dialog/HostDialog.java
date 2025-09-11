@@ -98,6 +98,7 @@ public class HostDialog extends CMTitleAreaDialog implements ModifyListener {
     private Button btnAutoCommit;
     private final boolean isNewHost;
     private final boolean actionIsConnect;
+    private final String hostName;
     private ServerInfo testConnServerInfo = null;
 
     private Button btnUseTimeOut;
@@ -106,8 +107,6 @@ public class HostDialog extends CMTitleAreaDialog implements ModifyListener {
     private String[] soTimeOutMsgs = {
         Messages.lbl10Second, Messages.lbl30Second, Messages.lbl60Second, Messages.lblNoLimit
     };
-    
-    private final String hostName;
 
     /**
      * The constructor
@@ -122,9 +121,9 @@ public class HostDialog extends CMTitleAreaDialog implements ModifyListener {
         this.actionIsConnect = actionIsConnect;
         this.hostName = hostName;
     }
-    
+
     public HostDialog(Shell parentShell, boolean isNewHost, boolean actionIsConnect) {
-        this(parentShell, isNewHost, isNewHost, null);
+        this(parentShell, isNewHost, actionIsConnect, null);
     }
 
     /**

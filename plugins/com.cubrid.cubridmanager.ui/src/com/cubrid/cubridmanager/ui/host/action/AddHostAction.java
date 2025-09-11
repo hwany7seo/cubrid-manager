@@ -116,7 +116,11 @@ public class AddHostAction extends SelectionAction {
             return;
         }
 
-        doRun(this.getSelectedObj(), null);
+        doRun(this.getSelectedObj());
+    }
+
+    public void doRun(Object[] nodes) {
+        doRun(nodes, null);
     }
 
     public void doRun(Object[] nodes, String hostName) {
@@ -161,17 +165,17 @@ public class AddHostAction extends SelectionAction {
                                     new CubridNodeChangedEvent(
                                             server, CubridNodeChangedEventType.SERVER_CONNECTED));
                     getHostStatus(server);
-                } 
-                
+                }
+
                 if (hostName == null) {
                     HAHostStatusInfo haHostStatusInfo = server.getServerInfo().getHaHostStatusInfo();
                     if (haHostStatusInfo != null) {
                         HostStatusType type = haHostStatusInfo.getStatusType();
                         HAHostStatusInfo masterInfo;
                         if (type == HostStatusType.MASTER) {
-                        	masterInfo = haHostStatusInfo;
+                            masterInfo = haHostStatusInfo;
                         } else {
-                        	masterInfo = haHostStatusInfo.getMasterHostStatusInfo();
+                            masterInfo = haHostStatusInfo.getMasterHostStatusInfo();
                         }
                         List<HAHostStatusInfo> listInfo = masterInfo.getSlaveHostStatusInfoList();
                         List<HAHostStatusInfo> addList = new ArrayList<HAHostStatusInfo>();
@@ -192,10 +196,8 @@ public class AddHostAction extends SelectionAction {
                                 showAddHost(type, info, false);
                             }
                         }
-
                     }
                 }
-                
             } else {
                 dialog.closeTestServerConnection();
             }
@@ -234,7 +236,7 @@ public class AddHostAction extends SelectionAction {
         server.setAutoSavePassword(dialog.isSavePassword());
         return server;
     }
-    
+
     private void getHostStatus(final CubridServer server) {
         final GetHeartbeatNodeInfoTask getHeartbeatNodeInfoTask =
                 new GetHeartbeatNodeInfoTask(server.getServerInfo());
@@ -253,13 +255,13 @@ public class AddHostAction extends SelectionAction {
             LOGGER.debug("Get host status error:" + getHeartbeatNodeInfoTask.getErrorMsg());
         }
     }
- 
-    private void showAddHost(HostStatusType fistHostType, HAHostStatusInfo haHostInfo, boolean isFirst) {
+
+    private void showAddHost(HostStatusType firstHostType, HAHostStatusInfo haHostInfo, boolean isFirst) {
         if (haHostInfo != null) {
             String msg = "";
             if (isFirst) {
                 msg = Messages.bind(Messages.msgHAAddYesNoDialog1, 
-                        fistHostType.getText(), 
+                        firstHostType.getText(),
                         haHostInfo.getHostName() + "(" + haHostInfo.getStatusType().getText() + ")");
             } else {
                 msg = Messages.bind(Messages.msgHAAddYesNoDialog2,  
@@ -270,7 +272,7 @@ public class AddHostAction extends SelectionAction {
                     Messages.titleHAAddYesNoDialog,
                     msg
             );
-            
+
             if (isConfirmed) {
               doRun(this.getSelectedObj(), haHostInfo.getHostName());
             }

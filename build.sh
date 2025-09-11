@@ -19,7 +19,7 @@ function update_build_version ()
 
   if [ -d ${SHELL_DIR}/.git ]; then
     COMMIT_NUMBER=$(git rev-list --count HEAD | awk '{ printf "%04d", $1 }')
-  else  
+  else
     COMMIT_NUMBER=0000
   fi
 
@@ -28,7 +28,6 @@ function update_build_version ()
   sed -i "/releaseVersion/d" $RELEASE_QUERY_VERSION_FILE_PATH
   echo "releaseVersion="$VERSION >> $RELEASE_VERSION_FILE_PATH
   echo "releaseVersion="$VERSION >> $RELEASE_QUERY_VERSION_FILE_PATH
-  
 
   RELEASE_VERSION=$VERSION.$COMMIT_NUMBER
   sed -i "/buildVersionId/d" $RELEASE_VERSION_FILE_PATH
@@ -41,10 +40,26 @@ function update_build_version ()
   echo "RELEASE_VERSION=" $RELEASE_VERSION
 }
 
+if [ -z "$JAVA_HOME" ]; then
+  echo "Please set JAVA_HOME"
+  exit 1
+fi
 
-if [ ! -z "${JAVA_17_HOME}" ]; then
-  echo JAVA_17_HOME: ${JAVA_17_HOME}
-  JAVA_HOME=${JAVA_17_HOME}
+JAVA_EXECUTABLE="$JAVA_HOME/bin/java"
+
+if [ -z "$JAVA_EXECUTABLE" ]; then
+  echo "JAVA_EXECUTABLE not found"
+  exit 1
+fi
+
+JAVA_VERSION=$($JAVA_EXECUTABLE -version 2>&1 | awk -F '"' '/version/ {print $2}')
+JAVA_MAJOR_VERSION=$(echo ${JAVA_VERSION} | cut -d '.' -f 1)
+
+echo "JAVA_MAJOR_VERSION=" $JAVA_MAJOR_VERSION
+
+if [ $JAVA_MAJOR_VERSION -lt 21 ]; then
+  echo "JAVA_MAJOR_VERSION is less than 21"
+  exit 1
 fi
 
 MVN="`which mvn`"

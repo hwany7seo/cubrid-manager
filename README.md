@@ -17,14 +17,14 @@ CM can be found here:
 
 - https://ftp.cubrid.org/CUBRID_Tools/CUBRID_Admin/
 
-## How to run CUBRID Manager on Eclipse
+## How to run CUBRID Admin on Eclipse
 
 Please refer here:
 
-- https://github.com/CUBRID/cubrid-manager/wiki/How-to-run-CUBRID-Manager-on-Eclipse
+- https://github.com/CUBRID/cubrid-manager/wiki/How-to-run-CUBRID-Admin-on-Eclipse
 
 ## How to CONTRIBUTE
-If you want to contribute to CUBRID Manager, please follow the procedure below.
+If you want to contribute to CUBRID Admin, please follow the procedure below.
 - Register the issue in [jira](http://jira.cubrid.org/browse/TOOLS).
   - Describe the problem and solution in detail.
 - Create the branch name as jira issue number.

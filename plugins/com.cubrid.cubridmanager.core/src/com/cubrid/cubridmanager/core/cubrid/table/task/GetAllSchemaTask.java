@@ -870,11 +870,11 @@ public class GetAllSchemaTask extends JDBCTask {
                 }
                 String attrName = rs.getString("attr_name");
                 String type = rs.getString("attr_type");
-                String dateType = rs.getString("data_type");
+                String dataType = rs.getString("data_type");
                 String prec = rs.getString("prec");
                 String scale = rs.getString("scale");
 
-                String subType = DataType.convertAttrTypeString(dateType, prec, scale);
+                String subType = DataType.convertAttrTypeString(dataType, prec, scale);
                 Map<String, List<SubAttribute>> columnMap;
 
                 columnMap = schemaColumnMap.get(uniqueName);
@@ -973,7 +973,12 @@ public class GetAllSchemaTask extends JDBCTask {
                 String cyclic = rs.getString("cyclic");
                 String startVal = rs.getString("started");
                 String className = rs.getString("class_name");
-                String attName = rs.getString("att_name");
+                String attrName;
+                if (CompatibleUtil.isAfter114(databaseInfo)) {
+                    attrName = rs.getString("attr_name");
+                } else {
+                    attrName = rs.getString("att_name");
+                }
                 String cacheCount = null;
                 if (isSupportCache) {
                     cacheCount = rs.getString("cached_num");
@@ -995,7 +1000,7 @@ public class GetAllSchemaTask extends JDBCTask {
                                 startVal,
                                 cacheCount,
                                 className,
-                                attName);
+                                attrName);
                 serialInfoList.add(serialInfo);
             }
 
