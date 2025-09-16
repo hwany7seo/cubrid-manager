@@ -48,25 +48,12 @@ import com.cubrid.common.ui.cubrid.table.action.DropTableAction;
 import com.cubrid.common.ui.cubrid.table.action.EditTableAction;
 import com.cubrid.common.ui.cubrid.table.action.ExportTableDefinitionAction;
 import com.cubrid.common.ui.cubrid.table.action.ExportWizardAction;
-import com.cubrid.common.ui.cubrid.table.action.ImportDataFromFileAction;
 import com.cubrid.common.ui.cubrid.table.action.ImportWizardAction;
-import com.cubrid.common.ui.cubrid.table.action.InsertOneByPstmtAction;
 import com.cubrid.common.ui.cubrid.table.action.NewTableAction;
 import com.cubrid.common.ui.cubrid.table.action.RenameTableAction;
-import com.cubrid.common.ui.cubrid.table.action.SelectByMultiPstmtDataAction;
-import com.cubrid.common.ui.cubrid.table.action.SelectByOnePstmtDataAction;
-import com.cubrid.common.ui.cubrid.table.action.TableSelectAllAction;
-import com.cubrid.common.ui.cubrid.table.action.TableSelectCountAction;
 import com.cubrid.common.ui.cubrid.table.action.TableToJavaCodeAction;
 import com.cubrid.common.ui.cubrid.table.action.TableToPhpCodeAction;
-import com.cubrid.common.ui.cubrid.table.action.makequery.MakeCreateQueryAction;
-import com.cubrid.common.ui.cubrid.table.action.makequery.MakeDeleteQueryAction;
-import com.cubrid.common.ui.cubrid.table.action.makequery.MakeInsertQueryAction;
-import com.cubrid.common.ui.cubrid.table.action.makequery.MakeSelectPstmtQueryAction;
-import com.cubrid.common.ui.cubrid.table.action.makequery.MakeSelectQueryAction;
-import com.cubrid.common.ui.cubrid.table.action.makequery.MakeUpdateQueryAction;
 import com.cubrid.common.ui.cubrid.table.dashboard.control.TableDashboardComposite.TablesDetailInfoCTabItem;
-import com.cubrid.common.ui.query.editor.QueryEditorUtil;
 import com.cubrid.common.ui.spi.ResourceManager;
 import com.cubrid.common.ui.spi.action.ActionManager;
 import com.cubrid.common.ui.spi.event.CubridNodeChangedEvent;
@@ -89,7 +76,6 @@ import com.cubrid.common.ui.spi.table.button.ITableButtonSupportEvent;
 import com.cubrid.common.ui.spi.table.button.InputTextDialog;
 import com.cubrid.common.ui.spi.table.button.TableEditButtonSupport;
 import com.cubrid.common.ui.spi.util.CommonUITool;
-import com.cubrid.common.ui.spi.util.SQLGenerateUtils;
 import com.cubrid.cubridmanager.core.common.jdbc.JDBCConnectionManager;
 import com.cubrid.cubridmanager.core.cubrid.table.SchemaProvider;
 import com.cubrid.cubridmanager.core.cubrid.table.model.ClassInfo;
@@ -315,28 +301,6 @@ public class TableDashboardPart extends CubridEditorPart implements ITableButton
                                             Messages.loadTableRecordSizeProgressSubTaskName);
                             progress.getCount();
                             tableListView.refresh();
-                        }
-                    }
-                });
-
-        new ToolItem(toolBar, SWT.SEPARATOR);
-        ToolItem viewDataItem = new ToolItem(toolBar, SWT.PUSH);
-        viewDataItem.setText(Messages.tablesDetailInfoPartBtnViewData);
-        viewDataItem.setToolTipText(Messages.tablesDetailInfoPartBtnViewDataTip);
-        viewDataItem.setImage(CommonUIPlugin.getImage("icons/action/table_select_all.png"));
-        viewDataItem.addSelectionListener(
-                new SelectionAdapter() {
-                    public void widgetSelected(SelectionEvent e) {
-                        TableItem[] items = tableListView.getTable().getSelection();
-                        if (items.length == 1) {
-                            TableDetailInfo tableDetailInfo = (TableDetailInfo) items[0].getData();
-                            String query =
-                                    SQLGenerateUtils.getSelectSQLWithLimit(
-                                            tableDetailInfo.getTableName(), 1, 100);
-                            QueryEditorUtil.openQueryEditorAndRunQuery(database, query, true, true);
-                        } else {
-                            CommonUITool.openInformationBox(
-                                    Messages.tablesDetailInfoPartBtnViewDataSelectOne);
                         }
                     }
                 });
@@ -945,28 +909,6 @@ public class TableDashboardPart extends CubridEditorPart implements ITableButton
 
         Menu menu = new Menu(shell, SWT.POP_UP);
 
-        // SELECT GROUP
-        final Menu makeSelectQueryMenu = new Menu(menu);
-        {
-            MenuItem subMenuItem = new MenuItem(menu, SWT.CASCADE);
-            subMenuItem.setText(com.cubrid.common.ui.spi.Messages.lblMakeSelectQueryGrp);
-            subMenuItem.setMenu(makeSelectQueryMenu);
-        }
-        // SELECT
-        initializeAction(makeSelectQueryMenu, getMakeQueryAction(MakeSelectQueryAction.ID));
-        // Parameterized SELECT
-        initializeAction(makeSelectQueryMenu, getMakeQueryAction(MakeSelectPstmtQueryAction.ID));
-        // Parameterized INSERT
-        initializeAction(menu, getMakeQueryAction(MakeInsertQueryAction.ID));
-        // Parameterized UPDATE
-        initializeAction(menu, getMakeQueryAction(MakeUpdateQueryAction.ID));
-        // Parameterized DELETE
-        initializeAction(menu, getMakeQueryAction(MakeDeleteQueryAction.ID));
-        // CREATE
-        initializeAction(menu, getMakeQueryAction(MakeCreateQueryAction.ID));
-
-        new MenuItem(menu, SWT.SEPARATOR);
-
         final TableToJavaCodeAction createJavaCodeAction =
                 (TableToJavaCodeAction) manager.getAction(TableToJavaCodeAction.ID);
         if (createJavaCodeAction != null) {
@@ -1014,128 +956,6 @@ public class TableDashboardPart extends CubridEditorPart implements ITableButton
                             ICubridNode[] nodes = getAllSelectedNodes();
                             if (nodes != null && nodes.length > 0) {
                                 exportTableDefinitionAction.run(nodes);
-                            }
-                        }
-                    });
-        }
-
-        new MenuItem(menu, SWT.SEPARATOR);
-
-        // View data menu
-        final Menu viewDataMenu = new Menu(menu);
-        {
-            final MenuItem subMenuItem = new MenuItem(menu, SWT.CASCADE);
-            subMenuItem.setText(com.cubrid.common.ui.spi.Messages.viewDataMenuName);
-            subMenuItem.setMenu(viewDataMenu);
-        }
-
-        final TableSelectAllAction selectAllAction =
-                (TableSelectAllAction) manager.getAction(TableSelectAllAction.ID);
-        if (selectAllAction != null) {
-            MenuItem menuItem = new MenuItem(viewDataMenu, SWT.PUSH);
-            menuItem.setText(selectAllAction.getText());
-            menuItem.setImage(CommonUITool.getImage(selectAllAction.getImageDescriptor()));
-            menuItem.addSelectionListener(
-                    new SelectionAdapter() {
-                        public void widgetSelected(SelectionEvent event) {
-                            ICubridNode node = getFirstSelectedNode();
-                            if (node != null) {
-                                selectAllAction.run((ISchemaNode) node);
-                            }
-                        }
-                    });
-        }
-
-        final SelectByOnePstmtDataAction selectPstmtAction =
-                (SelectByOnePstmtDataAction) manager.getAction(SelectByOnePstmtDataAction.ID);
-        if (selectPstmtAction != null) {
-            MenuItem menuItem = new MenuItem(viewDataMenu, SWT.PUSH);
-            menuItem.setText(selectPstmtAction.getText());
-            menuItem.setImage(CommonUITool.getImage(selectPstmtAction.getImageDescriptor()));
-            menuItem.addSelectionListener(
-                    new SelectionAdapter() {
-                        public void widgetSelected(SelectionEvent event) {
-                            ICubridNode node = getFirstSelectedNode();
-                            if (node != null) {
-                                selectPstmtAction.run((ISchemaNode) node);
-                            }
-                        }
-                    });
-        }
-
-        final SelectByMultiPstmtDataAction selectMultiPstmtAction =
-                (SelectByMultiPstmtDataAction) manager.getAction(SelectByMultiPstmtDataAction.ID);
-        if (selectMultiPstmtAction != null) {
-            MenuItem menuItem = new MenuItem(viewDataMenu, SWT.PUSH);
-            menuItem.setText(selectMultiPstmtAction.getText());
-            menuItem.setImage(CommonUITool.getImage(selectMultiPstmtAction.getImageDescriptor()));
-            menuItem.addSelectionListener(
-                    new SelectionAdapter() {
-                        public void widgetSelected(SelectionEvent event) {
-                            ICubridNode node = getFirstSelectedNode();
-                            if (node != null) {
-                                selectMultiPstmtAction.run((ISchemaNode) node);
-                            }
-                        }
-                    });
-        }
-
-        new MenuItem(viewDataMenu, SWT.SEPARATOR);
-
-        final TableSelectCountAction selectCountAction =
-                (TableSelectCountAction) manager.getAction(TableSelectCountAction.ID);
-        if (selectCountAction != null) {
-            MenuItem menuItem = new MenuItem(viewDataMenu, SWT.PUSH);
-            menuItem.setText(selectCountAction.getText());
-            menuItem.setImage(CommonUITool.getImage(selectAllAction.getImageDescriptor()));
-            menuItem.addSelectionListener(
-                    new SelectionAdapter() {
-                        public void widgetSelected(SelectionEvent event) {
-                            ICubridNode node = getFirstSelectedNode();
-                            if (node != null) {
-                                selectCountAction.run((ISchemaNode) node);
-                            }
-                        }
-                    });
-        }
-
-        // Input data menu
-        final Menu inputDataMenu = new Menu(menu);
-        {
-            MenuItem subMenuItem = new MenuItem(menu, SWT.CASCADE);
-            subMenuItem.setText(com.cubrid.common.ui.spi.Messages.inputDataMenuName);
-            subMenuItem.setMenu(inputDataMenu);
-        }
-
-        final InsertOneByPstmtAction insertStmtAction =
-                (InsertOneByPstmtAction) manager.getAction(InsertOneByPstmtAction.ID);
-        if (insertStmtAction != null) {
-            MenuItem menuItem = new MenuItem(inputDataMenu, SWT.PUSH);
-            menuItem.setText(insertStmtAction.getText());
-            menuItem.setImage(CommonUITool.getImage(insertStmtAction.getImageDescriptor()));
-            menuItem.addSelectionListener(
-                    new SelectionAdapter() {
-                        public void widgetSelected(SelectionEvent event) {
-                            ICubridNode node = getFirstSelectedNode();
-                            if (node != null) {
-                                insertStmtAction.run((ISchemaNode) node);
-                            }
-                        }
-                    });
-        }
-
-        final ImportDataFromFileAction insertMultiStmtAction =
-                (ImportDataFromFileAction) manager.getAction(ImportDataFromFileAction.ID);
-        if (insertMultiStmtAction != null) {
-            MenuItem menuItem = new MenuItem(inputDataMenu, SWT.PUSH);
-            menuItem.setText(insertMultiStmtAction.getText());
-            menuItem.setImage(CommonUITool.getImage(insertMultiStmtAction.getImageDescriptor()));
-            menuItem.addSelectionListener(
-                    new SelectionAdapter() {
-                        public void widgetSelected(SelectionEvent event) {
-                            ICubridNode node = getFirstSelectedNode();
-                            if (node != null) {
-                                insertMultiStmtAction.run((ISchemaNode) node);
                             }
                         }
                     });

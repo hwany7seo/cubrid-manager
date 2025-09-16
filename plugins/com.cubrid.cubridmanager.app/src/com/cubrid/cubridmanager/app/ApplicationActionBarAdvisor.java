@@ -39,8 +39,6 @@ import com.cubrid.common.ui.common.action.OpenPreferenceAction;
 import com.cubrid.common.ui.common.action.ReportBugAction;
 import com.cubrid.common.ui.external.action.InstallMigrationToolkitAction;
 import com.cubrid.common.ui.perspective.IPerspectiveConstance;
-import com.cubrid.common.ui.perspective.OpenCMPerspectiveAction;
-import com.cubrid.common.ui.perspective.OpenCQBPerspectiveAction;
 import com.cubrid.common.ui.spi.action.ActionManager;
 import com.cubrid.common.ui.spi.action.IActionConstants;
 import com.cubrid.cubridmanager.ui.CubridManagerUIPlugin;
@@ -208,16 +206,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         coolBarManager.add(new ToolBarContributionItem(
                 toolbarManager, IActionConstants.TOOLBAR_4));
 
-        Bundle cqbBundle = Platform.getBundle(ApplicationUtil.CQB_PLUGIN_ID);
-        /* Active the CQB plugin */
-        if (cqbBundle != null) {
-            try {
-                cqbBundle.start();
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-            }
-        }
-
         Bundle cmBundle = Platform.getBundle(ApplicationUtil.CM_PLUGIN_ID);
         /* Active the CM plugin */
         if (cmBundle != null) {
@@ -226,25 +214,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
             }
-        }
-
-        // Change view actions
-        if (cqbBundle != null) {
-            DropDownAction viewAction =
-                    new DropDownAction(
-                            Messages.modeActionBig,
-                            IAction.AS_DROP_DOWN_MENU,
-                            CubridManagerAppPlugin.getImageDescriptor("icons/cubridmanager32.gif"));
-            viewAction.setDisabledImageDescriptor(
-                    CubridManagerAppPlugin.getImageDescriptor("icons/cubridmanager32.gif"));
-            MenuManager viewActionManager = viewAction.getMenuManager();
-            viewActionManager.add(manager.getAction(OpenCMPerspectiveAction.ID));
-            viewActionManager.add(manager.getAction(OpenCQBPerspectiveAction.ID));
-
-            ActionContributionItem viewItems = new ActionContributionItem(viewAction);
-            viewItems.setMode(ActionContributionItem.MODE_FORCE_TEXT);
-            viewItems.setId(IPerspectiveConstance.PERSPECTIVE_ACTION_CONTRIBUTION_ID);
-            toolbarManager.add(viewItems);
         }
 
         /*TOOLS-3988 There still is the install option after installing cmt plugin.*/

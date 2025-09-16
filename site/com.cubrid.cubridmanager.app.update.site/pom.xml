@@ -6,11 +6,10 @@
     <parent>
         <groupId>com.cubrid.cubridmanager</groupId>
         <artifactId>site</artifactId>
-        <version>9.3.1-SNAPSHOT</version>
+        <version>12.0.0-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
     <artifactId>com.cubrid.cubridmanager.app.update.site</artifactId>
-    <version>9.3.1-SNAPSHOT</version>
     <packaging>eclipse-repository</packaging>
     
 </project>

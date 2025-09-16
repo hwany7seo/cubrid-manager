@@ -34,13 +34,9 @@ import com.cubrid.common.ui.CommonUIPlugin;
 import com.cubrid.common.ui.common.notice.control.NoticeDashboardEditor;
 import com.cubrid.common.ui.common.notice.control.NoticeDashboardInput;
 import com.cubrid.common.ui.common.preference.GeneralPreference;
-import com.cubrid.common.ui.common.query.autosave.CheckQueryEditorTask;
 import com.cubrid.common.ui.common.query.autosave.HeartBeatTaskManager;
 import com.cubrid.common.ui.perspective.IPerspectiveConstance;
 import com.cubrid.common.ui.perspective.PerspectiveManager;
-import com.cubrid.common.ui.query.editor.InfoWindowManager;
-import com.cubrid.common.ui.query.editor.QueryEditorPart;
-import com.cubrid.common.ui.query.editor.QueryEditorUtil;
 import com.cubrid.common.ui.spi.LayoutManager;
 import com.cubrid.common.ui.spi.ResourceManager;
 import com.cubrid.common.ui.spi.persist.CubridJdbcManager;
@@ -57,8 +53,6 @@ import com.cubrid.cubridmanager.ui.spi.contribution.CubridTitleLineContrItem;
 import com.cubrid.cubridmanager.ui.spi.contribution.CubridWorkbenchContrItem;
 import com.cubrid.cubridmanager.ui.spi.persist.CMDBNodePersistManager;
 import com.cubrid.cubridmanager.ui.spi.persist.CMHostNodePersistManager;
-import com.cubrid.cubridmanager.ui.spi.persist.CQBDBNodePersistManager;
-import com.cubrid.cubridmanager.ui.workspace.dialog.ChooseModeDialog;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -70,7 +64,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -250,16 +243,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         Shell shell = getWindowConfigurer().getWindow().getShell();
         GeneralPreference.setMaximizeWindowOnStartUp(shell.getMaximized());
 
-        if (timer != null) {
-            timer.cancel();
-            HeartBeatTaskManager.getInstance().cancel();
-        }
-        /*Close the information window*/
-        InfoWindowManager.dispose();
-
-        /*All opened queryEditor*/
-        List<QueryEditorPart> editorPartList = QueryEditorUtil.getAllQueryEditorPart();
-        boolean isNeedSaveQueryEditor = isNeedSaveQueryEditor(editorPartList);
         boolean hasJobRunning = false;
         final JobFamily jobFamily = new JobFamily();
         jobFamily.setServerName(JobFamily.ALL_SERVER);
@@ -285,29 +268,21 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                                         }
                                     }
                                 });
-                if (isNeedSaveQueryEditor) {
-                    processSaveQueryEditor();
-                }
             }
         } else {
-            if (isNeedSaveQueryEditor) {
-                processSaveQueryEditor();
+            if (GeneralPreference.isAlwaysExit()) {
                 return true;
-            } else {
-                if (GeneralPreference.isAlwaysExit()) {
-                    return true;
-                }
-                MessageDialogWithToggle dialog =
-                        MessageDialogWithToggle.openOkCancelConfirm(
-                                getWindowConfigurer().getWindow().getShell(),
-                                com.cubrid.common.ui.common.Messages.titleExitConfirm,
-                                Messages.msgExistConfirm,
-                                com.cubrid.common.ui.common.Messages.msgToggleExitConfirm,
-                                false,
-                                CommonUIPlugin.getDefault().getPreferenceStore(),
-                                GeneralPreference.IS_ALWAYS_EXIT);
-                isExit = dialog.getReturnCode() == 0 ? true : false;
             }
+            MessageDialogWithToggle dialog =
+                    MessageDialogWithToggle.openOkCancelConfirm(
+                            getWindowConfigurer().getWindow().getShell(),
+                            com.cubrid.common.ui.common.Messages.titleExitConfirm,
+                            Messages.msgExistConfirm,
+                            com.cubrid.common.ui.common.Messages.msgToggleExitConfirm,
+                            false,
+                            CommonUIPlugin.getDefault().getPreferenceStore(),
+                            GeneralPreference.IS_ALWAYS_EXIT);
+            isExit = dialog.getReturnCode() == 0 ? true : false;
         }
 
         if (isExit) {
@@ -319,23 +294,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         }
 
         return isExit;
-    }
-
-    private void processSaveQueryEditor() {
-        CheckQueryEditorTask.getInstance().doSave();
-    }
-
-    private boolean isNeedSaveQueryEditor(List<QueryEditorPart> editorPartList) {
-        for (QueryEditorPart editor : editorPartList) {
-            if (editor == null
-                    || editor.getCombinedQueryComposite().isDisposed()
-                    || editor.getAllQueries().trim().length() == 0) {
-                continue;
-            } else {
-                return true;
-            }
-        }
-        return false;
     }
 
     /** Performs arbitrary actions after the window is closed. */
@@ -395,26 +353,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         //		showDashboard();
 
         /* Open the perspective */
-        String perspective = PerspectiveManager.getInstance().getSelectedPerspective();
-        if (StringUtil.isEmpty(perspective)) {
-            String mode = null;
-            ChooseModeDialog dialog = new ChooseModeDialog(Display.getDefault().getActiveShell());
-            if (IDialogConstants.OK_ID == dialog.open()) {
-                mode = dialog.getSelectedMode();
-            } else {
-                mode = ApplicationType.CUBRID_MANAGER.getShortName();
-            }
-
-            if (ApplicationType.CUBRID_QUERY_BROWSER.getShortName().equals(mode)) {
-                PerspectiveManager.getInstance()
-                        .openPerspective(IPerspectiveConstance.CQB_PERSPECTIVE_ID);
-            } else {
-                PerspectiveManager.getInstance()
-                        .openPerspective(IPerspectiveConstance.CM_PERSPECTIVE_ID);
-            }
-        } else {
-            PerspectiveManager.getInstance().openPerspective(perspective);
-        }
+        PerspectiveManager.getInstance()
+                .openPerspective(IPerspectiveConstance.CM_PERSPECTIVE_ID);
 
         //		Display.getDefault().asyncExec(new Runnable() {
         //			public void run() {
@@ -515,8 +455,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
         /*Load JDBC driver for CMT*/
         CubridJdbcManager.getInstance();
-        /*Init CQBDBNodePersistManager*/
-        CQBDBNodePersistManager.getInstance();
         /*Init CMDBNodePersistManager*/
         CMDBNodePersistManager.getInstance();
 

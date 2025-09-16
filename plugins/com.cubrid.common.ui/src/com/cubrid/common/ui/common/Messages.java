@@ -297,7 +297,6 @@ public class Messages extends NLS {
     public static String tipFind;
     public static String tipNoSupportJdbcVersion;
     public static String titleAboutDialog;
-    public static String titleAssignName;
     public static String titleConfirm;
     public static String titleExitConfirm;
     public static String titleExportConnection;
@@ -471,7 +470,6 @@ public class Messages extends NLS {
     public static String titlePreferencesBtn;
     public static String titleHelpBtn;
     public static String titleCUBRIDManager;
-    public static String titleCUBRIDQuery;
     public static String titleCUBRIDMigration;
     public static String titleCommonAction;
     public static String titleReleaseNews;
