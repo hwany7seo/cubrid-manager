@@ -69,7 +69,7 @@ public class SearchContributionComposite extends Composite {
      */
     public SearchContributionComposite(Composite parent, int style) {
         super(parent, style);
-        LOGGER.debug("create SearchContributionComposite");
+        LOGGER.error("create SearchContributionComposite");
         setLayout(new FillLayout());
 
         final Composite composite = new Composite(this, SWT.None);

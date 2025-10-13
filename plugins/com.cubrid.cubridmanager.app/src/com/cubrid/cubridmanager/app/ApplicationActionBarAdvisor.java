@@ -267,11 +267,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         ControlContribution searchContribution =
                 new ControlContribution(SearchContributionComposite.class.getName()) {
                     protected Control createControl(Composite parent) {
-                        LOGGER.debug("create SearchContributionComposite");
+                        LOGGER.error("create SearchContributionComposite");
                         return new SearchContributionComposite(parent, SWT.None);
                     }
                 };
-        LOGGER.debug("create SearchContributionComposite");
+        LOGGER.error("create SearchContributionComposite");
         searchContribution.setId(IPerspectiveConstance.SEARCH_ACTION_CONTRIBUTION_ID);
         searchContribution.setVisible(true);
         toolbarManager.add(searchContribution);
