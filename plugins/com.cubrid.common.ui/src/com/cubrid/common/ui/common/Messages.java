@@ -73,6 +73,7 @@ public class Messages extends NLS {
     public static String btnRunInDebugMode;
     public static String btnRunQuery;
     public static String btnSavePassword;
+    public static String btnSearchTooltip;
     public static String btnStop;
     public static String btnTop;
     public static String btnUp;
@@ -180,6 +181,7 @@ public class Messages extends NLS {
     public static String lblSchemaComparisonBase;
     public static String lblSchemaComparisonTarget;
     public static String lblSearch;
+    public static String lblSearchDesc;
     public static String lblSelectAll;
     public static String lblServerOS;
     public static String lblServerVersion;
@@ -289,6 +291,7 @@ public class Messages extends NLS {
     public static String SQLCounts;
     public static String subTaskDownload;
     public static String successCount;
+    public static String tabSearch;
     public static String taskDownload;
     public static String tblColDriverVersion;
     public static String tblColJarPath;
@@ -297,6 +300,7 @@ public class Messages extends NLS {
     public static String tipFind;
     public static String tipNoSupportJdbcVersion;
     public static String titleAboutDialog;
+    public static String titleAssignName;
     public static String titleConfirm;
     public static String titleExitConfirm;
     public static String titleExportConnection;
@@ -333,7 +337,9 @@ public class Messages extends NLS {
     public static String tooltipGo;
     public static String tooltipRefresh;
     public static String tooltipStop;
+    public static String tooltipTabSearch;
     public static String topLevelElements;
+    public static String urlSearch;
     public static String userColumn;
     public static String viewFailedSQLDialogTitle;
     public static String warningDeleteJdbc;

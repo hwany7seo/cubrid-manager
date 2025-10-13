@@ -37,6 +37,7 @@ import com.cubrid.common.ui.common.action.HelpDocumentAction;
 import com.cubrid.common.ui.common.action.NewFeaturesAction;
 import com.cubrid.common.ui.common.action.OpenPreferenceAction;
 import com.cubrid.common.ui.common.action.ReportBugAction;
+import com.cubrid.common.ui.common.control.SearchContributionComposite;
 import com.cubrid.common.ui.external.action.InstallMigrationToolkitAction;
 import com.cubrid.common.ui.perspective.IPerspectiveConstance;
 import com.cubrid.common.ui.spi.action.ActionManager;
@@ -50,6 +51,7 @@ import com.cubrid.cubridmanager.ui.spi.action.CubridActionBuilder;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ICoolBarManager;
@@ -61,6 +63,8 @@ import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.ActionBarAdvisor;
@@ -260,6 +264,15 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         helpItems.setId(IPerspectiveConstance.HELP_ACTION_CONTRIBUTION_ID);
         toolbarManager.add(helpItems);
 
+        ControlContribution searchContribution =
+                new ControlContribution(SearchContributionComposite.class.getName()) {
+                    protected Control createControl(Composite parent) {
+                        return new SearchContributionComposite(parent, SWT.None);
+                    }
+                };
+        searchContribution.setId(IPerspectiveConstance.SEARCH_ACTION_CONTRIBUTION_ID);
+        searchContribution.setVisible(true);
+        toolbarManager.add(searchContribution);
     }
 
     /**
