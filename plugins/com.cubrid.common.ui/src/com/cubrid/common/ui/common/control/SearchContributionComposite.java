@@ -33,6 +33,7 @@ import com.cubrid.common.core.util.LogUtil;
 import com.cubrid.common.core.util.StringUtil;
 import com.cubrid.common.ui.CommonUIPlugin;
 import com.cubrid.common.ui.common.Messages;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -43,6 +44,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -72,12 +74,15 @@ public class SearchContributionComposite extends Composite {
         LOGGER.error("create SearchContributionComposite");
         setLayout(new FillLayout());
 
-        final Composite composite = new Composite(this, SWT.None);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        composite.setLayout(new GridLayout(2, false));
+        boolean isMac = Util.isMac();
+        final Composite group = isMac ? new Composite(this, SWT.None) : new Group(this, SWT.None);
+        group.setLayout(new GridLayout(5, false));
 
-        text = new Text(composite, SWT.FILL | SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
+        text = new Text(group, SWT.FILL | SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
         text.setToolTipText(Messages.lblSearchDesc);
+        final GridData gridData = new GridData();
+        gridData.widthHint = 190;
+        text.setLayoutData(gridData);
         text.setMessage(Messages.msgSearchKeyword);
 
         text.addKeyListener(
@@ -92,15 +97,17 @@ public class SearchContributionComposite extends Composite {
                     }
                 });
 
-        searchButton = new Button(composite, SWT.None);
-        searchButton.setImage(CommonUIPlugin.getImage("icons/control/search.png"));
-        searchButton.setToolTipText(Messages.btnSearchTooltip);
-        searchButton.addSelectionListener(
-                new SelectionAdapter() {
-                    public void widgetSelected(SelectionEvent e) {
-                        processSearch();
-                    }
-                });
+        if (!isMac) {
+            searchButton = new Button(group, SWT.None);
+            searchButton.setImage(CommonUIPlugin.getImage("icons/control/search.png"));
+            searchButton.setToolTipText(Messages.btnSearchTooltip);
+            searchButton.addSelectionListener(
+                    new SelectionAdapter() {
+                        public void widgetSelected(SelectionEvent e) {
+                            processSearch();
+                        }
+                    });
+        }
     }
 
     public void processSearch() {
