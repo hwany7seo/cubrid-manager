@@ -73,13 +73,12 @@ public class SearchContributionComposite extends Composite {
         setLayout(new FillLayout());
 
         final Composite composite = new Composite(this, SWT.None);
-        GridLayout layout = new GridLayout(2, false);
-        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setLayout(new GridLayout(2, false));
 
         text = new Text(composite, SWT.FILL | SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
         text.setToolTipText(Messages.lblSearchDesc);
-        final GridData gridData = new GridData();
-        text.setLayoutData(gridData);
+        text.setLayoutData(new GridData());
         text.setMessage(Messages.msgSearchKeyword);
 
         text.addKeyListener(
