@@ -83,228 +83,229 @@ import org.slf4j.Logger;
  * @version 1.0 - 2009-12-23 created by pangqiren
  */
 public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
-    private static final Logger LOGGER = LogUtil.getLogger(ApplicationActionBarAdvisor.class);
-    // common actions
-    private IAction preferenceAction = null;
-    // private IAction checkNewVersionAction = null;
-    private IAction cubridOnlineForumAction = null;
-    private IAction cubridProjectSiteAction = null;
-    private AboutAction aboutAction = null;
-    private AboutAction clientVersionAction = null;
-    private NewFeaturesAction newFeatureAction = null;
-    private ReportBugAction reportBugAction;
-    private ServiceDashboardAction serviceDashboardAction;
+  private static final Logger LOGGER = LogUtil.getLogger(ApplicationActionBarAdvisor.class);
+  // common actions
+  private IAction preferenceAction = null;
+  // private IAction checkNewVersionAction = null;
+  private IAction cubridOnlineForumAction = null;
+  private IAction cubridProjectSiteAction = null;
+  private AboutAction aboutAction = null;
+  private AboutAction clientVersionAction = null;
+  private NewFeaturesAction newFeatureAction = null;
+  private ReportBugAction reportBugAction;
+  private ServiceDashboardAction serviceDashboardAction;
 
-    public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
-        super(configurer);
+  public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
+    super(configurer);
+  }
+
+  /**
+   * Instantiates the actions used in the fill methods.
+   *
+   * @see org.eclipse.ui.application.ActionBarAdvisor#makeActions(org.eclipse .ui.IWorkbenchWindow)
+   * @param window the window containing the action bars
+   */
+  protected void makeActions(IWorkbenchWindow window) {
+    removeUnWantedActions();
+
+    ActionManager manager = ActionManager.getInstance();
+    CubridActionBuilder.init();
+
+    serviceDashboardAction = (ServiceDashboardAction) manager.getAction(ServiceDashboardAction.ID);
+    if (serviceDashboardAction != null) {
+      serviceDashboardAction.setText(com.cubrid.common.ui.spi.Messages.serviceDashboardActionName);
+      register(serviceDashboardAction);
     }
 
-    /**
-     * Instantiates the actions used in the fill methods.
-     *
-     * @see org.eclipse.ui.application.ActionBarAdvisor#makeActions(org.eclipse
-     *     .ui.IWorkbenchWindow)
-     * @param window the window containing the action bars
-     */
-    protected void makeActions(IWorkbenchWindow window) {
-        removeUnWantedActions();
+    // customized actions for CUBRID Manager
+    // common action
+    preferenceAction =
+        new OpenPreferenceAction(window.getShell(), Messages.openPreferenceActionName, null);
+    register(preferenceAction);
+    preferenceAction.setId(
+        "preferences"); // It must be needed to use a Preferences Menu of an Application
+    // Menu on Mac.
+    manager.registerAction(preferenceAction);
 
-        ActionManager manager = ActionManager.getInstance();
-        CubridActionBuilder.init();
+    cubridOnlineForumAction = new CubridOnlineForumAction(Messages.cubridOnlineForumActionName);
+    cubridProjectSiteAction = new CubridProjectSiteAction(Messages.cubridProjectSiteActionName);
 
-        serviceDashboardAction =
-                (ServiceDashboardAction) manager.getAction(ServiceDashboardAction.ID);
-        if (serviceDashboardAction != null) {
-            serviceDashboardAction.setText(
-                    com.cubrid.common.ui.spi.Messages.serviceDashboardActionName);
-            register(serviceDashboardAction);
-        }
+    aboutAction =
+        new AboutAction(
+            Messages.aboutActionName,
+            Version.productName,
+            Version.buildVersionId,
+            CubridManagerAppPlugin.getImageDescriptor("icons/cubridmanager16.gif"),
+            CubridManagerAppPlugin.getImageDescriptor("icons/about.gif"));
+    aboutAction.setId(
+        "about"); // It must be needed to use a About Menu of an Application Menu on Mac.
 
-        // customized actions for CUBRID Manager
-        // common action
-        preferenceAction =
-                new OpenPreferenceAction(
-                        window.getShell(), Messages.openPreferenceActionName, null);
-        register(preferenceAction);
-        preferenceAction.setId(
-                "preferences"); // It must be needed to use a Preferences Menu of an Application
-        // Menu on Mac.
-        manager.registerAction(preferenceAction);
+    clientVersionAction =
+        new AboutAction(
+            Messages.clientVersionActionName,
+            Version.productName,
+            Version.buildVersionId,
+            CubridManagerAppPlugin.getImageDescriptor("icons/cubridmanager16.gif"),
+            CubridManagerAppPlugin.getImageDescriptor("icons/about.gif"));
 
-        cubridOnlineForumAction = new CubridOnlineForumAction(Messages.cubridOnlineForumActionName);
-        cubridProjectSiteAction = new CubridProjectSiteAction(Messages.cubridProjectSiteActionName);
+    newFeatureAction = new NewFeaturesAction(com.cubrid.common.ui.common.Messages.msgNewFeatures);
 
-        aboutAction =
-                new AboutAction(
-                        Messages.aboutActionName,
-                        Version.productName,
-                        Version.buildVersionId,
-                        CubridManagerAppPlugin.getImageDescriptor("icons/cubridmanager16.gif"),
-                        CubridManagerAppPlugin.getImageDescriptor("icons/about.gif"));
-        aboutAction.setId(
-                "about"); // It must be needed to use a About Menu of an Application Menu on Mac.
+    reportBugAction = (ReportBugAction) manager.getAction(ReportBugAction.ID);
+    reportBugAction.setCurrentVersion(Version.buildVersionId);
+  }
 
-        clientVersionAction =
-                new AboutAction(
-                        Messages.clientVersionActionName,
-                        Version.productName,
-                        Version.buildVersionId,
-                        CubridManagerAppPlugin.getImageDescriptor("icons/cubridmanager16.gif"),
-                        CubridManagerAppPlugin.getImageDescriptor("icons/about.gif"));
+  /**
+   * Fills the menu bar with the main menus for the window.
+   *
+   * @param menuBar the menu bar manager
+   */
+  protected void fillMenuBar(IMenuManager menuManager) {
+    ActionManager manager = ActionManager.getInstance();
 
-        newFeatureAction =
-                new NewFeaturesAction(com.cubrid.common.ui.common.Messages.msgNewFeatures);
+    MenuManager helpMenu =
+        new MenuManager(Messages.mnu_helpMneuName, IWorkbenchActionConstants.M_HELP);
+    helpMenu.add(manager.getAction(HelpDocumentAction.ID));
+    // fill in help menu
+    helpMenu.add(newFeatureAction);
+    helpMenu.add(new Separator());
+    helpMenu.add(reportBugAction);
+    helpMenu.add(new Separator());
+    helpMenu.add(cubridOnlineForumAction);
+    helpMenu.add(cubridProjectSiteAction);
+    helpMenu.add(new Separator());
+    helpMenu.add(new GroupMarker("updates"));
+    helpMenu.add(new Separator());
+    helpMenu.add(manager.getAction(ViewServerVersionAction.ID));
+    helpMenu.add(new Separator());
 
-        reportBugAction = (ReportBugAction) manager.getAction(ReportBugAction.ID);
-        reportBugAction.setCurrentVersion(Version.buildVersionId);
+    ActionContributionItem aboutActionItem = new ActionContributionItem(aboutAction);
+    helpMenu.add(aboutActionItem);
+    if (Util.isMac()) {
+      aboutActionItem.setVisible(false);
     }
 
-    /**
-     * Fills the menu bar with the main menus for the window.
-     *
-     * @param menuBar the menu bar manager
-     */
-    protected void fillMenuBar(IMenuManager menuManager) {
-        ActionManager manager = ActionManager.getInstance();
+    menuManager.add(helpMenu);
+  }
 
-        MenuManager helpMenu =
-                new MenuManager(Messages.mnu_helpMneuName, IWorkbenchActionConstants.M_HELP);
-        helpMenu.add(manager.getAction(HelpDocumentAction.ID));
-        // fill in help menu
-        helpMenu.add(newFeatureAction);
-        helpMenu.add(new Separator());
-        helpMenu.add(reportBugAction);
-        helpMenu.add(new Separator());
-        helpMenu.add(cubridOnlineForumAction);
-        helpMenu.add(cubridProjectSiteAction);
-        helpMenu.add(new Separator());
-        helpMenu.add(new GroupMarker("updates"));
-        helpMenu.add(new Separator());
-        helpMenu.add(manager.getAction(ViewServerVersionAction.ID));
-        helpMenu.add(new Separator());
+  /**
+   * Fills the cool bar with the main toolbars for the window.
+   *
+   * @param coolBar the cool bar manager
+   */
+  protected void fillCoolBar(ICoolBarManager coolBarManager) {
+    ActionManager manager = ActionManager.getInstance();
+    IToolBarManager toolbarManager = new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.RIGHT);
 
-        ActionContributionItem aboutActionItem = new ActionContributionItem(aboutAction);
-        helpMenu.add(aboutActionItem);
-        if (Util.isMac()) {
-            aboutActionItem.setVisible(false);
-        }
+    coolBarManager.add(
+        new ToolBarContributionItem(
+            new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_1));
+    coolBarManager.add(
+        new ToolBarContributionItem(
+            new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_2));
+    coolBarManager.add(
+        new ToolBarContributionItem(
+            new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_3));
+    coolBarManager.add(new ToolBarContributionItem(toolbarManager, IActionConstants.TOOLBAR_4));
 
-        menuManager.add(helpMenu);
+    Bundle cmBundle = Platform.getBundle(ApplicationUtil.CM_PLUGIN_ID);
+    /* Active the CM plugin */
+    if (cmBundle != null) {
+      try {
+        cmBundle.start();
+      } catch (Exception e) {
+        LOGGER.error(e.getMessage());
+      }
     }
 
-    /**
-     * Fills the cool bar with the main toolbars for the window.
-     *
-     * @param coolBar the cool bar manager
-     */
-    protected void fillCoolBar(ICoolBarManager coolBarManager) {
-        ActionManager manager = ActionManager.getInstance();
-        IToolBarManager toolbarManager = new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.RIGHT);
-
-        coolBarManager.add(new ToolBarContributionItem(
-                new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_1));
-        coolBarManager.add(new ToolBarContributionItem(
-                new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_2));
-        coolBarManager.add(new ToolBarContributionItem(
-                new ToolBarManager(SWT.FLAT | SWT.WRAP | SWT.LEFT), IActionConstants.TOOLBAR_3));
-        coolBarManager.add(new ToolBarContributionItem(
-                toolbarManager, IActionConstants.TOOLBAR_4));
-
-        Bundle cmBundle = Platform.getBundle(ApplicationUtil.CM_PLUGIN_ID);
-        /* Active the CM plugin */
-        if (cmBundle != null) {
-            try {
-                cmBundle.start();
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-            }
-        }
-
-        /*TOOLS-3988 There still is the install option after installing cmt plugin.*/
-        Bundle bundle = Platform.getBundle(ApplicationUtil.CMT_PLUGIN_ID);
-        if (bundle == null) {
-            IAction action =
-                    ActionManager.getInstance().getAction(InstallMigrationToolkitAction.ID);
-            if (action != null) {
-                ActionContributionItem item = new ActionContributionItem(action);
-                item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
-                toolbarManager.add(item);
-                item.setId(IPerspectiveConstance.MIGRATION_ACTION_CONTRIBUTION_ID);
-            }
-        } else {
-            /*Active the CMT plugin */
-            try {
-                bundle.start();
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-            }
-        }
-
-        // Help
-        DropDownAction helpDropAction =
-                new DropDownAction(
-                        Messages.helpActionNameBig,
-                        IAction.AS_DROP_DOWN_MENU,
-                        CubridManagerUIPlugin.getImageDescriptor("icons/action/help_big.png"));
-        helpDropAction.setDisabledImageDescriptor(
-                CubridManagerUIPlugin.getImageDescriptor("icons/action/help_big.png"));
-        MenuManager helpActionManager = helpDropAction.getMenuManager();
-        helpActionManager.add(manager.getAction(HelpDocumentAction.ID));
-        if ("ko".equals(Messages.language)) {
-            helpActionManager.add(newFeatureAction);
-        }
-        helpActionManager.add(new Separator());
-        helpActionManager.add(createItem(ReportBugAction.ID));
-        helpActionManager.add(new Separator());
-        helpActionManager.add(manager.getAction(ViewServerVersionAction.ID));
-        helpActionManager.add(clientVersionAction);
-
-        ActionContributionItem helpItems = new ActionContributionItem(helpDropAction);
-        helpItems.setMode(ActionContributionItem.MODE_FORCE_TEXT);
-        helpItems.setId(IPerspectiveConstance.HELP_ACTION_CONTRIBUTION_ID);
-        toolbarManager.add(helpItems);
-
-        ControlContribution searchContribution =
-                new ControlContribution(SearchContributionComposite.class.getName()) {
-                    protected Control createControl(Composite parent) {
-                        LOGGER.error("create SearchContributionComposite");
-                        return new SearchContributionComposite(parent, SWT.None);
-                    }
-                };
-        LOGGER.error("create SearchContributionComposite");
-        searchContribution.setId(IPerspectiveConstance.SEARCH_ACTION_CONTRIBUTION_ID);
-        searchContribution.setVisible(true);
-        toolbarManager.add(searchContribution);
-    }
-
-    /**
-     * Create action contribution item for action for show text and icon
-     *
-     * @param id action ID
-     * @return ActionContributionItem
-     */
-    private ActionContributionItem createItem(String id) {
-        ActionManager manager = ActionManager.getInstance();
-        IAction action = manager.getAction(id);
-        if (action == null) {
-            return null;
-        }
-
+    /*TOOLS-3988 There still is the install option after installing cmt plugin.*/
+    Bundle bundle = Platform.getBundle(ApplicationUtil.CMT_PLUGIN_ID);
+    if (bundle == null) {
+      IAction action = ActionManager.getInstance().getAction(InstallMigrationToolkitAction.ID);
+      if (action != null) {
         ActionContributionItem item = new ActionContributionItem(action);
         item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
-        return item;
+        toolbarManager.add(item);
+        item.setId(IPerspectiveConstance.MIGRATION_ACTION_CONTRIBUTION_ID);
+      }
+    } else {
+      /*Active the CMT plugin */
+      try {
+        bundle.start();
+      } catch (Exception e) {
+        LOGGER.error(e.getMessage());
+      }
     }
 
-    private void removeUnWantedActions() {
-        ActionSetRegistry asr = WorkbenchPlugin.getDefault().getActionSetRegistry();
-        IActionSetDescriptor[] actionSets = asr.getActionSets();
-
-        for (IActionSetDescriptor actionSet : actionSets) {
-            if ("org.eclipse.ui.edit.text.actionSet.annotationNavigation".equals(actionSet.getId())
-                    || "org.eclipse.ui.edit.text.actionSet.navigation".equals(actionSet.getId())) {
-                IExtension ext = actionSet.getConfigurationElement().getDeclaringExtension();
-                asr.removeExtension(ext, new Object[] {actionSet});
-            }
-        }
+    // Help
+    DropDownAction helpDropAction =
+        new DropDownAction(
+            Messages.helpActionNameBig,
+            IAction.AS_DROP_DOWN_MENU,
+            CubridManagerUIPlugin.getImageDescriptor("icons/action/help_big.png"));
+    helpDropAction.setDisabledImageDescriptor(
+        CubridManagerUIPlugin.getImageDescriptor("icons/action/help_big.png"));
+    MenuManager helpActionManager = helpDropAction.getMenuManager();
+    helpActionManager.add(manager.getAction(HelpDocumentAction.ID));
+    if ("ko".equals(Messages.language)) {
+      helpActionManager.add(newFeatureAction);
     }
+    helpActionManager.add(new Separator());
+    helpActionManager.add(createItem(ReportBugAction.ID));
+    helpActionManager.add(new Separator());
+    helpActionManager.add(manager.getAction(ViewServerVersionAction.ID));
+    helpActionManager.add(clientVersionAction);
+
+    ActionContributionItem helpItems = new ActionContributionItem(helpDropAction);
+    helpItems.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+    helpItems.setId(IPerspectiveConstance.HELP_ACTION_CONTRIBUTION_ID);
+    toolbarManager.add(helpItems);
+
+    ControlContribution searchContribution =
+        new ControlContribution(SearchContributionComposite.class.getName()) {
+          protected Control createControl(Composite parent) {
+            return new SearchContributionComposite(parent, SWT.None);
+          }
+        };
+    try {
+        LOGGER.error("create SearchContributionComposite visible");
+        searchContribution.setVisible(true);
+        searchContribution.setId(IPerspectiveConstance.SEARCH_ACTION_CONTRIBUTION_ID);
+        toolbarManager.add(searchContribution);
+        toolbarManager.add(searchContribution);
+        toolbarManager.add(searchContribution);
+    } catch (Exception e) {
+      LOGGER.error(e.getMessage());
+    }
+  }
+
+  /**
+   * Create action contribution item for action for show text and icon
+   *
+   * @param id action ID
+   * @return ActionContributionItem
+   */
+  private ActionContributionItem createItem(String id) {
+    ActionManager manager = ActionManager.getInstance();
+    IAction action = manager.getAction(id);
+    if (action == null) {
+      return null;
+    }
+
+    ActionContributionItem item = new ActionContributionItem(action);
+    item.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+    return item;
+  }
+
+  private void removeUnWantedActions() {
+    ActionSetRegistry asr = WorkbenchPlugin.getDefault().getActionSetRegistry();
+    IActionSetDescriptor[] actionSets = asr.getActionSets();
+
+    for (IActionSetDescriptor actionSet : actionSets) {
+      if ("org.eclipse.ui.edit.text.actionSet.annotationNavigation".equals(actionSet.getId())
+          || "org.eclipse.ui.edit.text.actionSet.navigation".equals(actionSet.getId())) {
+        IExtension ext = actionSet.getConfigurationElement().getDeclaringExtension();
+        asr.removeExtension(ext, new Object[] {actionSet});
+      }
+    }
+  }
 }
