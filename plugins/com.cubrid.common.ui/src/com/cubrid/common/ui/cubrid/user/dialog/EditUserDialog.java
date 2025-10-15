@@ -72,6 +72,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
@@ -147,6 +148,9 @@ public class EditUserDialog extends CMTrayDialog {
     private boolean isCommentSupport = false;
     private boolean isCommentModified = false;
 
+    private final int GENERAL_TAB = 1;
+    private final int USER_TAB = 2;
+    
     public EditUserDialog(Shell parentShell) {
         super(parentShell);
     }
@@ -166,12 +170,14 @@ public class EditUserDialog extends CMTrayDialog {
         tabFolder.setLayout(layout);
 
         CTabItem item = new CTabItem(tabFolder, SWT.NONE);
+        item.setData(GENERAL_TAB);
         item.setText(Messages.tabItemGeneral);
         item.setControl(createUserComposite());
 
         CTabItem authItem = null;
         if (!DB_DBA_USERNAME.equalsIgnoreCase(userName)) {
             authItem = new CTabItem(tabFolder, SWT.NONE);
+            authItem.setData(USER_TAB);
             authItem.setText(Messages.tabItemAuthoration);
             Composite authComposite = createAuthComposite();
             authItem.setControl(authComposite);
@@ -184,6 +190,22 @@ public class EditUserDialog extends CMTrayDialog {
             authItem.dispose();
         }
 
+        tabFolder.addSelectionListener(new SelectionListener(){
+        
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                CTabItem tab = (CTabItem) e.item;
+                if ((int) tab.getData() == USER_TAB) {
+                    classTableViewer.refresh();
+                    authTableViewer.refresh();
+                }
+            }
+        
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+            }
+        });
+        
         userNameText.setFocus();
         return parentComp;
     }
