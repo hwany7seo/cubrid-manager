@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -122,6 +124,15 @@ public class AddQueryDialog extends CMTitleAreaDialog {
         group.setText(Messages.grpQuerySpecification);
         sqlSpecText = new Text(group, SWT.BORDER | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
         sqlSpecText.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        sqlSpecText.addVerifyListener(new VerifyListener() {
+            @Override
+            public void verifyText(VerifyEvent e) {
+                if (e.text.contains(";")) {
+                    e.doit = false;
+                }
+            }
+        });
     }
 
     /** initializes some values */
