@@ -130,6 +130,7 @@ public class AddQueryDialog extends CMTitleAreaDialog {
             public void verifyText(VerifyEvent e) {
                 if (e.text.contains(";")) {
                     e.doit = false;
+                    CommonUITool.openInformationBox(Messages.infoNoInputSemicolon);
                 }
             }
         });
