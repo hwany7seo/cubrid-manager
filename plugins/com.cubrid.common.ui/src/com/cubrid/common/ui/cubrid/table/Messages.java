@@ -497,6 +497,7 @@ public class Messages extends NLS {
     public static String grpOnDelete;
     public static String errNoTableName;
     public static String btnOnCacheObject;
+    public static String infoNoInputSemicolon;
 
     public static String typeClass;
     public static String typeInstance;

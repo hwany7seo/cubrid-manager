@@ -422,6 +422,7 @@ public class PeriodGroup extends Observable {
          */
         public void modifyText(ModifyEvent event) {
             detailsForType(typeCombo);
+            dialog.getShell().pack();
         }
     }
 
