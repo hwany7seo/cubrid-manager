@@ -176,6 +176,21 @@ public class EditUserDialog extends CMTrayDialog {
             Composite authComposite = createAuthComposite();
             authItem.setControl(authComposite);
         }
+        
+        tabFolder.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (tabFolder.getSelectionIndex() == 1) {
+                    CTabItem item = (CTabItem) e.item;
+                    Control tabControl = item.getControl();
+                    if (tabControl != null && tabControl instanceof Composite) {
+                      Composite composite = (Composite) tabControl;
+                      composite.layout(true, true); 
+                    }
+                }
+            }
+        });
+        
         /*init the data*/
         initial();
 
