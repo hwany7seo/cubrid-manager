@@ -68,8 +68,6 @@ import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -90,6 +88,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -130,7 +130,7 @@ public class EditUserDialog extends CMTrayDialog {
     private CubridDatabase database = null;
     private DbUserInfo currentUserInfo;
     private Map<String, ClassAuthorizations> currentUserAuthorizations;
-    private CTabFolder tabFolder;
+    private TabFolder tabFolder;
     private Button grantButton = null;
     private Composite parentComp;
     private Button buttonAddGroup;
@@ -160,18 +160,18 @@ public class EditUserDialog extends CMTrayDialog {
     protected Control createDialogArea(Composite parent) {
         parentComp = (Composite) super.createDialogArea(parent);
 
-        tabFolder = new CTabFolder(parentComp, SWT.NONE);
-        tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        tabFolder = new TabFolder(parentComp, SWT.NONE);
+        tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         GridLayout layout = new GridLayout();
         tabFolder.setLayout(layout);
 
-        CTabItem item = new CTabItem(tabFolder, SWT.NONE);
+        TabItem item = new TabItem(tabFolder, SWT.NONE);
         item.setText(Messages.tabItemGeneral);
         item.setControl(createUserComposite());
 
-        CTabItem authItem = null;
+        TabItem authItem = null;
         if (!DB_DBA_USERNAME.equalsIgnoreCase(userName)) {
-            authItem = new CTabItem(tabFolder, SWT.NONE);
+            authItem = new TabItem(tabFolder, SWT.NONE);
             authItem.setText(Messages.tabItemAuthoration);
             Composite authComposite = createAuthComposite();
             authItem.setControl(authComposite);
@@ -181,7 +181,7 @@ public class EditUserDialog extends CMTrayDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 if (tabFolder.getSelectionIndex() == 1) {
-                    CTabItem item = (CTabItem) e.item;
+                    TabItem item = (TabItem) e.item;
                     Control tabControl = item.getControl();
                     if (tabControl != null && tabControl instanceof Composite) {
                       Composite composite = (Composite) tabControl;
@@ -515,8 +515,8 @@ public class EditUserDialog extends CMTrayDialog {
      */
     private Composite createAuthComposite() {
         final Composite composite = new Composite(tabFolder, SWT.NONE);
-        composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
-        GridLayout layout = new GridLayout();
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        GridLayout layout = new GridLayout(1, false);
         composite.setLayout(layout);
 
         Label classTableDescLabel = new Label(composite, SWT.NONE);
