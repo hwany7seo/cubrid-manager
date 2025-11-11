@@ -161,7 +161,7 @@ public class EditUserDialog extends CMTrayDialog {
         parentComp = (Composite) super.createDialogArea(parent);
 
         tabFolder = new CTabFolder(parentComp, SWT.NONE);
-        tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+        tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
         GridLayout layout = new GridLayout();
         tabFolder.setLayout(layout);
 
@@ -500,7 +500,7 @@ public class EditUserDialog extends CMTrayDialog {
      */
     private Composite createAuthComposite() {
         final Composite composite = new Composite(tabFolder, SWT.NONE);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
         GridLayout layout = new GridLayout();
         composite.setLayout(layout);
 
@@ -513,12 +513,14 @@ public class EditUserDialog extends CMTrayDialog {
                     Messages.tblColClassOwner,
                     Messages.tblColClassType
                 };
+        GridData tableGridData =  new GridData(SWT.FILL, SWT.FILL, true, false);
+        tableGridData.heightHint = 200;
         classTableViewer =
                 CommonUITool.createCommonTableViewer(
                         composite,
                         new TableViewerSorter(),
                         columnNameArr,
-                        CommonUITool.createGridData(GridData.FILL_BOTH, 3, 1, -1, 200));
+                        tableGridData);
         classTableViewer.setInput(classListData);
         classTable = classTableViewer.getTable();
 
@@ -636,11 +638,14 @@ public class EditUserDialog extends CMTrayDialog {
                     Messages.tblColAuthGrantalter, Messages.tblColAuthGrantindex,
                     Messages.tblColAuthGrantexecute
                 };
+        tableGridData =  new GridData(SWT.FILL, SWT.FILL, true, true);
+        tableGridData.heightHint = 200;
+        tableGridData.widthHint = 200;
         authTableViewer =
                 createCommonTableViewer(
                         composite,
                         authColumnNameArr,
-                        CommonUITool.createGridData(GridData.FILL_BOTH, 3, 1, -1, 200));
+                        tableGridData);
         authTableViewer.setLabelProvider(new AuthTableLabelProvider());
 
         authTableViewer.setInput(authListData);
