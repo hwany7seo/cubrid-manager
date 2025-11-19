@@ -2609,7 +2609,7 @@ public class TableEditorPart extends CubridEditorPart implements ITaskExecutorIn
                                         isNewTableFlag,
                                         null);
                         CMWizardDialog dialog = new CMWizardDialog(getSite().getShell(), wizard);
-                        dialog.setPageSize(600, 400);
+//                        dialog.setPageSize(600, 400);
                         if (dialog.open() != IDialogConstants.OK_ID) {
                             return;
                         }
@@ -2732,7 +2732,7 @@ public class TableEditorPart extends CubridEditorPart implements ITaskExecutorIn
                         isNewTableFlag,
                         partitionInfo);
         CMWizardDialog dialog = new CMWizardDialog(getSite().getShell(), wizard);
-        dialog.setPageSize(600, 400);
+//        dialog.setPageSize(600, 400);
         if (dialog.open() != IDialogConstants.OK_ID) {
             return;
         }

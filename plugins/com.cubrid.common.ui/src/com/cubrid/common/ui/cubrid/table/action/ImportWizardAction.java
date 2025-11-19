@@ -141,7 +141,7 @@ public class ImportWizardAction extends SelectionAction {
 
         ImportDataWizardDialog dlg =
                 new ImportDataWizardDialog(getShell(), new ImportDataWizard(database, tableList));
-        dlg.setPageSize(880, 420);
+//        dlg.setPageSize(880, 420);
         dlg.open();
     }
 }
